@@ -19,9 +19,10 @@ const Header = ({ username }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [loggedInUsers, setLoggedInUsers] = useState([]);
   const navigate = useNavigate();
+  const [currentUsername, setCurrentUsername] = useState(username || '');
 
   // Only show search bar when user is logged in and on chat page
-  const showSearchBar = location.pathname.includes('/productList') && username;
+  // const showSearchBar = location.pathname.includes('/productList') && username;
 
 
 
@@ -29,6 +30,17 @@ const Header = ({ username }) => {
   useEffect(() => {
     const users = JSON.parse(localStorage.getItem('loggedInUsers')) || [];
     setLoggedInUsers(users);
+
+    // Load the last active user from localStorage if available
+    const activeUser = localStorage.getItem('activeUser');
+    if (activeUser) {
+      const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
+    const activeToken = tokens[username];
+    if (activeToken) {
+      localStorage.setItem('authToken', activeToken); // Ensure the correct token is set
+    }
+      setCurrentUsername(activeUser);
+    }
   }, []);
 
   // useEffect(() => {
@@ -50,15 +62,17 @@ const Header = ({ username }) => {
 
   const handleLogout = () => {
     const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
-    delete tokens[username]; // Remove current user's token
+    delete tokens[currentUsername]; // Remove current user's token
     localStorage.setItem('authTokens', JSON.stringify(tokens));
     
     // Remove current user from logged-in users list
-    const updatedUsers = loggedInUsers.filter(user => user !== username);
+    const updatedUsers = loggedInUsers.filter(user => user !== currentUsername);
     localStorage.setItem('loggedInUsers', JSON.stringify(updatedUsers));
     setLoggedInUsers(updatedUsers);
     localStorage.removeItem('authToken'); // Clear current session token
     setAnchorEl(null);
+    setCurrentUsername('');
+    localStorage.removeItem('activeUser'); // Clear active user on logout
     navigate('/');
   };
   
@@ -81,6 +95,8 @@ const Header = ({ username }) => {
   
       // Set the selected user's token as the active auth token
       localStorage.setItem('authToken', authToken);
+      localStorage.setItem('activeUser', user); // Set active user in localStorage
+      setCurrentUsername(user); // Update current username state
       navigate('/productList');
     }
     setOpenDialog(false);
@@ -99,6 +115,8 @@ const Header = ({ username }) => {
       const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
       tokens[username] = localStorage.getItem('authToken'); // Save current token
       localStorage.setItem('authTokens', JSON.stringify(tokens));
+      setCurrentUsername(username); // Set initial username on login
+      localStorage.setItem('activeUser', username); // Save active user
     }
   }, [username]);
 
@@ -133,89 +151,94 @@ const Header = ({ username }) => {
             TejCart
           </Link>
         </Typography>
-        <Link to="/admin" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>Admin Page</Link>
+        {/* <Link to="/admin" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>Admin Page</Link> */}
         {/* Search Bar */}
-        {showSearchBar && (
-          <Box display="flex" alignItems="center" mr={2}>
-            <TextField
-              variant="outlined"
-              size="small"
-              placeholder="Search usernames"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              InputProps={{
-                endAdornment: <SearchIcon />, //sx={{ color: '#888' }}
-              }}
-              sx={{
-                width: isMobile ? 150 : 200, // Responsive width
-              }}
-            />
-            {/* Search results dropdown */}
-            {searchTerm && (
-              <Paper elevation={3} sx={{ position: 'absolute', top: '80%', mt: 1, zIndex: 10, maxWidth: isMobile ? 200 : 250, }}>
-              <List style={{
-                position: 'absolute', background: 'white', width: isMobile ? 200 : 250, boxShadow: '0 4px 8px rgba(0,0,0,0.2)', borderRadius: '4px'
-              }}>
-                {loading ? (
-                  <ListItem>
-                    <CircularProgress size={20} />
-                  </ListItem>
-                ) : (
-                  searchResults.length > 0 ? (
-                    searchResults.map((user) => (
-                      <ListItem key={user.username}>
-                        <ListItemIcon>
-                          <CheckCircleIcon style={{ color: 'green' }} />
-                        </ListItemIcon>
-                        <ListItemText primary={user.username} />
+        {location.pathname.includes('/admin') && currentUsername && (
+            <Box display="flex" alignItems="center" mr={2}>
+              <TextField
+                variant="outlined"
+                size="small"
+                placeholder="Search usernames"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                InputProps={{ endAdornment: <SearchIcon /> }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '20px',
+                    bgcolor: 'transparent', //theme.palette.background.paper
+                    // backgroundColor:'white'
+                  },
+                  '& .MuiInputBase-input': {
+                    padding: '10px 14px',
+                  },
+                  width: isMobile ? 130 : 200
+                }}
+              />
+              
+              {searchTerm && (
+                <Paper elevation={3} sx={{ position: 'absolute', top: '80%', mt: 1, zIndex: 10, maxWidth: isMobile ? 200 : 250 }}>
+                  <List style={{
+                    position: 'absolute', background: 'white', width: isMobile ? 200 : 250,
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)', borderRadius: '4px'
+                  }}>
+                    {loading ? (
+                      <ListItem>
+                        <CircularProgress size={20} />
                       </ListItem>
-                    ))
-                  ) : (
-                    <ListItem>
-                      <ListItemText primary="Searched username doesn't match any existing username" />
-                    </ListItem>
-                  )
-                )}
-              </List>
-              </Paper>
-            )}
-          </Box>
-        )}
-          {location.pathname === '/productList' && username && (
+                    ) : (
+                      searchResults.length > 0 ? (
+                        searchResults.map((user) => (
+                          <ListItem key={user.username}>
+                            <CheckCircleIcon style={{ color: 'green' }} />
+                            <ListItemText primary={user.username} />
+                          </ListItem>
+                        ))
+                      ) : (
+                        <ListItem>
+                          <ListItemText primary="Searched username doesn't match any existing username" />
+                        </ListItem>
+                      )
+                    )}
+                  </List>
+                </Paper>
+              )}
+            </Box>
+          )}
+          {/* {location.pathname === '/productList' && username && (
             <Typography variant="body1" 
             // sx={{ display: isMobile ? 'none' : 'block' }}
             >
               {username}
             </Typography>
+          )} */}
+          {currentUsername && (
+            <>
+              <IconButton onClick={handleProfileClick} color="inherit">
+                <AccountCircleIcon />
+                <Typography variant="body1">{currentUsername}</Typography>
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={handleSwitchProfile}>Switch Profile</MenuItem>
+              </Menu>
+              <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <List style={{ cursor: 'pointer' }}>
+                  <ListItem button onClick={() => handleSelectUser('Login with another account')}>
+                    <ListItemText primary="Login with another account" />
+                  </ListItem>
+                  {loggedInUsers.map((user) => (
+                    <ListItem button key={user} onClick={() => handleSelectUser(user)}>
+                      <ListItemText primary={user} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Dialog>
+            </>
           )}
-          {username && (
-        <>
-          <IconButton onClick={handleProfileClick} color="inherit">
-            <AccountCircleIcon />
-            <Typography variant="body1">{username}</Typography>
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            <MenuItem onClick={handleSwitchProfile}>Switch Profile</MenuItem>
-          </Menu>
-          <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-            <List>
-              <ListItem button onClick={() => handleSelectUser('Login with another account')}>
-                <ListItemText primary="Login with another account" />
-              </ListItem>
-              {loggedInUsers.map((user) => (
-                <ListItem button key={user} onClick={() => handleSelectUser(user)}>
-                  <ListItemText primary={user} />
-                </ListItem>
-              ))}
-            </List>
-          </Dialog>
-        </>
-      )}
         </Toolbar>
       </AppBar>
     </Box>

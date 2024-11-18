@@ -140,7 +140,12 @@ function ProductDetail({ product, onClose }) {
             <Typography variant="body2" color="textSecondary" style={{
               marginTop: '0.5rem',
               lineHeight: '1.5',
-              textAlign: 'justify'
+              textAlign: 'justify', whiteSpace: "pre-wrap", // Retain line breaks and tabs
+              wordWrap: "break-word", // Handle long words gracefully
+              backgroundColor: "#f5f5f5", 
+              padding: "1rem", 
+              borderRadius: "8px",
+              border: "1px solid #ddd",
             }}>
               {product.description}
             </Typography>

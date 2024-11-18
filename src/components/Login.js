@@ -57,13 +57,30 @@ const Login = () => {
       setPassword('');
 
       const { authToken, tokenUsername } = response.data;
-      if (authToken) {
-        // Store the token in localStorage
-        localStorage.setItem('authToken', authToken);
-        localStorage.setItem('tokenUsername', tokenUsername);
-        // Redirect to chat page
-        navigate('/productList'); // navigate(`/chat-${username}`);
-      } else {
+      // if (authToken) {
+      //   // Store the token in localStorage
+      //   localStorage.setItem('authToken', authToken);
+      //   localStorage.setItem('tokenUsername', tokenUsername);
+      //   // Redirect to chat page
+      //   navigate('/productList'); // navigate(`/chat-${username}`);
+      // } else {
+      //   setError('Token is missing in response');
+      // }
+      if (authToken){
+
+      // Store authToken uniquely for the user
+      const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
+      tokens[tokenUsername] = authToken;
+      localStorage.setItem('authTokens', JSON.stringify(tokens));
+
+      // Set authToken and active user in localStorage
+      localStorage.setItem('authToken', authToken);
+      localStorage.setItem('activeUser', tokenUsername);
+      localStorage.setItem('tokenUsername', tokenUsername);
+
+      setSuccess('Login successful!');
+      navigate('/productList', { replace: true });
+    } else {
         setError('Token is missing in response');
       }
       
