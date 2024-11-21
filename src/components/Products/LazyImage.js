@@ -1,3 +1,4 @@
+// /components/Products/LazyImage.js
 import React from 'react';
 
 const LazyImage = React.memo(({ base64Image, alt }) => (

@@ -1,7 +1,7 @@
 // src/components/ProductList.js
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardMedia, CardContent, Typography, Tooltip, TextField, IconButton, Box, Dialog, DialogTitle, DialogContent, Toolbar, Button} from '@mui/material';
-import { fetchProducts } from '../../api/api';
+import { addToWishlist, fetchProducts } from '../../api/api';
 import { Grid } from "@mui/material";
 import ProductDetail from './ProductDetail';
 import CommentPopup from './CommentPopup';
@@ -9,7 +9,7 @@ import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LazyImage from './LazyImage';
 import SkeletonCards from './SkeletonCards';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -18,7 +18,6 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 function ProductList() {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [commentPopupOpen, setCommentPopupOpen] = useState(false);
   const tokenUsername = localStorage.getItem('tokenUsername'); // Get the username from local storage
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -48,6 +47,7 @@ function ProductList() {
       setIsScrolling(false);
     }, 5000);
   };
+  const navigate = useNavigate();
   
  
 
@@ -232,7 +232,10 @@ function ProductList() {
         </Button>
       </Box>
       );
-    };
+  };
+
+
+  
   
 
   return (
@@ -394,19 +397,27 @@ function ProductList() {
             </DialogContent>
           </Dialog>
 
-          <CommentPopup
+          {/* <CommentPopup
             open={commentPopupOpen}
             onClose={() => setCommentPopupOpen(false)}
             product={selectedProduct}
-          />
+          /> */}
       </Box>
 
-          {/* Products displaying module */}
+        {/* Products displaying module */}
       <Toolbar > {/* style={{ display: 'flex', marginTop: '5rem', marginBottom: '-3rem' }} */}
           <Typography variant="h6" style={{ flexGrow: 1, marginRight:'2rem' }}>
           Products Page
           </Typography> 
           <Link to="/admin" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px' }}>Admin Page</Link>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => navigate('/wishlist')}
+            sx={{ marginRight: '15px' }}
+          >
+            Wishlist
+          </Button>
       </Toolbar>
       <div style={{
         marginTop: '-1rem',
@@ -439,7 +450,7 @@ function ProductList() {
                   boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', // Default shadow
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition for hover
                 }}
-                  onClick={() => openProductDetail(product)}
+                  // onClick={() => openProductDetail(product)}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'scale(1.02)'; // Slight zoom on hover
                     e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)'; // Enhance shadow
@@ -498,6 +509,18 @@ function ProductList() {
                   <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
                     Delivery Days: {product.deliveryDays}
                   </Typography>
+                  {/* <IconButton
+                        onClick={() => handleWishlistToggle(product._id)}
+                        sx={{
+                          color: wishlist.has(product._id) ? 'red' : 'gray',
+                        }}
+                      >
+                        {wishlist.has(product._id) ? (
+                          <FavoriteIcon />
+                        ) : (
+                          <FavoriteBorderIcon />
+                        )}
+                      </IconButton> */}
                   <Typography
                     variant="body2"
                     color="textSecondary"

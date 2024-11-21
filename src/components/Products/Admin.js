@@ -22,6 +22,7 @@ import SkeletonCards from './SkeletonCards';
 import { useTheme } from '@emotion/react';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import SearchBar from './SearchBar';
 
 // const LazyImage = React.memo(({ base64Image, alt }) => (
 //   <img
@@ -462,10 +463,15 @@ function Admin() {
     <div >
     {/* <div style={{ display: 'flex', marginTop: '2rem' }}><h2>Products Page</h2></div> */}
       {/* <h2>Admin Page</h2> */}
+      
         <Toolbar > {/* style={{ display: 'flex', marginTop: '5rem', marginBottom: '-3rem' }} */}
             <Typography variant="h6" style={{ flexGrow: 1 }}>
             Admin Page
             </Typography>
+            <SearchBar 
+            products={products} 
+            onProductSelect={openProductDetail} 
+          />
             <Link to="/productList" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px' }}>Products Page</Link>
             <Button variant="contained" color="primary" onClick={() => handleOpenDialog()}>
                 Add Product

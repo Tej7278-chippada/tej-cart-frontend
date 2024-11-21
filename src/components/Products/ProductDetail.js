@@ -3,14 +3,17 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ThumbUp, Comment } from '@mui/icons-material';
-import { fetchProducts, likeProduct } from '../../api/api';
+import { addToWishlist, fetchProducts, likeProduct } from '../../api/api';
 import CommentPopup from './CommentPopup';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 function ProductDetail({ product, onClose }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [commentPopupOpen, setCommentPopupOpen] = useState(false);
+  const [wishlist, setWishlist] = useState(new Set());
 
   useEffect(() => {
     fetchProducts().then((response) => setProducts(response.data));
@@ -36,6 +39,23 @@ function ProductDetail({ product, onClose }) {
   // Function to close the zoomed image modal
   const handleCloseImageModal = () => {
     setSelectedImage(null);
+  };
+
+  const handleWishlistToggle = async (productId) => {
+    try {
+      await addToWishlist(productId);
+      setWishlist((prevWishlist) => {
+        const newWishlist = new Set(prevWishlist);
+        if (newWishlist.has(productId)) {
+          newWishlist.delete(productId);
+        } else {
+          newWishlist.add(productId);
+        }
+        return newWishlist;
+      });
+    } catch (error) {
+      console.error('Error adding to wishlist:', error);
+    }
   };
 
   return (
@@ -93,6 +113,18 @@ function ProductDetail({ product, onClose }) {
         {/* Product Details */}
         <Grid container spacing={2}>
           <Grid item xs={12}>
+            <IconButton style={{ display: 'inline-block',float: 'right', fontWeight: '500' }}
+              onClick={() => handleWishlistToggle(product._id)}
+              sx={{
+                color: wishlist.has(product._id) ? 'red' : 'gray',
+              }}
+            >
+              {wishlist.has(product._id) ? (
+                <FavoriteIcon />
+              ) : (
+                <FavoriteBorderIcon />
+              )}
+            </IconButton>
             <Typography variant="h4" style={{
               fontWeight: 'bold',
               marginBottom: '0.5rem',
@@ -100,6 +132,7 @@ function ProductDetail({ product, onClose }) {
             }}>
               {product.title}
             </Typography>
+            
           </Grid>
           <Grid item xs={6} sm={4}>
             <Typography variant="body1" style={{ fontWeight: 500 }}>

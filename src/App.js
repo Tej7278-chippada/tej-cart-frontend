@@ -1,15 +1,16 @@
+// src/App.js
 import React from 'react';
 import './App.css';
 import Chat from './components/Chat';
 import Login from './components/Login';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-// import ProtectedRoute from './components/ProtectedRoute';
 import Register from './components/Register';
 import PrivateRoute from './components/PriviteRoute';
 import { ThemeProvider, createTheme } from '@mui/material';
 import ForgotPassword from './components/ForgotPassword';
 import Admin from './components/Products/Admin';
 import ProductList from './components/Products/ProductList';
+import WishList from './components/Products/WishList';
 
 const theme = createTheme({
   breakpoints: {
@@ -42,6 +43,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/wishlist" element={<WishList />} />
       </Routes>
     </Router>
     </ThemeProvider>
