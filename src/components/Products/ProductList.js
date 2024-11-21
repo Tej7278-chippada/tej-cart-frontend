@@ -529,9 +529,19 @@ function ProductList() {
               cursor: 'pointer',
               backdropFilter: 'none',
               backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              borderRadius: '8px'
+              borderRadius: '8px',
+              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', // Default shadow
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition for hover
             }}
-              onClick={() => openProductDetail(product)} >
+              onClick={() => openProductDetail(product)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.02)'; // Slight zoom on hover
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)'; // Enhance shadow
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'; // Revert zoom
+                e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)'; // Revert shadow
+              }} >
             {/* <CardMedia>
               <div style={{
                 display: 'flex',

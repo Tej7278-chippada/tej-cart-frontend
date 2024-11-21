@@ -657,7 +657,18 @@ function Admin() {
       {currentProducts.map((product) => (
         <Grid item xs={12} sm={6} md={4} key={product._id}>
           {/* <ProductCard product={product} /> */}
-          <Card style={{ margin: '0rem 0', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', background: 'rgba(255, 255, 255, 0.9)' }}
+          <Card style={{ margin: '0rem 0', borderRadius: '8px', overflow: 'hidden',  background: 'rgba(255, 255, 255, 0.9)',
+              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', // Default shadow boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition for hover
+               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.02)'; // Slight zoom on hover
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)'; // Enhance shadow
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'; // Revert zoom
+                e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)'; // Revert shadow
+              }}
           >
             {/* CardMedia for Images with Scroll */}
             <CardMedia style={{ margin: '0rem 0',borderRadius: '8px', overflow: 'hidden', height: '200px', backgroundColor: '#f5f5f5' }}>
