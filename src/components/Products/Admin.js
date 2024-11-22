@@ -8,8 +8,6 @@ import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Card, Car
     Tooltip,
     Snackbar,
     Box,
-    // CircularProgress,
-    Pagination,
     IconButton} from '@mui/material';
 import { addProduct, deleteProduct, fetchProducts, updateProduct } from '../../api/api';
 // import ProductCard from "../components/ProductCard";
@@ -23,6 +21,7 @@ import { useTheme } from '@emotion/react';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import SearchBar from './SearchBar';
+import AddIcon from '@mui/icons-material/Add';
 
 // const LazyImage = React.memo(({ base64Image, alt }) => (
 //   <img
@@ -64,7 +63,7 @@ function Admin() {
   const totalPages = Math.ceil(products.length / productsPerPage);
   const [hoveredDots, setHoveredDots] = useState(false);
 
-  const handlePageChange = (event, value) => setCurrentPage(value);
+  // const handlePageChange = (event, value) => setCurrentPage(value);
 
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimeoutRef = useRef(null);
@@ -233,9 +232,10 @@ function Admin() {
     setFormData({
       title: product.title,
       price: product.price,
+      categories: product.categories,
+      gender: product.gender,
       stockStatus: product.stockStatus,
       stockCount: product.stockCount,
-      gender: product.gender,
       deliveryDays: product.deliveryDays,
       description: product.description,
       media: null, // Reset images to avoid re-uploading
@@ -296,9 +296,10 @@ function Admin() {
     setFormData({
         title: '',
         price: '',
+        categories: '',
+        gender: '',
         stockStatus: '',
         stockCount: '',
-        gender: '',
         deliveryDays: '',
         description: '',
         media: null,
@@ -316,7 +317,7 @@ function Admin() {
     setOpenDialog(false);
     setMediaError('');
     setSubmitError(''); // Clear submission error when dialog is closed
-    setFormData({ title: '', price: '', stockStatus: '', stockCount: '', gender: '', deliveryDays: '', description: '', media: null });
+    setFormData({ title: '', price: '', categories: '', gender: '', stockStatus: '', stockCount: '', deliveryDays: '', description: '', media: null });
   };
 
   // const refreshProducts = async () => {
@@ -469,12 +470,32 @@ function Admin() {
             Admin Page
             </Typography>
             <SearchBar 
-            products={products} 
-            onProductSelect={openProductDetail} 
-          />
-            <Link to="/productList" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px' }}>Products Page</Link>
-            <Button variant="contained" color="primary" onClick={() => handleOpenDialog()}>
+              products={products} 
+              onProductSelect={openProductDetail} 
+            />
+            <Link to="/productList" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px', paddingLeft: '1rem' }}>Products Page</Link>
+            {/* <Button variant="contained" color="primary" onClick={() => handleOpenDialog()}>
                 Add Product
+            </Button> */}
+            <Button
+              variant="contained"
+              onClick={() => handleOpenDialog()}
+              sx={{
+                backgroundColor: '#1976d2', // Primary blue
+                color: '#fff',
+                padding: '8px 16px',
+                borderRadius: '24px',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                '&:hover': {
+                  backgroundColor: '#1565c0', // Darker shade on hover
+                },
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <AddIcon sx={{ fontSize: '20px' }} />
+              {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Add Product</span> */}
             </Button>
         </Toolbar>
       {/* <Link to="/productList" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px' }}>Products Page</Link> */}
@@ -552,6 +573,18 @@ function Admin() {
             onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
             required 
           />
+          <FormControl fullWidth>
+              <InputLabel>Categories</InputLabel>
+              <Select 
+                value={formData.categories} 
+                onChange={(e) => setFormData({ ...formData, categories: e.target.value })} 
+                required
+              >
+                <MenuItem value="Clothing">Clothing</MenuItem>
+                <MenuItem value="Footwear">Footwear</MenuItem>
+                <MenuItem value="Accessories">Accessories</MenuItem>
+              </Select>
+            </FormControl>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <TextField 
               label="Price (INR)" 

@@ -136,6 +136,22 @@ function ProductDetail({ product, onClose }) {
           </Grid>
           <Grid item xs={6} sm={4}>
             <Typography variant="body1" style={{ fontWeight: 500 }}>
+              Product Category:
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {product.categories}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} sm={4}>
+            <Typography variant="body1" style={{ fontWeight: 500 }}>
+              Gender:
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {product.gender}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} sm={4}>
+            <Typography variant="body1" style={{ fontWeight: 500 }}>
               Price:
             </Typography>
             <Typography variant="body2" color="textSecondary">
@@ -152,12 +168,14 @@ function ProductDetail({ product, onClose }) {
           </Grid>
           <Grid item xs={6} sm={4}>
             <Typography variant="body1" style={{ fontWeight: 500 }}>
-              Gender:
+              Stock Count:
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              {product.gender}
+              {product.stockCount}
             </Typography>
           </Grid>
+          
+          
           <Grid item xs={6} sm={4}>
             <Typography variant="body1" style={{ fontWeight: 500 }}>
               Delivery Days:

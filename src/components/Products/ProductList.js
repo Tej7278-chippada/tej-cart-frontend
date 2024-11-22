@@ -1,10 +1,9 @@
 // src/components/ProductList.js
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardMedia, CardContent, Typography, Tooltip, TextField, IconButton, Box, Dialog, DialogTitle, DialogContent, Toolbar, Button} from '@mui/material';
-import { addToWishlist, fetchProducts } from '../../api/api';
+import { fetchProducts } from '../../api/api';
 import { Grid } from "@mui/material";
 import ProductDetail from './ProductDetail';
-import CommentPopup from './CommentPopup';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
 import SearchIcon from '@mui/icons-material/Search';
@@ -14,6 +13,9 @@ import LazyImage from './LazyImage';
 import SkeletonCards from './SkeletonCards';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import FilterProducts from './FilterProducts';
+import FilterListIcon from "@mui/icons-material/FilterList";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 function ProductList() {
   const [products, setProducts] = useState([]);
@@ -48,6 +50,14 @@ function ProductList() {
     }, 5000);
   };
   const navigate = useNavigate();
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterCriteria, setFilterCriteria] = useState({
+    category: '',
+    gender: '',
+    stockStatus: '',
+    priceRange: [0, 10000],
+  });
   
  
 
@@ -58,6 +68,7 @@ function ProductList() {
     fetchProducts()
       .then((response) => {
         setProducts(response.data);
+        setFilteredProducts(response.data); // Initially display all products
         setLoading(false); // Stop loading
       })
       .catch((error) => {
@@ -232,6 +243,24 @@ function ProductList() {
         </Button>
       </Box>
       );
+  };
+
+  // Handle opening and closing the filter card
+  const handleFilterToggle = () => {
+    setFilterOpen((prev) => !prev);
+  };
+
+  // Apply filters to the products
+  const applyFilters = (newFilters) => {
+    setFilterCriteria(newFilters);
+    const filtered = products.filter((product) => {
+      const matchCategory = newFilters.category ? product.category === newFilters.category : true;
+      const matchGender = newFilters.gender ? product.gender === newFilters.gender : true;
+      const matchStockStatus = newFilters.stockStatus ? product.stockStatus === newFilters.stockStatus : true;
+      const matchPrice = product.price >= newFilters.priceRange[0] && product.price <= newFilters.priceRange[1];
+      return matchCategory && matchGender && matchStockStatus && matchPrice;
+    });
+    setFilteredProducts(filtered);
   };
 
 
@@ -409,18 +438,71 @@ function ProductList() {
           <Typography variant="h6" style={{ flexGrow: 1, marginRight:'2rem' }}>
           Products Page
           </Typography> 
+          
+
           <Link to="/admin" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px' }}>Admin Page</Link>
-          <Button
+          {/* <Button
             variant="outlined"
             color="primary"
             onClick={() => navigate('/wishlist')}
             sx={{ marginRight: '15px' }}
           >
             Wishlist
+          </Button> */}
+          
+          <Button
+            variant="contained"
+            onClick={handleFilterToggle}
+            sx={{
+              backgroundColor: '#1976d2', // Primary blue
+              color: '#fff',
+              padding: '8px 16px',
+              borderRadius: '24px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+              '&:hover': {
+                backgroundColor: '#1565c0', // Darker shade on hover
+              },
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px', marginRight: '10px'
+            }}
+          >
+            <FilterListIcon sx={{ fontSize: '20px' }} />
+            {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Filter</span> */}
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => navigate('/wishlist')}
+            sx={{
+              backgroundColor: '#1976d2', // Primary blue
+              color: '#fff',
+              padding: '8px 16px',
+              borderRadius: '24px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+              '&:hover': {
+                backgroundColor: '#1565c0', // Darker shade on hover
+              },
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px', 
+            }}
+          >
+            <FavoriteIcon sx={{ fontSize: '20px' }} />
+            {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Filter</span> */}
           </Button>
       </Toolbar>
+      {/* Filter Floating Card */}
+      {filterOpen && (
+        <FilterProducts
+          filterCriteria={filterCriteria}
+          applyFilters={applyFilters}
+          products={products}
+          filteredProducts={filteredProducts}
+          onClose={handleFilterToggle}
+        />
+      )}
       <div style={{
-        marginTop: '-1rem',
+        // marginTop: '1rem',
         padding: '1rem',
         // backgroundImage: 'url("../assets/bg.jpg")',
         backgroundSize: 'cover',
@@ -506,9 +588,9 @@ function ProductList() {
                       Stock Count: {product.stockCount}
                     </Typography>
                   )}
-                  <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
+                  {/* <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
                     Delivery Days: {product.deliveryDays}
-                  </Typography>
+                  </Typography> */}
                   {/* <IconButton
                         onClick={() => handleWishlistToggle(product._id)}
                         sx={{
