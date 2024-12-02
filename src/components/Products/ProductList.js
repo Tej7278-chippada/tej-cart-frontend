@@ -59,6 +59,7 @@ function ProductList() {
     priceRange: [0, 10000],
   });
   
+  
  
 
   // Fetch products data
@@ -263,6 +264,8 @@ function ProductList() {
     setFilteredProducts(filtered);
   };
 
+  
+
 
   
   
@@ -438,6 +441,8 @@ function ProductList() {
           <Typography variant="h6" style={{ flexGrow: 1, marginRight:'2rem' }}>
           Products Page
           </Typography> 
+
+          
           
 
           <Link to="/admin" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px' }}>Admin Page</Link>
@@ -501,9 +506,10 @@ function ProductList() {
           onClose={handleFilterToggle}
         />
       )}
+      
       <div style={{
         // marginTop: '1rem',
-        padding: '1rem',
+        padding: '8px',
         // backgroundImage: 'url("../assets/bg.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -512,7 +518,7 @@ function ProductList() {
         }}>
         
         {/* <div style={{ display: 'flex', marginTop: '-2rem' }}><h2>Products Page</h2></div> */}
-        <Box > {/* sx={{ p: 2 }} */}
+        <Box sx={{bgcolor: '#f5f5f5', paddingTop: '1rem', paddingBottom: '1rem', paddingInline: '8px', borderRadius:'10px'}} > {/* sx={{ p: 2 }} */}
           {loading ? (
             // renderSkeletonCards()
             <SkeletonCards/>
@@ -530,7 +536,7 @@ function ProductList() {
                   backgroundColor: 'rgba(255, 255, 255, 0.8)',
                   borderRadius: '8px',
                   boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', // Default shadow
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition for hover
+                  transition: 'transform 0.1s ease, box-shadow 0.1s ease', // Smooth transition for hover
                 }}
                   // onClick={() => openProductDetail(product)}
                   onMouseEnter={(e) => {
@@ -542,7 +548,7 @@ function ProductList() {
                     e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)'; // Revert shadow
                   }} >
                 {/* CardMedia for Images with Scroll */}
-                <CardMedia style={{ margin: '0rem 0',borderRadius: '8px', overflow: 'hidden', height: '200px', backgroundColor: '#f5f5f5' }}>
+                <CardMedia sx={{ margin: '0rem 0',borderRadius: '8px', overflow: 'hidden', height: '200px', backgroundColor: '#f5f5f5' }}>
                   <div style={{
                     display: 'flex',
                     overflowX: 'auto',
@@ -706,6 +712,8 @@ function ProductList() {
             </Tooltip>
           </Box>
       )}
+
+
     </div>
     </Layout>
   );

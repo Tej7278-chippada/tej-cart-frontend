@@ -518,7 +518,7 @@ function Admin() {
           {existingMedia.length > 0 && (
           <div style={{marginBottom:'1rem', margin:'1rem'}}>
             <Typography variant="subtitle1">Existing Images</Typography>
-            <div style={{ display: 'flex', overflowX: 'scroll', scrollbarWidth: 'thin', scrollbarColor: '#888 transparent' }}>
+            <div style={{ display: 'flex', overflowX: 'scroll', scrollbarWidth: 'none', scrollbarColor: '#888 transparent' }}>
               {existingMedia.map((media) => (
                 !media.remove && (
                   <div key={media._id} style={{ position: 'relative', margin: '5px' }}>
@@ -541,7 +541,7 @@ function Admin() {
               <Typography variant="body2">Note : Maximum 5 Photos & Each Photo size should less than 2 MB</Typography>    
               {mediaError && <Alert severity="error">{mediaError}</Alert>}
               {newMedia.length > 0 && (
-                <div style={{ display: 'flex', gap: '2rem', marginTop: '1rem', overflowX: 'scroll'  , scrollbarWidth: 'thin', scrollbarColor: '#888 transparent'}}>
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', overflowX: 'auto'  , scrollbarWidth: 'none', scrollbarColor: '#888 transparent'}}>
                   {newMedia.map((file, index) => (
                     <div key={index} style={{ position: 'relative' }}>
                       <img 
@@ -672,7 +672,7 @@ function Admin() {
 
 
       {/* Product cards */}
-      <div style={{ position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', overflow: 'hidden',  }}>
         {/* Blurred Background Image */}
       <div style={{
         position: 'absolute',
@@ -688,7 +688,7 @@ function Admin() {
       }}></div>
       <div style={{ marginTop: '0rem', padding: '1rem', position: 'relative', zIndex: 1 }}>
       {/* {loading && <div style={{ marginTop: '1rem', padding: '1rem', position: 'relative' }}>Loading products...</div>} */}
-      <Box > {/* sx={{ p: 2 }} */}
+      <Box sx={{bgcolor: '#f5f5f5', paddingTop: '1rem', paddingBottom: '1rem', paddingInline: '8px', borderRadius:'10px'}}> {/* sx={{ p: 2 }} */}
         {loading ? (
           <SkeletonCards/>
         ) : (

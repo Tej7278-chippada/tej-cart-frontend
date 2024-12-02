@@ -1,7 +1,7 @@
 // Header.js
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, TextField, List, ListItem, ListItemText, ListItemIcon, Box, CircularProgress, Paper, useMediaQuery, IconButton, Menu, MenuItem, Dialog, } from '@mui/material';
+import { AppBar, Toolbar, Typography, TextField, List, ListItem, ListItemText, Box, CircularProgress, Paper, useMediaQuery, IconButton, Menu, MenuItem, Dialog, } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';

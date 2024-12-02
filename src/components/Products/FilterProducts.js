@@ -71,11 +71,11 @@ const FilterProducts = ({ filterCriteria, applyFilters, products, filteredProduc
             {selectedProduct && (
                 <ProductDetail product={selectedProduct} onClose={() => setSelectedProduct(null)} />
             )}
-            <DialogTitle sx={{ height: '10px' }}>
+            <DialogTitle sx={{ height: '0px', marginBottom:'1rem' }}>
                 Filter Products
-                <Button style={{ float: 'right', marginTop: '-12px' }} variant="text" onClick={handleDialogClose}>Close</Button>
+                <Button style={{ float: 'right', marginTop: '-10px' }} variant="text" onClick={handleDialogClose}>Close</Button>
             </DialogTitle>
-            <DialogContent>
+            <DialogContent sx={{padding:'8px'}}>
                 <Box
                     display="flex"
                     flexDirection={isMobile ? "column" : "row"}
