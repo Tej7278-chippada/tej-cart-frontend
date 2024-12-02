@@ -41,7 +41,7 @@ const Header = ({ username }) => {
     }
       setCurrentUsername(activeUser);
     }
-  }, []);
+  }, [username]);
 
   // useEffect(() => {
   //   // Add current user to the list if not already present
