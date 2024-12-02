@@ -48,7 +48,8 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
         {comments.length ? (
             comments.map((comment, index) => (
               <Typography key={index} style={{ marginBottom: '0.5rem' }}>
-                {comment.text}<Typography>Testing comment...</Typography>
+                {comment.text}
+                <Typography>Testing comment...</Typography>
               </Typography>
             ))
           ) : (

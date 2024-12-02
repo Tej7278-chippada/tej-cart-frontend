@@ -10,9 +10,9 @@ export const deleteProduct = (id) => API.delete(`/api/products/${id}`);
 export const likeProduct = (id) => API.post(`/api/products/${id}/like`);
 export const addComment = (id, comment) => API.post(`/api/products/${id}/comment`, comment);
 
-// export const addToWishlist = (data) => API.post('/api/wishlist/add', data);
-// export const removeFromWishlist = (data) => API.post('/api/wishlist/remove', data);
-// // export const fetchWishlist = (userId) => API.get(`/api/wishlist/${userId}`);
+export const addToWishlist = (data) => API.post('/api/wishlist/add', data);
+export const removeFromWishlist = (data) => API.post('/api/wishlist/remove', data);
+export const fetchWishlist = (userId) => API.get(`/api/wishlist/${userId}`);
 
 // export const fetchWishlist = async () => {
 //   const response = await fetch('/api/wishlist', {

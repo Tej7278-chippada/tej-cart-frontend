@@ -3,31 +3,69 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ThumbUp, Comment } from '@mui/icons-material';
-import {  fetchProducts, likeProduct } from '../../api/api';
+import {  addToWishlist, fetchProducts, likeProduct } from '../../api/api';
 import CommentPopup from './CommentPopup';
-// import FavoriteIcon from '@mui/icons-material/Favorite';
-// import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 function ProductDetail({ product, onClose }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [commentPopupOpen, setCommentPopupOpen] = useState(false);
-  // const [wishlist, setWishlist] = useState(new Set());
+  const [wishlist, setWishlist] = useState(new Set());
 
   useEffect(() => {
-    fetchProducts().then((response) => setProducts(response.data));
-  }, []);
-  if (!product) return null;
+    if (product) {
+      const updatedProduct = products.find((p) => p._id === product._id);
+      if (updatedProduct) {
+        setSelectedProduct(updatedProduct);
+      }
+    }
+  }, [products, product]);
+
+  // useEffect(() => {
+  //   fetchProducts().then((response) => setProducts(response.data));
+  // }, []);
+  // if (!product) return null;
+  
   
 
   const handleLike = async (productId) => {
-    await likeProduct(productId);
-    fetchProducts().then((response) => setProducts(response.data)); // Refresh product list with updated likes
+    try {
+      // Optimistic UI update
+      if (product._id === productId) {
+        product.likes = (product.likes || 0) + 1;
+      }
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p._id === productId ? { ...p, likes: (p.likes || 0) + 1 } : p
+        )
+      );
+  
+      // API call to update likes
+      const updatedProduct = await likeProduct(productId);
+  
+      // Update with actual response from the backend
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p._id === productId ? { ...p, likes: updatedProduct.likes } : p
+        )
+      );
+    } catch (error) {
+      console.error("Error liking product:", error);
+      // Revert the optimistic update on error
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p._id === productId ? { ...p, likes: (p.likes || 0) - 1 } : p
+        )
+      );
+    }
   };
+  
 
   const openComments = (product) => {
-    // setSelectedProduct(product);
+    setSelectedProduct(product);
     setCommentPopupOpen(true);
   };
 
@@ -41,22 +79,22 @@ function ProductDetail({ product, onClose }) {
     setSelectedImage(null);
   };
 
-  // const handleWishlistToggle = async (productId) => {
-  //   try {
-  //     await addToWishlist(productId);
-  //     setWishlist((prevWishlist) => {
-  //       const newWishlist = new Set(prevWishlist);
-  //       if (newWishlist.has(productId)) {
-  //         newWishlist.delete(productId);
-  //       } else {
-  //         newWishlist.add(productId);
-  //       }
-  //       return newWishlist;
-  //     });
-  //   } catch (error) {
-  //     console.error('Error adding to wishlist:', error);
-  //   }
-  // };
+  const handleWishlistToggle = async (productId) => {
+    try {
+      await addToWishlist(productId);
+      setWishlist((prevWishlist) => {
+        const newWishlist = new Set(prevWishlist);
+        if (newWishlist.has(productId)) {
+          newWishlist.delete(productId);
+        } else {
+          newWishlist.add(productId);
+        }
+        return newWishlist;
+      });
+    } catch (error) {
+      console.error('Error adding to wishlist:', error);
+    }
+  };
 
   return (
     <Dialog open={!!product} onClose={onClose} maxWidth="md" fullWidth>
@@ -113,7 +151,7 @@ function ProductDetail({ product, onClose }) {
         {/* Product Details */}
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            {/* <IconButton style={{ display: 'inline-block',float: 'right', fontWeight: '500' }}
+            <IconButton style={{ display: 'inline-block',float: 'right', fontWeight: '500' }}
               onClick={() => handleWishlistToggle(product._id)}
               sx={{
                 color: wishlist.has(product._id) ? 'red' : 'gray',
@@ -124,7 +162,7 @@ function ProductDetail({ product, onClose }) {
               ) : (
                 <FavoriteBorderIcon />
               )}
-            </IconButton> */}
+            </IconButton>
             <Typography variant="h4" style={{
               fontWeight: 'bold',
               marginBottom: '0.5rem',

@@ -1,20 +1,21 @@
-// // src/components/WishList.js
-// import React, { useEffect, useState } from 'react';
-// // import { fetchWishlist } from '../../api/api';
-// import { useNavigate } from 'react-router-dom';
-// // import { fetchWishlist } from '../../api/api';
-// import axios from 'axios';
-// // import { fetchWishlist } from '../api/api';
+// src/components/WishList.js
+import React, { useEffect, useState } from 'react';
+// import { fetchWishlist } from '../../api/api';
+import { useNavigate } from 'react-router-dom';
+// import { fetchWishlist } from '../../api/api';
+import axios from 'axios';
+import { fetchWishlist } from '../../api/api';
+// import { fetchWishlist } from '../api/api';
 
-// const WishList = () => {
-//   const [wishlist, setWishlist] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const navigate = useNavigate();
+const WishList = () => {
+  const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-//   useEffect(() => {
-//     fetchWishlist().then(setWishlist).catch(console.error);
-//   }, []);
+  useEffect(() => {
+    fetchWishlist().then(setWishlist).catch(console.error);
+  }, []);
 
 //   const fetchWishlist = async () => {
 //     try {
@@ -32,32 +33,32 @@
 //   };
   
 
-//   if (loading) {
-//     return <p>Loading wishlist...</p>;
-//   }
+  if (loading) {
+    return <p>Loading wishlist...</p>;
+  }
 
-//   if (error) {
-//     return <p>{error}</p>;
-//   }
+  if (error) {
+    return <p>{error}</p>;
+  }
 
-//   return (
-//     <div>
-//       <h2>Your Wishlist</h2>
-//       {wishlist.length === 0 ? (
-//         <p>Your wishlist is empty.</p>
-//       ) : (
-//         <div>
-//           {wishlist.map((product) => (
-//             <div key={product._id} onClick={() => navigate(`/product/${product._id}`)}>
-//               <h3>{product.title}</h3>
-//               <p>{product.description}</p>
-//               <img src={`data:image/jpeg;base64,${product.media[0]}`} alt={product.title} />
-//             </div>
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
+  return (
+    <div>
+      <h2>Your Wishlist</h2>
+      {wishlist.length === 0 ? (
+        <p>Your wishlist is empty.</p>
+      ) : (
+        <div>
+          {wishlist.map((product) => (
+            <div key={product._id} onClick={() => navigate(`/product/${product._id}`)}>
+              <h3>{product.title}</h3>
+              <p>{product.description}</p>
+              <img src={`data:image/jpeg;base64,${product.media[0]}`} alt={product.title} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
-// export default WishList;
+export default WishList;
