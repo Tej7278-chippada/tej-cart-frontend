@@ -1,6 +1,6 @@
 // src/components/ProductDetail.js
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid } from '@mui/material';
+import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid, Grid2 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import {  addToWishlist, fetchProducts, likeProduct } from '../../api/api';
@@ -67,6 +67,19 @@ function ProductDetail({ product, onClose }) {
   const openComments = (product) => {
     // setSelectedProduct(product);
     setCommentPopupOpen(true);
+    // setSelectedProduct(product); // Pass the product to ensure it gets updated in the popup
+  };
+
+  const onCommentAdded = async () => {
+    try {
+      // const updatedProducts = await fetchProducts(); // This fetches all products after a comment is added
+      // setProducts(updatedProducts.data); // Update the product list in the state
+      // setCommentPopupOpen(false); // Close the CommentPopup
+    } catch (error) {
+      console.error("Error fetching products after comment added:", error);
+    } finally {
+      // setCommentPopupOpen(false); // Close the comment popup
+    }
   };
 
   // Function to open the zoomed image modal
@@ -97,7 +110,7 @@ function ProductDetail({ product, onClose }) {
   };
 
   return (
-    <Dialog open={!!product} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={!!product} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogContent style={{
         padding: '2rem',
         position: 'relative',
@@ -239,12 +252,14 @@ function ProductDetail({ product, onClose }) {
               {product.description}
             </Typography>
           </Grid>
+          <Grid2 sx={{padding:'1rem'}}>
           <IconButton onClick={() => handleLike(product._id)}>
-                  <ThumbUp /> {product.likes}
-                </IconButton>
-                <IconButton onClick={() => openComments(product)}>
-                  <Comment /> {product.comments?.length || 0}
-                </IconButton>
+            <ThumbUp /> {product.likes}
+          </IconButton>
+          <IconButton onClick={() => openComments(product)}>
+            <Comment /> {product.comments?.length || 0}
+          </IconButton>
+          </Grid2>
         </Grid>
       </DialogContent>
 
@@ -276,7 +291,7 @@ function ProductDetail({ product, onClose }) {
         open={commentPopupOpen}
         onClose={() => setCommentPopupOpen(false)}
         product={product} // Pass the current product
-        onCommentAdded={() => fetchProducts().then((response) => setProducts(response.data))}
+        onCommentAdded={onCommentAdded}  // Passing the comment added handler
       />
     </Dialog>
   );
