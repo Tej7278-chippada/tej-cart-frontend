@@ -15,15 +15,19 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
 
   const handleAddComment = async () => {
     if (newComment.trim() && product?._id) {
-      await addComment(product._id, { text: newComment });
-      setNewComment('');
-      await refreshComments(); // Refresh comments after adding
+      try {
+        await addComment(product._id, { text: newComment });
+        setNewComment('');
+        await refreshComments(); // Refresh comments after adding
+      } catch (error) {
+        console.error('Error adding comment:', error);
+      }
     }
   };
 
   const refreshComments = async () => {
-    const updatedProduct = await fetchProducts(product._id);
-    setComments(updatedProduct.comments);
+    // const updatedProduct = await fetchProducts(product._id);
+    setComments(product.comments);
   };
 
   return (
@@ -45,11 +49,11 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
         </Button>
 
         <div style={{ maxHeight: '300px', overflowY: 'auto', margin: '1rem 0' }}>
-        {comments.length ? (
+        {comments && comments.length ? (
             comments.map((comment, index) => (
               <Typography key={index} style={{ marginBottom: '0.5rem' }}>
                 {comment.text}
-                <Typography>Testing comment...</Typography>
+                {/* <Typography>Testing comment...</Typography> */}
               </Typography>
             ))
           ) : (

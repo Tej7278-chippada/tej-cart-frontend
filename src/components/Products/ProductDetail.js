@@ -65,7 +65,7 @@ function ProductDetail({ product, onClose }) {
   
 
   const openComments = (product) => {
-    setSelectedProduct(product);
+    // setSelectedProduct(product);
     setCommentPopupOpen(true);
   };
 
