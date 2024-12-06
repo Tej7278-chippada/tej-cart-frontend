@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { fetchWishlist } from '../../api/api';
 import axios from 'axios';
-import { fetchWishlist } from '../../api/api';
+// import { fetchWishlist } from '../../api/api';
 // import { fetchWishlist } from '../api/api';
 
 const WishList = () => {
@@ -17,20 +17,24 @@ const WishList = () => {
     fetchWishlist().then(setWishlist).catch(console.error);
   }, []);
 
-//   const fetchWishlist = async () => {
-//     try {
-//       const authToken = localStorage.getItem('authToken'); // Retrieve token from storage
-//       const response = await axios.get(`${process.env.REACT_APP_API_URL}/wishlist`, {
-//         headers: {
-//           Authorization: `Bearer ${authToken}`, // Include the token
-//         },
-//       });
-//       setWishlist(response.data); // Assuming response.data is the list of wishlist products
-//     } catch (error) {
-//       console.error('Error fetching wishlist:', error);
-//       alert(error.response?.data?.message || 'Failed to fetch wishlist.');
-//     }
-//   };
+  const fetchWishlist = async () => {
+    setLoading(true);
+    try {
+      const authToken = localStorage.getItem('authToken'); // Retrieve token from storage
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/wishlist`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Include the token
+        },
+      });
+      setWishlist(response.data); // Assuming response.data is the list of wishlist products
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+      alert(error.response?.data?.message || 'Failed to fetch wishlist.');
+      setError('Failed to fetch wishlist.')
+    } finally {
+      setLoading(false);
+    }
+  };
   
 
   if (loading) {

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid, Grid2 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ThumbUp, Comment } from '@mui/icons-material';
-import {  addToWishlist, fetchProducts, likeProduct } from '../../api/api';
+import {  addToWishlist, likeProduct } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';

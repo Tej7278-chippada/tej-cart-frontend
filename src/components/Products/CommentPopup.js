@@ -1,7 +1,7 @@
 // src/components/CommentPopup.js
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, Typography, TextField, Button, IconButton } from '@mui/material';
-import { addComment, fetchProducts } from '../../api/api';
+import { addComment } from '../../api/api';
 import CloseIcon from '@mui/icons-material/Close';
 
 function CommentPopup({ open, onClose, product, onCommentAdded }) {
@@ -50,10 +50,10 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
     }
   };
 
-  const refreshComments = async () => {
+  // const refreshComments = async () => {
     // const updatedProduct = await fetchProducts(product._id);
     // setComments(product.comments);
-  };
+  // };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
