@@ -18,20 +18,33 @@ export const addComment = async (id, comment) => {
       throw error;
     }
   };
-  // export const fetchProductById = (id) => API.get(`/api/products/${id}`);
+  
+export const fetchWishlist = async () => {
+  const authToken = localStorage.getItem('authToken');
+  return await API.get('/api/wishlist', {
+      headers: {
+          Authorization: `Bearer ${authToken}`,
+      },
+  });
+};
 
-  // export const fetchProducts1 = async (id) => {
-  //   try {
-  //     const response = await API.get(`/api/products/${id}`);
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error('Error fetching product:', error);
-  //     throw error;
-  //   }
-  // };
-export const addToWishlist = (data) => API.post('/api/wishlist/add', data);
-export const removeFromWishlist = (data) => API.post('/api/wishlist/remove', data);
-export const fetchWishlist = (userId) => API.get(`/api/wishlist/${userId}`);
+export const addToWishlist = async (productId) => {
+    const authToken = localStorage.getItem('authToken');
+    return await API.post('/api/wishlist/add', { productId }, {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    });
+};
+
+export const removeFromWishlist = async (productId) => {
+    const authToken = localStorage.getItem('authToken');
+    return await API.post('/api/wishlist/remove', { productId }, {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    });
+};
 
 // export const fetchWishlist = async () => {
 //   const response = await fetch('/api/wishlist', {

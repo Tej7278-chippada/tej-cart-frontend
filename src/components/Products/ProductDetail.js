@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid, Grid2 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ThumbUp, Comment } from '@mui/icons-material';
-import {  addToWishlist, likeProduct } from '../../api/api';
+import {  addToWishlist, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -17,12 +17,25 @@ function ProductDetail({ product, onClose }) {
 
   useEffect(() => {
     if (product) {
+      // Find the updated product in the product list
       const updatedProduct = products.find((p) => p._id === product._id);
       if (updatedProduct) {
         setSelectedProduct(updatedProduct);
       }
+  
+      // Initialize wishlist state based on the product's `isInWishlist` property
+      if (product.isInWishlist) {
+        setWishlist((prevWishlist) => new Set([...prevWishlist, product._id]));
+      } else {
+        setWishlist((prevWishlist) => {
+          const newWishlist = new Set(prevWishlist);
+          newWishlist.delete(product._id);
+          return newWishlist;
+        });
+      }
     }
   }, [products, product]);
+  
 
   // useEffect(() => {
   //   fetchProducts().then((response) => setProducts(response.data));
@@ -94,20 +107,22 @@ function ProductDetail({ product, onClose }) {
 
   const handleWishlistToggle = async (productId) => {
     try {
-      await addToWishlist(productId);
-      setWishlist((prevWishlist) => {
-        const newWishlist = new Set(prevWishlist);
-        if (newWishlist.has(productId)) {
-          newWishlist.delete(productId);
+        if (wishlist.has(productId)) {
+            await removeFromWishlist(productId);
+            setWishlist((prevWishlist) => {
+                const newWishlist = new Set(prevWishlist);
+                newWishlist.delete(productId);
+                return newWishlist;
+            });
         } else {
-          newWishlist.add(productId);
+            await addToWishlist(productId);
+            setWishlist((prevWishlist) => new Set([...prevWishlist, productId]));
         }
-        return newWishlist;
-      });
     } catch (error) {
-      console.error('Error adding to wishlist:', error);
+        console.error('Error toggling wishlist:', error);
     }
-  };
+};
+
 
   return (
     <Dialog open={!!product} onClose={onClose} maxWidth="lg" fullWidth>
@@ -164,17 +179,14 @@ function ProductDetail({ product, onClose }) {
         {/* Product Details */}
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <IconButton style={{ display: 'inline-block',float: 'right', fontWeight: '500' }}
+          <IconButton
+              style={{ display: 'inline-block', float: 'right', fontWeight: '500' }}
               onClick={() => handleWishlistToggle(product._id)}
               sx={{
                 color: wishlist.has(product._id) ? 'red' : 'gray',
               }}
             >
-              {wishlist.has(product._id) ? (
-                <FavoriteIcon />
-              ) : (
-                <FavoriteBorderIcon />
-              )}
+              {wishlist.has(product._id) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
             </IconButton>
             <Typography variant="h4" style={{
               fontWeight: 'bold',
