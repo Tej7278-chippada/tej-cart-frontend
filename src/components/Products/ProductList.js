@@ -128,7 +128,8 @@ function ProductList() {
   };
 
   const openProductDetail = (product) => {
-    setSelectedProduct(product);
+    // setSelectedProduct(product);
+    navigate(`/product/${product._id}`);
   };
 
   const renderPagination = () => {

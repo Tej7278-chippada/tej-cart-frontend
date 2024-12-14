@@ -1,21 +1,44 @@
-// src/components/ProductDetail.js
+// src/components/ProductDetailID.js
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid, Grid2, Tooltip } from '@mui/material';
+import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, Card } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ThumbUp, Comment } from '@mui/icons-material';
-import {  addToWishlist, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
+import {  addToWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ProductDetail from './ProductDetail';
+import { useParams } from 'react-router-dom';
+import Layout from '../Layout';
+import SkeletonCards from './SkeletonCards';
+import { useTheme } from '@emotion/react';
+import SkeletonProductDetail from './SkeletonProductDetail';
 
-function ProductDetail({ product, onClose }) {
+function ProductDetailID({  onClose }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [commentPopupOpen, setCommentPopupOpen] = useState(false);
   const [wishlist, setWishlist] = useState(new Set());
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
+    setLoading(true);
+    const fetchProductDetails = async () => {
+      
+      try {
+        const response = await fetchProductById(id);
+        setProduct(response.data);
+        // setLoading(false);
+      } catch (error) {
+        console.error('Error fetching product details:', error);
+        // setLoading(false);
+      }
+    };
     if (product) {
       // Find the updated product in the product list
       const updatedProduct = products.find((p) => p._id === product._id);
@@ -35,18 +58,13 @@ function ProductDetail({ product, onClose }) {
       };
   
       if (product) {
+        
         fetchUserWishlist();
       }
     }
-  }, [products, product]);
-  
-
-  // useEffect(() => {
-  //   fetchProducts().then((response) => setProducts(response.data));
-  // }, []);
-  // if (!product) return null;
-  
-  
+    fetchProductDetails();
+    setLoading(false);
+  }, [products, product, id]);
 
   const handleLike = async (productId) => {
     try {
@@ -131,18 +149,30 @@ function ProductDetail({ product, onClose }) {
         alert('Product already added on wishlist!');
     }
 };
-
+// if (!product) {
+//   return <Typography>Loading product details...</Typography>;
+// }
+if (loading || !product) {
+  return (
+    <Layout>
+      {/* <SkeletonCards /> */}
+      <SkeletonProductDetail/>
+    </Layout>
+  );
+}
 
   return (
-    <Dialog open={!!product} onClose={onClose} maxWidth="lg" fullWidth>
-      <DialogContent style={{
-        padding: '2rem',
-        position: 'relative',
+    <Layout>
+    <Box>
+    
+      <div style={{
+        padding: '8px',
+        // position: 'relative',
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
         borderRadius: '8px', scrollbarWidth: 'thin'
       }}>
         {/* Close button */}
-        <IconButton
+        {/* <IconButton
           onClick={onClose}
           style={{
             position: 'absolute',
@@ -153,7 +183,26 @@ function ProductDetail({ product, onClose }) {
           }}
         >
           <CloseIcon />
-        </IconButton>
+        </IconButton> */}
+
+        <Box
+                    display="flex"
+                    flexDirection={isMobile ? "column" : "row"}
+                    gap={2} sx={{bgcolor: '#f5f5f5', borderRadius:'10px', padding: '6px', paddingBottom: '10px', paddingTop: '10px'}}
+                >
+                  <Box sx={{
+                        flex: 2,
+                        // height: '73vh', // Fixed height relative to viewport
+                        overflowY: 'auto',
+                        // bgcolor: 'transparent', // Card background color (customizable)
+                        borderRadius: 3, // Card border radius (customizable)
+                        // boxShadow: 3, // Shadow for a modern look
+                        scrollbarWidth: 'thin'
+                    }}>
+                  <Box
+                                flex={isMobile ? "1" : "0 0 30%"}
+                                style={{ paddingRight: isMobile ? "0" : "0rem" }}
+                            >
 
         {/* Media section */}
         {/* Media section with click to zoom */}
@@ -161,11 +210,10 @@ function ProductDetail({ product, onClose }) {
           <div style={{
             display: 'flex',
             overflowX: 'auto',
-            scrollbarWidth: 'thin',
+            scrollbarWidth: 'none',
             scrollbarColor: '#888 transparent',
             // borderRadius: '8px',
-            gap: '0.5rem',
-            marginBottom: '1rem'
+            gap: '0.2rem', height: '300px', 
           }}>
             {product.media && product.media.map((base64Image, index) => (
               <img
@@ -173,7 +221,7 @@ function ProductDetail({ product, onClose }) {
                 src={`data:image/jpeg;base64,${base64Image}`}
                 alt={`Product ${index}`}
                 style={{
-                  height: '200px',
+                  // height: '200px',
                   borderRadius: '8px',
                   objectFit: 'cover',
                   flexShrink: 0,
@@ -183,39 +231,48 @@ function ProductDetail({ product, onClose }) {
               />
             ))}
           </div>
-        </CardMedia>
+        </CardMedia></Box></Box>
+
+        <Box sx={{
+                        flex: 3,
+                        // height: '73vh', // Fixed height relative to viewport
+                        overflowY: 'auto',
+                        bgcolor: 'white', // Card background color (customizable)
+                        borderRadius: 3, // Card border radius (customizable)
+                        // boxShadow: 3, // Shadow for a modern look
+                        scrollbarWidth: 'thin', padding: '1rem'
+                    }}>
+        <Box flex={isMobile ? "1" : "0 0 70%"}>
 
         {/* Product Details */}
         <Grid container spacing={2}>
           <Grid item xs={12}>
-          <IconButton
-              style={{ display: 'inline-block', float: 'right', fontWeight: '500', backgroundColor:  'rgba(255, 255, 255, 0.8)', boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)' }}
-              onClick={() => handleWishlistToggle(product._id)}
-              sx={{
-                color: wishlist.has(product._id) ? 'red' : 'gray',
-              }}
-            >
-              {/* {wishlist.has(product._id) ? <FavoriteIcon /> : <FavoriteBorderIcon />} */}
-              <Tooltip
-    title={wishlist.has(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
-    arrow
-    placement="right"
-  >
-              <span
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '100%',
-                  height: '100%',
-                  position: 'relative',
-                  transition: 'transform 0.3s ease',
+              <IconButton
+                style={{ display: 'inline-block', float: 'right', fontWeight: '500', backgroundColor: 'rgba(255, 255, 255, 0.8)', boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)' }}
+                onClick={() => handleWishlistToggle(product._id)}
+                sx={{
+                  color: wishlist.has(product._id) ? 'red' : 'gray',
                 }}
-                // className="icon-container"
               >
-                {wishlist.has(product._id) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-              </span></Tooltip>
-            </IconButton>
+                <Tooltip
+                  title={wishlist.has(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                  arrow
+                  placement="right"
+                >
+                  <span
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '100%',
+                      position: 'relative',
+                      transition: 'transform 0.3s ease',
+                    }}
+                  >
+                    {wishlist.has(product._id) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  </span></Tooltip>
+              </IconButton>
             <Typography variant="h4" style={{
               fontWeight: 'bold',
               marginBottom: '0.5rem',
@@ -275,9 +332,23 @@ function ProductDetail({ product, onClose }) {
               {product.deliveryDays}
             </Typography>
           </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1" style={{ fontWeight: 500 }}>
-              Description:
+          
+        </Grid>
+        </Box></Box>
+        </Box>
+
+        <Grid item xs={12} sx={{paddingTop: '2rem'}}>
+          <Grid2 sx={{ bottom: '1rem',
+            right: '1rem', position: 'relative',display: 'inline-block', float: 'right',}}>
+          <IconButton onClick={() => handleLike(product._id)}>
+            <ThumbUp /> {product.likes}
+          </IconButton>
+          <IconButton onClick={() => openComments(product)}>
+            <Comment /> {product.comments?.length || 0}
+          </IconButton>
+          </Grid2>
+            <Typography variant="body1" style={{ paddingLeft: '1rem', fontWeight: 500 }}>
+              Product Description:
             </Typography>
             <Typography variant="body2" color="textSecondary" style={{
               marginTop: '0.5rem',
@@ -292,16 +363,10 @@ function ProductDetail({ product, onClose }) {
               {product.description}
             </Typography>
           </Grid>
-          <Grid2 sx={{padding:'1rem'}}>
-          <IconButton onClick={() => handleLike(product._id)}>
-            <ThumbUp /> {product.likes}
-          </IconButton>
-          <IconButton onClick={() => openComments(product)}>
-            <Comment /> {product.comments?.length || 0}
-          </IconButton>
-          </Grid2>
-        </Grid>
-      </DialogContent>
+          
+      </div>
+      
+              
 
       {/* Large Image Dialog with Zoom */}
       <Dialog open={!!selectedImage} onClose={handleCloseImageModal} maxWidth="lg">
@@ -333,8 +398,9 @@ function ProductDetail({ product, onClose }) {
         product={product} // Pass the current product
         onCommentAdded={onCommentAdded}  // Passing the comment added handler
       />
-    </Dialog>
+    </Box>
+    </Layout>
   );
 }
 
-export default ProductDetail;
+export default ProductDetailID;

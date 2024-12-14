@@ -1,6 +1,6 @@
 // src/components/CommentPopup.js
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, Typography, TextField, Button, IconButton } from '@mui/material';
+import { Dialog, DialogContent, Typography, TextField, Button, IconButton, CircularProgress } from '@mui/material';
 import { addComment } from '../../api/api';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -8,7 +8,8 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState([]);
   const [commentAddedMessage, setCommentAddedMessage] = useState('');
-
+  const [commentFailedMessage, setCommentFailedMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (product) {
@@ -18,6 +19,7 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
 
   const handleAddComment = async () => {
     if (newComment.trim() && product?._id) {
+      setLoading(true);
       try {
         // Adding the comment to the backend
         const newCommentData = { text: newComment, createdAt: new Date().toISOString() };
@@ -46,6 +48,9 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
         // await refreshComments();
       } catch (error) {
         console.error('Error adding comment:', error);
+        setCommentFailedMessage('Comment can not added!');
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -87,8 +92,13 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
             {commentAddedMessage}
           </Typography>
         )}
-        <Button onClick={handleAddComment} variant="contained" color="primary" style={{ marginTop: '1rem' }}>
-          Submit
+        {commentFailedMessage && (
+          <Typography variant="body2" color="error.main" style={{ marginTop: '1rem' }}>
+            {commentFailedMessage}
+          </Typography>
+        )}
+        <Button onClick={handleAddComment} variant="contained" color="primary" style={{ marginTop: '1rem' }} disabled={loading}>
+        {loading ? <CircularProgress size={24} /> : 'Submit'}
         </Button>
 
         

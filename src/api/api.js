@@ -2,8 +2,63 @@
 import axios from 'axios';
 
 const API = axios.create({ baseURL: process.env.REACT_APP_API_URL });
-
+// Interceptor to refresh token if about to expire
+API.interceptors.response.use(
+    (response) => {
+      const newAuthToken = response.headers['authorization'];
+      if (newAuthToken) {
+        const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
+        const tokenUsername = localStorage.getItem('tokenUsername');
+        tokens[tokenUsername] = newAuthToken.split(' ')[1];
+        localStorage.setItem('authTokens', JSON.stringify(tokens));
+        localStorage.setItem('authToken', newAuthToken.split(' ')[1]);
+      }
+      return response;
+    },
+    async (error) => {
+      if (error.response && error.response.status === 401) {
+        const originalRequest = error.config;
+  
+        // Attempt token refresh
+        const authToken = localStorage.getItem('authToken');
+        if (authToken && !originalRequest._retry) {
+          originalRequest._retry = true;
+  
+          try {
+            const { data } = await axios.post(
+              `${process.env.REACT_APP_API_URL}/api/auth/refresh-token`,
+              {},
+              { headers: { Authorization: `Bearer ${authToken}` } }
+            );
+  
+            const newToken = data.authToken;
+            const tokenUsername = localStorage.getItem('tokenUsername');
+            const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
+            tokens[tokenUsername] = newToken;
+            localStorage.setItem('authTokens', JSON.stringify(tokens));
+            localStorage.setItem('authToken', newToken);
+  
+            originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+            return API(originalRequest);
+          } catch (err) {
+            console.error('Token refresh failed:', err);
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('authTokens');
+            localStorage.removeItem('tokenUsername');
+          }
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
+  
+  export default API;
+// export const fetchProductById = async (id) => {
+//     return await axios.get(`/api/products/${id}`); // Update with actual API endpoint
+//   };
+// export const fetchProductById = (id) => API.get(`/api/products/${id}`,{ headers: { 'Content-Type': 'multipart/form-data' } });
 export const fetchProducts = () => API.get('/api/products');
+export const fetchProductById = (id) => API.get(`/api/products/${id}`);
 export const addProduct = (data) => API.post('/api/products/add/products', data, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const updateProduct = (id, data) => API.put(`/api/products/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const deleteProduct = (id) => API.delete(`/api/products/${id}`);

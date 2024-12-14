@@ -11,6 +11,8 @@ import ForgotPassword from './components/ForgotPassword';
 import Admin from './components/Products/Admin';
 import ProductList from './components/Products/ProductList';
 import WishList from './components/Products/WishList';
+import ProductDetailPage from './components/Products/ProductDetailPage';
+import ProductDetailID from './components/Products/ProductDetailID';
 // import HomeEditor from './components/Products/Home/HomeEditor';
 // import HomePage from './components/Products/Home/HomePage';
 
@@ -45,7 +47,8 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/wishlist" element={<WishList />} />/
+        <Route path="/wishlist" element={<WishList />} />
+        <Route path="/product/:id" element={<ProductDetailID />} />
         {/* <Route path="/home" element={<HomePage />} /> */}
           {/* <Route path="/home-editor" element={<PrivateRoute><HomeEditor /></PrivateRoute>} /> */}
       </Routes>

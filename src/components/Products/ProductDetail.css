@@ -1,0 +1,26 @@
+.icon-container {
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .icon-container:hover {
+    transform: translateX(-30px); /* Adjust this value for the desired slide effect */
+  }
+  
+  .hover-text {
+    opacity: 10;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(30px); /* Start off-screen */
+  }
+  
+  .icon-container:hover ~ .hover-text {
+    opacity: 1;
+    transform: translateX(0); /* Slide into view */
+  }
+
+  .IconButton:hover .hover-text {
+    opacity: 10;
+    visibility: visible;
+  }
+  
+  

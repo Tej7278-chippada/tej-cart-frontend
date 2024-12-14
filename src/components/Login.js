@@ -1,5 +1,5 @@
 // /components/Login.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, Button, Typography, Box, Alert, useMediaQuery, ThemeProvider, createTheme, Dialog, DialogContent, DialogActions, CircularProgress,
   //  IconButton
    } from '@mui/material';
@@ -43,6 +43,38 @@ const Login = () => {
   //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   //   return emailRegex.test(input);
   // };
+  useEffect(() => {
+    const extendSession = () => {
+      const authToken = localStorage.getItem('authToken');
+      if (authToken) {
+        axios.post(
+          `${process.env.REACT_APP_API_URL}/api/auth/refresh-token`,
+          {},
+          { headers: { Authorization: `Bearer ${authToken}` } }
+        )
+        .then((response) => {
+          const newAuthToken = response.data.authToken;
+          const tokenUsername = localStorage.getItem('tokenUsername');
+          const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
+          tokens[tokenUsername] = newAuthToken;
+          localStorage.setItem('authTokens', JSON.stringify(tokens));
+          localStorage.setItem('authToken', newAuthToken);
+        })
+        .catch((error) => console.error('Failed to extend session:', error));
+      }
+    };
+
+    const activityEvents = ['mousemove', 'keydown', 'scroll', 'click'];
+    activityEvents.forEach((event) =>
+      window.addEventListener(event, extendSession)
+    );
+
+    return () => {
+      activityEvents.forEach((event) =>
+        window.removeEventListener(event, extendSession)
+      );
+    };
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
