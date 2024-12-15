@@ -62,7 +62,15 @@ export const fetchProductById = (id) => API.get(`/api/products/${id}`);
 export const addProduct = (data) => API.post('/api/products/add/products', data, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const updateProduct = (id, data) => API.put(`/api/products/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const deleteProduct = (id) => API.delete(`/api/products/${id}`);
-export const likeProduct = (id) => API.post(`/api/products/${id}/like`);
+// export const likeProduct = (id) => API.post(`/api/products/${id}/like`);
+export const likeProduct = async (id) => {
+  const authToken = localStorage.getItem('authToken');
+  const response = await API.post(`/api/products/${id}/like`, {}, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+  return response.data;
+};
+
 // export const addComment = (id, comment) => API.post(`/api/products/${id}/comment`, comment);
 export const addComment = async (id, comment) => {
     try {
