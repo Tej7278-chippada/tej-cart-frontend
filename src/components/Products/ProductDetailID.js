@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { addToWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -25,16 +26,19 @@ function ProductDetailID({ onClose, user }) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const fetchProductDetails = async () => {
-
+      setLoading(true);
       try {
         const response = await fetchProductById(id);
-        setProduct(response.data);
-        // setLoading(false);
+        setProduct({
+          ...response.data,
+          likedByUser: response.data.likedByUser, // Set the liked status
+        });
       } catch (error) {
         console.error('Error fetching product details:', error);
-        // setLoading(false);
+      } finally {
+        setLoading(false);
       }
     };
     if (product) {
@@ -68,11 +72,15 @@ function ProductDetailID({ onClose, user }) {
     try {
       const response = await likeProduct(productId);
       const updatedLikes = response.likes;
-
-      // Update product state with new like count
+  
+      // Toggle likedByUser and update the likes count
       setProduct((prevProduct) =>
         prevProduct._id === productId
-          ? { ...prevProduct, likes: updatedLikes }
+          ? {
+              ...prevProduct,
+              likes: updatedLikes,
+              likedByUser: !prevProduct.likedByUser, // Toggle liked state
+            }
           : prevProduct
       );
     } catch (error) {
@@ -80,6 +88,7 @@ function ProductDetailID({ onClose, user }) {
       alert('Error toggling like.');
     }
   };
+  
 
 
 
@@ -328,7 +337,8 @@ function ProductDetailID({ onClose, user }) {
                 onClick={() => handleLike(product._id)}
                 sx={{ color: product.likedByUser ? 'blue' : 'gray' }}
               >
-                <ThumbUp /> {product.likes}
+                          {product.likedByUser ? <ThumbUp /> : <ThumbUpOffAltIcon />}
+                        {product.likes}
               </IconButton>
 
 
