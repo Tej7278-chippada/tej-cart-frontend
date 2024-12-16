@@ -1,22 +1,22 @@
 // src/components/ProductDetailID.js
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress } from '@mui/material';
+import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { addToWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ProductDetail from './ProductDetail';
 import { useParams } from 'react-router-dom';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
 import SkeletonProductDetail from './SkeletonProductDetail';
+import ImageZoomDialog from './ImageZoomDialog';
 
 function ProductDetailID({ onClose, user }) {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  // const [products, setProducts] = useState([]);
+  // const [selectedProduct, setSelectedProduct] = useState(null);
   const [commentPopupOpen, setCommentPopupOpen] = useState(false);
   const [wishlist, setWishlist] = useState(new Set());
   const { id } = useParams();
@@ -54,10 +54,7 @@ function ProductDetailID({ onClose, user }) {
     };
     if (product) {
       // Find the updated product in the product list
-      const updatedProduct = products.find((p) => p._id === product._id);
-      if (updatedProduct) {
-        setSelectedProduct(updatedProduct);
-      }
+
 
       // Initialize wishlist state based on the product's `isInWishlist` property
       const fetchUserWishlist = async () => {
@@ -77,7 +74,7 @@ function ProductDetailID({ onClose, user }) {
     }
     fetchProductDetails();
     setLoading(false);
-  }, [products, product, id]);
+  }, [product, id]);
 
   const handleLike = async (productId) => {
     if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
@@ -85,15 +82,15 @@ function ProductDetailID({ onClose, user }) {
     try {
       const response = await likeProduct(productId);
       const updatedLikes = response.likes;
-  
+
       // Toggle likedByUser and update the likes count
       setProduct((prevProduct) =>
         prevProduct._id === productId
           ? {
-              ...prevProduct,
-              likes: updatedLikes,
-              likedByUser: !prevProduct.likedByUser, // Toggle liked state
-            }
+            ...prevProduct,
+            likes: updatedLikes,
+            likedByUser: !prevProduct.likedByUser, // Toggle liked state
+          }
           : prevProduct
       );
     } catch (error) {
@@ -103,10 +100,6 @@ function ProductDetailID({ onClose, user }) {
       setLikeLoading(false); // End the progress indicator
     }
   };
-  
-
-
-
   const openComments = (product) => {
     // setSelectedProduct(product);
     setCommentPopupOpen(true);
@@ -159,9 +152,6 @@ function ProductDetailID({ onClose, user }) {
       setWishLoading(false); // End the progress indicator
     }
   };
-  // if (!product) {
-  //   return <Typography>Loading product details...</Typography>;
-  // }
   if (loading || !product) {
     return (
       <Layout>
@@ -181,20 +171,6 @@ function ProductDetailID({ onClose, user }) {
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
           borderRadius: '8px', scrollbarWidth: 'thin'
         }}>
-          {/* Close button */}
-          {/* <IconButton
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '1rem',
-            right: '1rem',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-            color: '#333'
-          }}
-        >
-          <CloseIcon />
-        </IconButton> */}
-
           <Box
             display="flex"
             flexDirection={isMobile ? "column" : "row"}
@@ -286,7 +262,6 @@ function ProductDetailID({ onClose, user }) {
                         ) : (
                           <FavoriteBorderIcon />
                         )}
-                          {/* {wishlist.has(product._id) ? <FavoriteIcon /> : <FavoriteBorderIcon />} */}
                         </span></Tooltip>
                     </IconButton>
                     <Typography variant="h4" style={{
@@ -338,8 +313,6 @@ function ProductDetailID({ onClose, user }) {
                       {product.stockCount}
                     </Typography>
                   </Grid>
-
-
                   <Grid item xs={6} sm={4}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
                       Delivery Days:
@@ -362,17 +335,15 @@ function ProductDetailID({ onClose, user }) {
                 onClick={() => handleLike(product._id)}
                 sx={{ color: product.likedByUser ? 'blue' : 'gray' }} disabled={likeLoading} // Disable button while loading
               >
-                          {likeLoading ? (
-                <CircularProgress size={24} color="inherit" /> // Show spinner while loading
-              ) : product.likedByUser ? (
-                <ThumbUp />
-              ) : (
-                <ThumbUpOffAltIcon />
-              )}
-                        {product.likes}
+                {likeLoading ? (
+                  <CircularProgress size={24} color="inherit" /> // Show spinner while loading
+                ) : product.likedByUser ? (
+                  <ThumbUp />
+                ) : (
+                  <ThumbUpOffAltIcon />
+                )}
+                {product.likes}
               </IconButton>
-
-
               <IconButton onClick={() => openComments(product)}>
                 <Comment /> {product.comments?.length || 0}
               </IconButton>
@@ -395,33 +366,11 @@ function ProductDetailID({ onClose, user }) {
           </Grid>
 
         </div>
-
-
-
         {/* Large Image Dialog with Zoom */}
-        <Dialog open={!!selectedImage} onClose={handleCloseImageModal} maxWidth="lg">
-          <DialogContent style={{ padding: 0 }}>
-            <img
-              src={`data:image/jpeg;base64,${selectedImage}`}
-              alt="Zoomed Product"
-              style={{
-                width: '100%',
-                height: 'auto',
-                cursor: 'zoom-in', // Zoom-in cursor effect
-                transition: 'transform 0.3s ease', // Smooth zoom effect
-                // transform: 'scale(1.1)', // Apply zoom effect on hover
-              }}
-              onClick={handleCloseImageModal}
-            />
-          </DialogContent>
-        </Dialog>
-        {selectedProduct && (
-          <ProductDetail
-            product={selectedProduct}
-            onClose={() => setSelectedProduct(null)}
-          />
-        )}
-
+        <ImageZoomDialog
+          selectedImage={selectedImage}
+          handleCloseImageModal={handleCloseImageModal}
+        />
         <CommentPopup
           open={commentPopupOpen}
           onClose={() => setCommentPopupOpen(false)}
@@ -429,7 +378,7 @@ function ProductDetailID({ onClose, user }) {
           onCommentAdded={onCommentAdded}  // Passing the comment added handler
         />
       </Box>
-    </Layout> 
+    </Layout>
   );
 }
 

@@ -1,6 +1,6 @@
 // src/components/CommentPopup.js
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, Typography, TextField, Button, IconButton, CircularProgress } from '@mui/material';
+import { Dialog, DialogContent, Typography, TextField, Button, IconButton, CircularProgress, Box } from '@mui/material';
 import { addComment } from '../../api/api';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -14,9 +14,9 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
-        setIsAuthenticated(!!authToken); // Check if user is authenticated
+    setIsAuthenticated(!!authToken); // Check if user is authenticated
     if (product) {
-      setComments([...product.comments].reverse()  || []); // Set existing comments when component loads
+      setComments([...product.comments].reverse() || []); // Set existing comments when component loads
     }
   }, [product]);
 
@@ -31,7 +31,7 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
 
         // Clear the input field
         setNewComment('');
-        
+
         // Show success message
         setCommentAddedMessage('Comment added successfully!');
 
@@ -47,7 +47,7 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
         // Update product's comment count
         // Call the parent function to update the product and close the popup
         onCommentAdded(); // This will trigger the parent to update the comment count
-        
+
         // Refresh the comments list
         // await refreshComments();
       } catch (error) {
@@ -60,13 +60,13 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
   };
 
   // const refreshComments = async () => {
-    // const updatedProduct = await fetchProducts(product._id);
-    // setComments(product.comments);
+  // const updatedProduct = await fetchProducts(product._id);
+  // setComments(product.comments);
   // };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogContent style={{ position:'sticky', height:'auto', scrollbarWidth: 'thin'}}>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogContent style={{ position: 'sticky', height: 'auto', scrollbarWidth: 'thin' }}>
         {/* Close button */}
         <IconButton
           onClick={onClose}
@@ -81,63 +81,74 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
           <CloseIcon />
         </IconButton>
         <Typography variant="h6">Comments</Typography>
-        
+
         <TextField
           label="Add a comment"
           fullWidth
           multiline
-          rows={2} style={{marginTop: '1rem'}}
+          rows={3} style={{ marginTop: '1rem' }}
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         />
-        {/* Display message after a comment is added */}
-        {commentAddedMessage && (
-          <Typography variant="body2" color="success.main" style={{ marginTop: '1rem' }}>
-            {commentAddedMessage}
-          </Typography>
-        )}
-        {commentFailedMessage && (
-          <Typography variant="body2" color="error.main" style={{ marginTop: '1rem' }}>
-            {commentFailedMessage}
-          </Typography>
-        )}
-        <Button onClick={handleAddComment} variant="contained" color="primary" style={{ marginTop: '1rem' }} disabled={loading}>
-        {loading ? <CircularProgress size={24} /> : 'Submit'}
-        </Button>
-
-        
-
+        {/* Align Submit button to the right */}
+        <Box
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end', // Align to the right
+            marginTop: '1rem',
+          }}
+        >
+          {/* Display message after a comment is added */}
+          {commentAddedMessage && (
+            <Typography variant="body2" color="success.main" style={{ marginTop: '1rem', paddingRight: '1rem', display: 'inline-block', float: 'right' }}>
+              {commentAddedMessage}
+            </Typography>
+          )}
+          {commentFailedMessage && (
+            <Typography variant="body2" color="error.main" style={{ marginTop: '1rem' }}>
+              {commentFailedMessage}
+            </Typography>
+          )}
+          <Button
+            onClick={handleAddComment}
+            variant="contained"
+            color="primary" style={{ width: '150px' }}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} /> : 'Submit'}
+          </Button>
+        </Box>
         {/* Display list of comments */}
         <div style={{ maxHeight: '300px', overflowY: 'auto', margin: '1rem 0', scrollbarWidth: 'thin' }}>
-  {comments && comments.length ? (
-    comments.map((comment, index) => (
-      <Typography
-        key={index}
-        component="div"
-        style={{
-          margin: '6px',
-          backgroundColor: '#f5f5f5',
-          padding: '1rem',
-          borderRadius: '6px',
-          border: '1px solid #ddd',
-          marginTop: '6px',
-          lineHeight: '1.5',
-          textAlign: 'justify',
-          whiteSpace: 'pre-wrap',
-          wordWrap: 'break-word',
-        }}
-      >
-        <strong>{comment.username || 'Anonymous'}</strong> {/* Display username */}
-        <Typography sx={{display: 'inline-block',float: 'right'}}>
-          <small>{new Date(comment.createdAt).toLocaleString()}</small>
-        </Typography>
-        <Typography sx={{paddingTop: '1rem'}}>{comment.text}</Typography>
-      </Typography>
-    ))
-  ) : (
-    <Typography>No comments available.</Typography>
-  )}
-</div>
+          {comments && comments.length ? (
+            comments.map((comment, index) => (
+              <Typography
+                key={index}
+                component="div"
+                style={{
+                  margin: '6px',
+                  backgroundColor: '#f5f5f5',
+                  padding: '1rem',
+                  borderRadius: '6px',
+                  border: '1px solid #ddd',
+                  marginTop: '6px',
+                  lineHeight: '1.5',
+                  textAlign: 'justify',
+                  whiteSpace: 'pre-wrap',
+                  wordWrap: 'break-word',
+                }}
+              >
+                <strong>{comment.username || 'Anonymous'}</strong> {/* Display username */}
+                <Typography sx={{ display: 'inline-block', float: 'right' }}>
+                  <small>{new Date(comment.createdAt).toLocaleString()}</small>
+                </Typography>
+                <Typography sx={{ paddingTop: '1rem' }}>{comment.text}</Typography>
+              </Typography>
+            ))
+          ) : (
+            <Typography>No comments available.</Typography>
+          )}
+        </div>
 
       </DialogContent>
     </Dialog>
