@@ -57,7 +57,7 @@ const WishList = () => {
         <Typography variant="h5" align="left" marginLeft="1rem" marginTop="1rem" gutterBottom>
           Your Wishlist
         </Typography>
-        
+
         <div style={{
           backgroundSize: 'cover', backgroundPosition: 'center', backdropFilter: 'blur(10px)'
         }}>
@@ -99,15 +99,34 @@ const WishList = () => {
                             // marginBottom: '1rem'
                             height: '210px'
                           }} >
-                            {product.media && product.media.slice(0, 5).map((base64Image, index) => (
-                              <LazyImage key={index} base64Image={base64Image} alt={`Product ${index}`} style={{
-                                height: '200px',
-                                borderRadius: '8px',
-                                objectFit: 'cover',
-                                flexShrink: 0,
-                                cursor: 'pointer' // Make the image look clickable
-                              }} />
-                            ))}
+                            {product.media && product.media.length > 0 ? (
+                              product.media.slice(0, 5).map((base64Image, index) => (
+                                <LazyImage
+                                  key={index}
+                                  base64Image={base64Image}
+                                  alt={`Product ${index}`}
+                                  style={{
+                                    height: '200px',
+                                    borderRadius: '8px',
+                                    objectFit: 'cover',
+                                    flexShrink: 0,
+                                    cursor: 'pointer',
+                                  }}
+                                />
+                              ))
+                            ) : (
+                              // Show a placeholder image if no media is available
+                              <img
+                                src="../assets/null-product-image.webp" // Replace with the path to your placeholder image
+                                alt="No media available"
+                                style={{
+                                  height: '200px',
+                                  borderRadius: '8px',
+                                  objectFit: 'cover',
+                                  flexShrink: 0,
+                                }}
+                              />
+                            )}
                           </div>
                           <IconButton
                             onClick={(event) => {
@@ -143,7 +162,7 @@ const WishList = () => {
                                 Remove from Wishlist
                               </span>
                             )}
-                            <HeartBrokenIcon/>
+                            <HeartBrokenIcon />
                           </IconButton>
                         </CardMedia>
                         <CardContent style={{ padding: '1rem' }}>

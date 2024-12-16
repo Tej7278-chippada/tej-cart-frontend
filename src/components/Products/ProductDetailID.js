@@ -201,7 +201,8 @@ function ProductDetailID({ onClose, user }) {
                     // borderRadius: '8px',
                     gap: '0.2rem', height: '300px',
                   }}>
-                    {product.media && product.media.map((base64Image, index) => (
+                    {product.media && product.media.length > 0 ? (
+                      product.media.map((base64Image, index) => (
                       <img
                         key={index}
                         src={`data:image/jpeg;base64,${base64Image}`}
@@ -215,7 +216,20 @@ function ProductDetailID({ onClose, user }) {
                         }}
                         onClick={() => handleImageClick(base64Image)} // Open image in modal on click
                       />
-                    ))}
+                    ))
+                  ) : (
+                    // Show a placeholder image if no media is available
+                    <img
+                      src="../assets/null-product-image.webp" // Replace with the path to your placeholder image
+                      alt="No media available"
+                      style={{
+                        // height: '200px',
+                        borderRadius: '8px',
+                        objectFit: 'cover',
+                        flexShrink: 0,
+                      }}
+                    />
+                  )}
                   </div>
                 </CardMedia></Box></Box>
 
