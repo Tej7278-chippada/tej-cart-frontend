@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardMedia, CardContent, Typography, Tooltip, IconButton, Grid, Box } from '@mui/material';
 import { fetchWishlist, removeFromWishlist } from '../../api/api';
-import DeleteIcon from '@mui/icons-material/Delete';
 import LazyImage from './LazyImage';
 import SkeletonCards from './SkeletonCards';
 import ProductDetail from './ProductDetail';

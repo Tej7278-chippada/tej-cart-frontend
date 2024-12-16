@@ -1,6 +1,6 @@
 // src/components/ProductDetailID.js
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery } from '@mui/material';
+import { Dialog, DialogContent, Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { addToWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
@@ -24,17 +24,28 @@ function ProductDetailID({ onClose, user }) {
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication
+  const [likeLoading, setLikeLoading] = useState(false); // For like progress
+  const [wishLoading, setWishLoading] = useState(false); // For like progress
 
   useEffect(() => {
     // setLoading(true);
     const fetchProductDetails = async () => {
       setLoading(true);
       try {
+        const authToken = localStorage.getItem('authToken');
+        setIsAuthenticated(!!authToken); // Check if user is authenticated
+
         const response = await fetchProductById(id);
         setProduct({
           ...response.data,
-          likedByUser: response.data.likedByUser, // Set the liked status
+          likedByUser: response.data.likedByUser || false, // Set the liked status
         });
+        if (authToken) {
+          const wishlistResponse = await fetchWishlist();
+          const wishlistProducts = wishlistResponse.data.wishlist.map((item) => item._id);
+          setWishlist(new Set(wishlistProducts));
+        }
       } catch (error) {
         console.error('Error fetching product details:', error);
       } finally {
@@ -69,6 +80,8 @@ function ProductDetailID({ onClose, user }) {
   }, [products, product, id]);
 
   const handleLike = async (productId) => {
+    if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
+    setLikeLoading(true); // Start the progress indicator
     try {
       const response = await likeProduct(productId);
       const updatedLikes = response.likes;
@@ -86,6 +99,8 @@ function ProductDetailID({ onClose, user }) {
     } catch (error) {
       console.error('Error toggling like:', error);
       alert('Error toggling like.');
+    } finally {
+      setLikeLoading(false); // End the progress indicator
     }
   };
   
@@ -121,6 +136,8 @@ function ProductDetailID({ onClose, user }) {
   };
 
   const handleWishlistToggle = async (productId) => {
+    if (!isAuthenticated) return; // Prevent unauthenticated actions
+    setWishLoading(true); // Start the progress indicator
     try {
       if (wishlist.has(productId)) {
         await removeFromWishlist(productId);
@@ -138,6 +155,8 @@ function ProductDetailID({ onClose, user }) {
     } catch (error) {
       console.error('Error toggling wishlist:', error);
       alert('Product already added on wishlist!');
+    } finally {
+      setWishLoading(false); // End the progress indicator
     }
   };
   // if (!product) {
@@ -243,7 +262,7 @@ function ProductDetailID({ onClose, user }) {
                       onClick={() => handleWishlistToggle(product._id)}
                       sx={{
                         color: wishlist.has(product._id) ? 'red' : 'gray',
-                      }}
+                      }} disabled={wishLoading} // Disable button while loading
                     >
                       <Tooltip
                         title={wishlist.has(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
@@ -260,8 +279,14 @@ function ProductDetailID({ onClose, user }) {
                             position: 'relative',
                             transition: 'transform 0.3s ease',
                           }}
-                        >
-                          {wishlist.has(product._id) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                        >{wishLoading ? (
+                          <CircularProgress size={24} color="inherit" /> // Show spinner while loading
+                        ) : wishlist.has(product._id) ? (
+                          <FavoriteIcon />
+                        ) : (
+                          <FavoriteBorderIcon />
+                        )}
+                          {/* {wishlist.has(product._id) ? <FavoriteIcon /> : <FavoriteBorderIcon />} */}
                         </span></Tooltip>
                     </IconButton>
                     <Typography variant="h4" style={{
@@ -335,9 +360,15 @@ function ProductDetailID({ onClose, user }) {
             }}>
               <IconButton
                 onClick={() => handleLike(product._id)}
-                sx={{ color: product.likedByUser ? 'blue' : 'gray' }}
+                sx={{ color: product.likedByUser ? 'blue' : 'gray' }} disabled={likeLoading} // Disable button while loading
               >
-                          {product.likedByUser ? <ThumbUp /> : <ThumbUpOffAltIcon />}
+                          {likeLoading ? (
+                <CircularProgress size={24} color="inherit" /> // Show spinner while loading
+              ) : product.likedByUser ? (
+                <ThumbUp />
+              ) : (
+                <ThumbUpOffAltIcon />
+              )}
                         {product.likes}
               </IconButton>
 

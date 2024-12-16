@@ -10,14 +10,18 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
   const [commentAddedMessage, setCommentAddedMessage] = useState('');
   const [commentFailedMessage, setCommentFailedMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication
 
   useEffect(() => {
+    const authToken = localStorage.getItem('authToken');
+        setIsAuthenticated(!!authToken); // Check if user is authenticated
     if (product) {
       setComments([...product.comments].reverse()  || []); // Set existing comments when component loads
     }
   }, [product]);
 
   const handleAddComment = async () => {
+    if (!isAuthenticated) return; // Prevent unauthenticated actions
     if (newComment.trim() && product?._id) {
       setLoading(true);
       try {

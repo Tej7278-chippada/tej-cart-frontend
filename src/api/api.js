@@ -59,18 +59,25 @@ API.interceptors.response.use(
 // export const fetchProductById = (id) => API.get(`/api/products/${id}`,{ headers: { 'Content-Type': 'multipart/form-data' } });
 export const fetchProducts = () => API.get('/api/products');
 // export const fetchProductById = (id) => API.get(`/api/products/${id}`);
+// export const fetchProductById = async (id) => {
+//   const authToken = localStorage.getItem('authToken');
+//   if (!authToken) {
+//     throw new Error('No auth token found');
+//   }
+
+//   return await API.get(`/api/products/${id}`, {
+//     headers: {
+//       Authorization: `Bearer ${authToken}`,
+//     },
+//   });
+// };
 export const fetchProductById = async (id) => {
   const authToken = localStorage.getItem('authToken');
-  if (!authToken) {
-    throw new Error('No auth token found');
-  }
-
-  return await API.get(`/api/products/${id}`, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
-  });
+  const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+  
+  return await API.get(`/api/products/${id}`, { headers });
 };
+
 
 export const addProduct = (data) => API.post('/api/products/add/products', data, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const updateProduct = (id, data) => API.put(`/api/products/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } });
