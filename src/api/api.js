@@ -93,14 +93,18 @@ export const likeProduct = async (id) => {
 
 // export const addComment = (id, comment) => API.post(`/api/products/${id}/comment`, comment);
 export const addComment = async (id, comment) => {
-    try {
-      const response = await API.post(`/api/products/${id}/comment`, comment);
+  const authToken = localStorage.getItem('authToken');
+  const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+
+  try {
+      const response = await API.post(`/api/products/${id}/comment`, comment, { headers });
       return response.data;
-    } catch (error) {
+  } catch (error) {
       console.error('Error adding comment:', error);
       throw error;
-    }
-  };
+  }
+};
+
   
 export const fetchWishlist = async () => {
   const authToken = localStorage.getItem('authToken');

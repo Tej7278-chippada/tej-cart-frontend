@@ -355,7 +355,7 @@ function ProductDetailID({ onClose, user }) {
 
           <Grid item xs={12} sx={{ paddingTop: '2rem' }}>
             <Grid2 sx={{
-              bottom: '1rem',
+              bottom: '6px',
               right: '1rem', position: 'relative', display: 'inline-block', float: 'right',
             }}>
               <IconButton
@@ -377,7 +377,7 @@ function ProductDetailID({ onClose, user }) {
                 <Comment /> {product.comments?.length || 0}
               </IconButton>
             </Grid2>
-            <Typography variant="body1" style={{ paddingLeft: '1rem', fontWeight: 500 }}>
+            <Typography variant="h6" style={{ paddingLeft: '6px', fontWeight: 500 }}>
               Product Description:
             </Typography>
             <Typography variant="body2" color="textSecondary" style={{

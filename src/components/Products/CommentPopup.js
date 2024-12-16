@@ -108,24 +108,37 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
         
 
         {/* Display list of comments */}
-        <div style={{ maxHeight: '300px', overflowY: 'auto', margin: '1rem 0', scrollbarWidth:'thin' }}>
-          {comments && comments.length ? (
-            comments.map((comment, index) => (
-              <Typography key={index} style={{ margin: '6px',  backgroundColor: "#f5f5f5",padding: "1rem", 
-                borderRadius: "6px",
-                border: "1px solid #ddd",marginTop: '6px',
-                lineHeight: '1.5',
-                textAlign: 'justify', whiteSpace: "pre-wrap", // Retain line breaks and tabs
-                wordWrap: "break-word", // Handle long words gracefully
-                 }}>
-                {comment.text}
-                <Typography><small>{new Date(comment.createdAt).toLocaleString()}</small></Typography>
-              </Typography>
-            ))
-          ) : (
-            <Typography>No comments available.</Typography>
-          )}
-        </div>
+        <div style={{ maxHeight: '300px', overflowY: 'auto', margin: '1rem 0', scrollbarWidth: 'thin' }}>
+  {comments && comments.length ? (
+    comments.map((comment, index) => (
+      <Typography
+        key={index}
+        component="div"
+        style={{
+          margin: '6px',
+          backgroundColor: '#f5f5f5',
+          padding: '1rem',
+          borderRadius: '6px',
+          border: '1px solid #ddd',
+          marginTop: '6px',
+          lineHeight: '1.5',
+          textAlign: 'justify',
+          whiteSpace: 'pre-wrap',
+          wordWrap: 'break-word',
+        }}
+      >
+        <strong>{comment.username || 'Anonymous'}</strong> {/* Display username */}
+        <Typography sx={{display: 'inline-block',float: 'right'}}>
+          <small>{new Date(comment.createdAt).toLocaleString()}</small>
+        </Typography>
+        <Typography sx={{paddingTop: '1rem'}}>{comment.text}</Typography>
+      </Typography>
+    ))
+  ) : (
+    <Typography>No comments available.</Typography>
+  )}
+</div>
+
       </DialogContent>
     </Dialog>
   );

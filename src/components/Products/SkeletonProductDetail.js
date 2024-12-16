@@ -18,7 +18,7 @@ function SkeletonProductDetail() {
                     <Card sx={{ borderRadius: 3, padding: '1rem', height: 265 }}>
                         <CardContent>
                             {/* Interaction Buttons Skeleton */}
-                            <Grid item xs={12} sx={{ display: 'inline-block', float: 'right', paddingBottom: '3rem' }}>
+                            <Grid item xs={12} sx={{ display: 'inline-block', float: 'right', paddingBottom: '1rem' }}>
                                 <Box display="flex" justifyContent="flex-end" gap={2}>
                                     <Skeleton variant="circular" width={40} height={40} />
                                 </Box>
