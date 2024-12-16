@@ -11,7 +11,6 @@ import ForgotPassword from './components/ForgotPassword';
 import Admin from './components/Products/Admin';
 import ProductList from './components/Products/ProductList';
 import WishList from './components/Products/WishList';
-import ProductDetailPage from './components/Products/ProductDetailPage';
 import ProductDetailID from './components/Products/ProductDetailID';
 // import HomeEditor from './components/Products/Home/HomeEditor';
 // import HomePage from './components/Products/Home/HomePage';
