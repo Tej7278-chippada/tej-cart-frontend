@@ -1,8 +1,9 @@
 // src/components/CommentPopup.js
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, Typography, TextField, Button, IconButton, CircularProgress, Box } from '@mui/material';
+import { Dialog, DialogContent, Typography, TextField, Button, IconButton, CircularProgress, Box, useMediaQuery } from '@mui/material';
 import { addComment } from '../../api/api';
 import CloseIcon from '@mui/icons-material/Close';
+import { useTheme } from '@emotion/react';
 
 function CommentPopup({ open, onClose, product, onCommentAdded }) {
   const [newComment, setNewComment] = useState('');
@@ -11,6 +12,8 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
   const [commentFailedMessage, setCommentFailedMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
@@ -65,7 +68,7 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
   // };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="md"  fullWidth fullScreen={ isMobile ? true : false} >
       <DialogContent style={{ position: 'sticky', height: 'auto', scrollbarWidth: 'thin' }}>
         {/* Close button */}
         <IconButton
@@ -119,7 +122,7 @@ function CommentPopup({ open, onClose, product, onCommentAdded }) {
           </Button>
         </Box>
         {/* Display list of comments */}
-        <div style={{ maxHeight: '300px', overflowY: 'auto', margin: '1rem 0', scrollbarWidth: 'thin' }}>
+        <div style={{ height: isMobile ? 'auto' : '300px', overflowY: 'auto', margin: '1rem 0', scrollbarWidth: 'thin', marginInline: '-20px' }}>
           {comments && comments.length ? (
             comments.map((comment, index) => (
               <Typography

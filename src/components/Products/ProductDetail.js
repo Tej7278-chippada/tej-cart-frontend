@@ -134,7 +134,7 @@ function ProductDetail({ product, onClose }) {
 
 
   return (
-    <Dialog open={!!product} onClose={onClose} maxWidth="lg" fullWidth>
+    <Dialog open={!!product} onClose={onClose} maxWidth="lg" fullWidth fullScreen={true}>
       <DialogContent style={{
         padding: '2rem',
         position: 'relative',

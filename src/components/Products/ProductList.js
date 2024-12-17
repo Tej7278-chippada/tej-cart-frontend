@@ -1,6 +1,6 @@
 // src/components/ProductList.js
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardMedia, CardContent, Typography, Tooltip, TextField, IconButton, Box, Dialog, DialogTitle, DialogContent, Toolbar, Button} from '@mui/material';
+import { Card, CardMedia, CardContent, Typography, Tooltip, TextField, IconButton, Box, Dialog, DialogTitle, DialogContent, Toolbar, Button, useMediaQuery} from '@mui/material';
 import { fetchProducts } from '../../api/api';
 import { Grid } from "@mui/material";
 import ProductDetail from './ProductDetail';
@@ -25,7 +25,9 @@ function ProductList() {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  // const theme = useTheme();
   const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const searchInputRef = useRef(null);
   // Calculate pagination
   const [currentPage, setCurrentPage] = useState(parseInt(localStorage.getItem('currentPage')) || 1);
@@ -510,7 +512,7 @@ function ProductList() {
       
       <div style={{
         // marginTop: '1rem',
-        padding: '8px',
+        paddingInline: isMobile ? '4px' : '8px',
         // backgroundImage: 'url("../assets/bg.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -519,7 +521,7 @@ function ProductList() {
         }}>
         
         {/* <div style={{ display: 'flex', marginTop: '-2rem' }}><h2>Products Page</h2></div> */}
-        <Box sx={{bgcolor: '#f5f5f5', paddingTop: '1rem', paddingBottom: '1rem', paddingInline: '8px', borderRadius:'10px'}} > {/* sx={{ p: 2 }} */}
+        <Box sx={{bgcolor: '#f5f5f5', paddingTop: '1rem', paddingBottom: '1rem', paddingInline: isMobile ? '4px' : '8px', borderRadius:'10px'}} > {/* sx={{ p: 2 }} */}
           {loading ? (
             // renderSkeletonCards()
             <SkeletonCards/>
@@ -527,7 +529,7 @@ function ProductList() {
             //   <CircularProgress />
             // </Box>
           ) : (
-          <Grid container spacing={2}>
+          <Grid container spacing={isMobile ? 1 : 2}>
           {currentProducts.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product._id}>
               <Card style={{
@@ -549,7 +551,7 @@ function ProductList() {
                     e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)'; // Revert shadow
                   }} >
                 {/* CardMedia for Images with Scroll */}
-                <CardMedia sx={{ margin: '0rem 0',borderRadius: '8px', overflow: 'hidden', height: '200px', backgroundColor: '#f5f5f5' }}>
+                <CardMedia marginInline={isMobile ? "-12px" : "-2px"} sx={{ margin: '0rem 0',borderRadius: '8px', overflow: 'hidden', height: '200px', backgroundColor: '#f5f5f5' }}>
                   <div style={{
                     display: 'flex',
                     overflowX: 'auto',

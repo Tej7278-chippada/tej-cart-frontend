@@ -67,27 +67,27 @@ const FilterProducts = ({ filterCriteria, applyFilters, products, filteredProduc
       };
 
     return (
-        <Dialog open={true} onClose={handleDialogClose} fullWidth maxWidth="lg">
+        <Dialog open={true} onClose={handleDialogClose} borderRadius="10px" fullScreen={true}  style={{margin:'0px', borderRadius:'3'}}>
             {selectedProduct && (
                 <ProductDetail product={selectedProduct} onClose={() => setSelectedProduct(null)} />
             )}
             <DialogTitle sx={{ height: '0px', marginBottom:'1rem' }}>
                 Filter Products
-                <Button style={{ float: 'right', marginTop: '-10px' }} variant="text" onClick={handleDialogClose}>Close</Button>
+                <Button style={{ float: 'right', marginTop: '-2px' }} variant="text" onClick={handleDialogClose}>Close</Button>
             </DialogTitle>
-            <DialogContent sx={{padding:'8px'}}>
+            <DialogContent sx={{padding: isMobile ? '2px' : '6px', marginTop: '10px',}}>
                 <Box
                     display="flex"
                     flexDirection={isMobile ? "column" : "row"}
-                    gap={2} p={1} sx={{bgcolor: '#f5f5f5', borderRadius:'10px'}}
+                    gap={1}  sx={{bgcolor: '#f5f5f5', borderRadius:'10px', height: isMobile ? 'auto' : '96%', paddingBlock: isMobile ? '8px' : '10px', paddingInline: isMobile ? '2px' : '6px'}}
                 >
                     {/* Filter Fields */}
                     <Card sx={{
                         flex: 1,
-                        height: '73vh', // Fixed height relative to viewport
+                        // height: 'auto', // Fixed height relative to viewport
                         overflowY: 'auto',
                         bgcolor: 'white', // Card background color (customizable)
-                        borderRadius: 3, // Card border radius (customizable)
+                        borderRadius: '8px', // Card border radius (customizable)
                         boxShadow: 3, // Shadow for a modern look
                         scrollbarWidth: 'thin'
                     }}>
@@ -167,7 +167,7 @@ const FilterProducts = ({ filterCriteria, applyFilters, products, filteredProduc
                                 <Button
                                     variant="contained"
                                     onClick={handleApplyFilters}
-                                    style={{ alignSelf: 'flex-end', float: 'none'}}
+                                    style={{ alignSelf: 'flex-end', float: 'center', marginTop: '1rem' ,}} fullWidth
                                 >
                                     Apply Filters
                                 </Button>
@@ -176,21 +176,21 @@ const FilterProducts = ({ filterCriteria, applyFilters, products, filteredProduc
                     </Card>
                     <Card sx={{
                         flex: 3,
-                        height: '73vh', // Fixed height relative to viewport
+                        height: '73hv', // Fixed height relative to viewport
                         overflowY: 'auto',
                         bgcolor: 'white', // Card background color (customizable)
-                        borderRadius: 3, // Card border radius (customizable)
+                        borderRadius: '8px', // Card border radius (customizable)
                         boxShadow: 3, // Shadow for a modern look
                         scrollbarWidth: 'thin'
                     }}>
                         <CardContent>
                             {/* Display Filtered Products */}
                             {showFilteredProducts && (
-                                <Box flex={isMobile ? "1" : "0 0 70%"}>
-                                    <Typography variant="h6" gutterBottom>
+                                <Box flex={isMobile ? "1" : "0 0 70%"} marginInline={isMobile ? "-12px" : "-2px"}>
+                                    <Typography variant="h6" paddingLeft="10px" gutterBottom>
                                         Filtered Products
                                     </Typography>
-                                    <Grid container spacing={2}>
+                                    <Grid container spacing={isMobile ? 1 : 2}  sx={{ paddingInline : isMobile ? '1px' : '1px'}}>
                                         {filteredProducts.map((product) => (
                                             <Grid item xs={12} sm={6} md={4} key={product._id}>
                                             <Card style={{
