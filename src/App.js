@@ -46,7 +46,11 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/wishlist" element={<WishList />} />
+        <Route path="/wishlist" element={
+          <PrivateRoute>
+          <WishList />
+          </PrivateRoute>
+          } />
         <Route path="/product/:id" element={<ProductDetailID />} />
         {/* <Route path="/home" element={<HomePage />} /> */}
           {/* <Route path="/home-editor" element={<PrivateRoute><HomeEditor /></PrivateRoute>} /> */}

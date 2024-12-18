@@ -53,14 +53,16 @@ const Login = () => {
           { headers: { Authorization: `Bearer ${authToken}` } }
         )
         .then((response) => {
-          const newAuthToken = response.data.authToken;
+          const newToken  = response.data.authToken;
           const tokenUsername = localStorage.getItem('tokenUsername');
           const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
-          tokens[tokenUsername] = newAuthToken;
+          tokens[tokenUsername] = newToken ;
           localStorage.setItem('authTokens', JSON.stringify(tokens));
-          localStorage.setItem('authToken', newAuthToken);
+          localStorage.setItem('authToken', newToken );
+          console.log('authToken refreshed..! :', newToken);
         })
         .catch((error) => console.error('Failed to extend session:', error));
+        console.log('Refresh token failed. Token expired or invalid.');
       }
     };
 
