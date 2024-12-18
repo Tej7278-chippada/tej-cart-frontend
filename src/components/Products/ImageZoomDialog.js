@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, IconButton, Box } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Dialog, DialogContent, IconButton, Box, useMediaQuery } from '@mui/material';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import CloseIcon from '@mui/icons-material/Close';
+import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 
-const ImageZoomDialog = ({ selectedImage, handleCloseImageModal }) => {
+const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
     const [zoomLevel, setZoomLevel] = useState(1);
     const [offset, setOffset] = useState({ x: 0, y: 0 }); // Offset for panning
     const [isDragging, setIsDragging] = useState(false);
     const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const isMobile = useMediaQuery("(max-width:600px)");
+
+    // Update the index when a new image is passed
+    useEffect(() => {
+        if (selectedImage && images) {
+            const initialIndex = images.indexOf(selectedImage); // Find the index of selectedImage
+            if (initialIndex !== -1) setCurrentIndex(initialIndex);
+        }
+    }, [selectedImage, images]);
 
     // Zoom Handlers
     const handleZoomIn = () => {
@@ -66,12 +77,23 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal }) => {
         setIsDragging(false);
     };
 
+    // Handle navigation
+    const handleNext = () => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    };
+
+    const handlePrev = () => {
+        setCurrentIndex((prevIndex) =>
+            prevIndex === 0 ? images.length - 1 : prevIndex - 1
+        );
+    };
+
     return (
         <Dialog
             open={!!selectedImage}
             onClose={handleCloseImageModal}
             maxWidth="md"
-            fullWidth
+            fullWidth fullScreen={isMobile} sx={{ margin: '1rem' }}
         >
             <DialogContent
                 style={{
@@ -85,8 +107,8 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal }) => {
 
                 {/* Image with Zoom and Pan */}
                 <img
-                    src={`data:image/jpeg;base64,${selectedImage}`}
-                    alt="Zoomed Product"
+                    src={`data:image/jpeg;base64,${images[currentIndex]}`}
+                    alt={`Zoomed ${currentIndex}`}
                     style={{
                         transform: `scale(${zoomLevel}) translate(${offset.x}px, ${offset.y}px)`,
                         transition: isDragging ? 'none' : 'transform 0.3s ease',
@@ -118,6 +140,40 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal }) => {
                 >
                     <CloseIcon />
                 </IconButton>
+                {/* Navigation Buttons */}
+                {images.length > 1 && (
+                    <>
+                        {/* Previous Button */}
+                        <IconButton
+                            onClick={handlePrev}
+                            style={{
+                                position: "absolute",
+                                top: "50%",
+                                left: 16,
+                                transform: "translateY(-50%)",
+                                backgroundColor: "rgba(0,0,0,0.5)",
+                                color: "white",
+                            }}
+                        >
+                            <ArrowBackIos />
+                        </IconButton>
+
+                        {/* Next Button */}
+                        <IconButton
+                            onClick={handleNext}
+                            style={{
+                                position: "absolute",
+                                top: "50%",
+                                right: 16,
+                                transform: "translateY(-50%)",
+                                backgroundColor: "rgba(0,0,0,0.5)",
+                                color: "white",
+                            }}
+                        >
+                            <ArrowForwardIos />
+                        </IconButton>
+                    </>
+                )}
 
                 {/* Zoom Controls */}
                 <Box

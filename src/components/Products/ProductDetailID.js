@@ -384,6 +384,7 @@ function ProductDetailID({ onClose, user }) {
         <ImageZoomDialog
           selectedImage={selectedImage}
           handleCloseImageModal={handleCloseImageModal}
+          images={product.media} // Pass the full media array
         />
         <CommentPopup
           open={commentPopupOpen}
