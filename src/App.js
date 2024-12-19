@@ -12,6 +12,10 @@ import Admin from './components/Products/Admin';
 import ProductList from './components/Products/ProductList';
 import WishList from './components/Products/WishList';
 import ProductDetailID from './components/Products/ProductDetailID';
+import SellerRegister from './components/Seller/SellerRegister';
+import SellerLogin from './components/Seller/SellerLogin';
+import SellerProducts from './components/Seller/SellerProducts';
+import SellerPrivateRoute from './components/Seller/SellerPrivateRoute';
 // import HomeEditor from './components/Products/Home/HomeEditor';
 // import HomePage from './components/Products/Home/HomePage';
 
@@ -37,6 +41,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/sellerRegister" element={<SellerRegister />} />
+        <Route path="/sellerLogin" element={<SellerLogin />} />
+        <Route path='/sellerProducts' element={
+          <SellerPrivateRoute>
+          <SellerProducts/>
+          </SellerPrivateRoute>
+        } />
+
+
         {/* Dynamic route for chat page  path="/chat-:username"*/} 
         <Route path="/productList" element={ 
             <PrivateRoute>
