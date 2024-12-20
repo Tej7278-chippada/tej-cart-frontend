@@ -28,6 +28,7 @@ import ProductDetail from '../Products/ProductDetail';
 import SkeletonCards from '../Products/SkeletonCards';
 import LazyImage from '../Products/LazyImage';
 import { addSellerProduct, deleteSellerProduct, fetchAllProducts, fetchMySellerProducts, updateSellerProduct } from '../../api/sellerApi';
+import SellerProductDetails from './SellerProductDetails';
 
 // const LazyImage = React.memo(({ base64Image, alt }) => (
 //   <img
@@ -404,7 +405,7 @@ function SellerProducts() {
               products={products} 
               onProductSelect={openProductDetail} 
             />
-            <Link to="/productList" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px', paddingLeft: '1rem' }}>Products Page</Link>
+            <Link to="/allProducts" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px', paddingLeft: '1rem' }}>Products Page</Link>
             {/* <Button variant="contained" color="primary" onClick={() => handleOpenDialog()}>
                 Add Product
             </Button> */}
@@ -433,7 +434,7 @@ function SellerProducts() {
 
 
         {selectedProduct && (
-        <ProductDetail
+        <SellerProductDetails
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
         />
@@ -689,6 +690,9 @@ function SellerProducts() {
               )}
               <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
                 Delivery Days: {product.deliveryDays}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
+                Seller : {product.sellerTitle}
               </Typography>
                 <Typography
                   variant="body2"

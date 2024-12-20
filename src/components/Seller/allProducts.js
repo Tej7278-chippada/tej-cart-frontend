@@ -1,27 +1,33 @@
 // src/components/ProductList.js
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardMedia, CardContent, Typography, Tooltip, TextField, IconButton, Box, Dialog, DialogTitle, DialogContent, Toolbar, Button, useMediaQuery} from '@mui/material';
-import { fetchProducts } from '../../api/api';
+// import { fetchProducts } from '../../api/api';
 import { Grid } from "@mui/material";
-import ProductDetail from './ProductDetail';
-import Layout from '../Layout';
+// import ProductDetail from './ProductDetail';
+// import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link, useNavigate } from 'react-router-dom';
-import LazyImage from './LazyImage';
-import SkeletonCards from './SkeletonCards';
+// import LazyImage from './LazyImage';
+// import SkeletonCards from './SkeletonCards';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import FilterProducts from './FilterProducts';
+// import FilterProducts from './FilterProducts';
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import SkeletonCards from '../Products/SkeletonCards';
 import { fetchAllProducts } from '../../api/sellerApi';
+import SellerLayout from './SellerLayout';
+import ProductDetail from '../Products/ProductDetail';
+import FilterProducts from '../Products/FilterProducts';
+import LazyImage from '../Products/LazyImage';
+import SellerProductDetails from './SellerProductDetails';
 
-function ProductList() {
+function AllProducts() {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const tokenUsername = localStorage.getItem('tokenUsername'); // Get the username from local storage
+  const tokenUsernameSeller = localStorage.getItem('tokenUsername'); // Get the username from local storage
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -275,7 +281,7 @@ function ProductList() {
   
 
   return (
-    <Layout username={tokenUsername}>
+    <SellerLayout username={tokenUsernameSeller}>
     <div>
         {/* Search Bar module */}
       <Box display="flex" alignItems="center" p={2} sx={{ maxWidth: 600, mx: 'auto' }}>
@@ -304,7 +310,7 @@ function ProductList() {
           }}
         />
           {selectedProduct && (
-            <ProductDetail product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+            <SellerProductDetails product={selectedProduct} onClose={() => setSelectedProduct(null)} />
           )}
 
           <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} xs={12} sm={6} md={4}  maxWidth="md" fullWidth  >
@@ -449,7 +455,7 @@ function ProductList() {
           
           
 
-          <Link to="/admin" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px' }}>Admin Page</Link>
+          <Link to="/sellerProducts" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px' }}>Seller Page</Link>
           {/* <Button
             variant="outlined"
             color="primary"
@@ -727,8 +733,8 @@ function ProductList() {
 
 
     </div>
-    </Layout>
+    </SellerLayout>
   );
 }
 
-export default ProductList;
+export default AllProducts;

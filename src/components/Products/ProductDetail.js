@@ -292,6 +292,14 @@ function ProductDetail({ product, onClose }) {
               {product.description}
             </Typography>
           </Grid>
+          <Grid item xs={6} sm={4}>
+            <Typography variant="body1" style={{ fontWeight: 500 }}>
+              Seller Details:
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {product.sellerTitle}
+            </Typography>
+          </Grid>
           <Grid2 sx={{padding:'1rem'}}>
           <IconButton onClick={() => handleLike(product._id)}>
             <ThumbUp /> {product.likes}

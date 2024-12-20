@@ -3,17 +3,23 @@ import React, { useEffect, useState } from 'react';
 import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import { addToWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
-import CommentPopup from './CommentPopup';
+// import { addToWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
+// import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useParams } from 'react-router-dom';
-import Layout from '../Layout';
+// import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
-import SkeletonProductDetail from './SkeletonProductDetail';
-import ImageZoomDialog from './ImageZoomDialog';
+import SellerLayout from './SellerLayout';
+import SkeletonProductDetail from '../Products/SkeletonProductDetail';
+import ImageZoomDialog from '../Products/ImageZoomDialog';
+import CommentPopup from '../Products/CommentPopup';
+import { fetchSellerProductById } from '../../api/sellerApi';
+import { addToWishlist, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
+// import SkeletonProductDetail from './SkeletonProductDetail';
+// import ImageZoomDialog from './ImageZoomDialog';
 
-function ProductDetailID({ onClose, user }) {
+function SellerProductDetails({ onClose, user }) {
   const [selectedImage, setSelectedImage] = useState(null);
   // const [products, setProducts] = useState([]);
   // const [selectedProduct, setSelectedProduct] = useState(null);
@@ -33,15 +39,15 @@ function ProductDetailID({ onClose, user }) {
     const fetchProductDetails = async () => {
       setLoading(true);
       try {
-        const authToken = localStorage.getItem('authToken');
-        setIsAuthenticated(!!authToken); // Check if user is authenticated
+        const authTokenSeller = localStorage.getItem('authTokenSeller');
+        setIsAuthenticated(!!authTokenSeller); // Check if user is authenticated
 
-        const response = await fetchProductById(id);
+        const response = await fetchSellerProductById(id);
         setProduct({
           ...response.data,
           likedByUser: response.data.likedByUser || false, // Set the liked status
         });
-        if (authToken) {
+        if (authTokenSeller) {
           const wishlistResponse = await fetchWishlist();
           const wishlistProducts = wishlistResponse.data.wishlist.map((item) => item._id);
           setWishlist(new Set(wishlistProducts));
@@ -154,15 +160,15 @@ function ProductDetailID({ onClose, user }) {
   };
   if (loading || !product) {
     return (
-      <Layout>
+      <SellerLayout>
         {/* <SkeletonCards /> */}
         <SkeletonProductDetail />
-      </Layout>
+      </SellerLayout>
     );
   }
 
   return (
-    <Layout>
+    <SellerLayout>
       <Box>
 
         <div style={{
@@ -401,8 +407,8 @@ function ProductDetailID({ onClose, user }) {
           onCommentAdded={onCommentAdded}  // Passing the comment added handler
         />
       </Box>
-    </Layout>
+    </SellerLayout>
   );
 }
 
-export default ProductDetailID;
+export default SellerProductDetails;

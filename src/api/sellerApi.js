@@ -71,11 +71,11 @@ export default API;
 //   return API.get('/api/productSeller', { headers });
 // };
 
-// export const fetchSellerProductById = (id) => {
-//   const authTokenSeller = localStorage.getItem('authTokenSeller');
-//   const headers = authTokenSeller ? { Authorization: `Bearer ${authTokenSeller}` } : {};
-//   return API.get(`/api/productSeller/${id}`, { headers });
-// };
+export const fetchSellerProductById = (id) => {
+  const authTokenSeller = localStorage.getItem('authTokenSeller');
+  const headers = authTokenSeller ? { Authorization: `Bearer ${authTokenSeller}` } : {};
+  return API.get(`/api/productSeller/${id}`, { headers });
+};
 
 export const addSellerProduct = (data) => {
   const authTokenSeller = localStorage.getItem('authTokenSeller');

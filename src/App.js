@@ -16,6 +16,7 @@ import SellerRegister from './components/Seller/SellerRegister';
 import SellerLogin from './components/Seller/SellerLogin';
 import SellerProducts from './components/Seller/SellerProducts';
 import SellerPrivateRoute from './components/Seller/SellerPrivateRoute';
+import AllProducts from './components/Seller/allProducts';
 // import HomeEditor from './components/Products/Home/HomeEditor';
 // import HomePage from './components/Products/Home/HomePage';
 
@@ -48,6 +49,7 @@ function App() {
           <SellerProducts/>
           </SellerPrivateRoute>
         } />
+        <Route path="/allProducts" element={<AllProducts />} />
 
 
         {/* Dynamic route for chat page  path="/chat-:username"*/} 
