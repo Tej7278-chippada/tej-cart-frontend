@@ -1,38 +1,29 @@
 // src/components/ProductDetailID.js
 import React, { useEffect, useState } from 'react';
-import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress } from '@mui/material';
-import { ThumbUp, Comment } from '@mui/icons-material';
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-// import { addToWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
+import { Typography, CardMedia, IconButton, Grid, Grid2, Box, useMediaQuery } from '@mui/material';
+import {  Comment } from '@mui/icons-material';
 // import CommentPopup from './CommentPopup';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useParams } from 'react-router-dom';
-// import Layout from '../Layout';
+import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
-import SellerLayout from './SellerLayout';
+// import SkeletonProductDetail from './SkeletonProductDetail';
+// import ImageZoomDialog from './ImageZoomDialog';
+import { fetchSellerProductById } from '../../api/sellerApi';
 import SkeletonProductDetail from '../Products/SkeletonProductDetail';
 import ImageZoomDialog from '../Products/ImageZoomDialog';
 import CommentPopup from '../Products/CommentPopup';
-import { fetchSellerProductById } from '../../api/sellerApi';
-import { addToWishlist, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
-// import SkeletonProductDetail from './SkeletonProductDetail';
-// import ImageZoomDialog from './ImageZoomDialog';
 
 function SellerProductDetails({ onClose, user }) {
   const [selectedImage, setSelectedImage] = useState(null);
   // const [products, setProducts] = useState([]);
   // const [selectedProduct, setSelectedProduct] = useState(null);
   const [commentPopupOpen, setCommentPopupOpen] = useState(false);
-  const [wishlist, setWishlist] = useState(new Set());
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication
-  const [likeLoading, setLikeLoading] = useState(false); // For like progress
-  const [wishLoading, setWishLoading] = useState(false); // For like progress
 
   useEffect(() => {
     // setLoading(true);
@@ -45,67 +36,18 @@ function SellerProductDetails({ onClose, user }) {
         const response = await fetchSellerProductById(id);
         setProduct({
           ...response.data,
-          likedByUser: response.data.likedByUser || false, // Set the liked status
         });
-        if (authTokenSeller) {
-          const wishlistResponse = await fetchWishlist();
-          const wishlistProducts = wishlistResponse.data.wishlist.map((item) => item._id);
-          setWishlist(new Set(wishlistProducts));
-        }
       } catch (error) {
         console.error('Error fetching product details:', error);
       } finally {
         setLoading(false);
       }
     };
-    if (product) {
-      // Find the updated product in the product list
-
-
-      // Initialize wishlist state based on the product's `isInWishlist` property
-      const fetchUserWishlist = async () => {
-        try {
-          const response = await fetchWishlist();
-          const wishlistProducts = response.data.wishlist.map((item) => item._id);
-          setWishlist(new Set(wishlistProducts));
-        } catch (error) {
-          console.error('Error fetching wishlist:', error);
-        }
-      };
-
-      if (product) {
-
-        fetchUserWishlist();
-      }
-    }
     fetchProductDetails();
     setLoading(false);
-  }, [product, id]);
+  }, [id]);
 
-  const handleLike = async (productId) => {
-    if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
-    setLikeLoading(true); // Start the progress indicator
-    try {
-      const response = await likeProduct(productId);
-      const updatedLikes = response.likes;
-
-      // Toggle likedByUser and update the likes count
-      setProduct((prevProduct) =>
-        prevProduct._id === productId
-          ? {
-            ...prevProduct,
-            likes: updatedLikes,
-            likedByUser: !prevProduct.likedByUser, // Toggle liked state
-          }
-          : prevProduct
-      );
-    } catch (error) {
-      console.error('Error toggling like:', error);
-      alert('Error toggling like.');
-    } finally {
-      setLikeLoading(false); // End the progress indicator
-    }
-  };
+  
   const openComments = (product) => {
     // setSelectedProduct(product);
     setCommentPopupOpen(true);
@@ -134,41 +76,18 @@ function SellerProductDetails({ onClose, user }) {
     setSelectedImage(null);
   };
 
-  const handleWishlistToggle = async (productId) => {
-    if (!isAuthenticated) return; // Prevent unauthenticated actions
-    setWishLoading(true); // Start the progress indicator
-    try {
-      if (wishlist.has(productId)) {
-        await removeFromWishlist(productId);
-        setWishlist((prevWishlist) => {
-          const newWishlist = new Set(prevWishlist);
-          newWishlist.delete(productId);
-          return newWishlist;
-        });
-        // alert('Product removed from wishlist!');
-      } else {
-        await addToWishlist(productId);
-        setWishlist((prevWishlist) => new Set([...prevWishlist, productId]));
-        // alert('Product added to wishlist!');
-      }
-    } catch (error) {
-      console.error('Error toggling wishlist:', error);
-      alert('Product already added on wishlist!');
-    } finally {
-      setWishLoading(false); // End the progress indicator
-    }
-  };
+  
   if (loading || !product) {
     return (
-      <SellerLayout>
+      <Layout>
         {/* <SkeletonCards /> */}
         <SkeletonProductDetail />
-      </SellerLayout>
+      </Layout>
     );
   }
 
   return (
-    <SellerLayout>
+    <Layout>
       <Box>
 
         <div style={{
@@ -253,37 +172,6 @@ function SellerProductDetails({ onClose, user }) {
                 {/* Product Details */}
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <IconButton
-                      style={{ display: 'inline-block', float: 'right', fontWeight: '500', backgroundColor: 'rgba(255, 255, 255, 0.8)', boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)' }}
-                      onClick={() => handleWishlistToggle(product._id)}
-                      sx={{
-                        color: wishlist.has(product._id) ? 'red' : 'gray',
-                      }} disabled={wishLoading} // Disable button while loading
-                    >
-                      <Tooltip
-                        title={wishlist.has(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                        arrow
-                        placement="right"
-                      >
-                        <span
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '100%',
-                            height: '100%',
-                            position: 'relative',
-                            transition: 'transform 0.3s ease',
-                          }}
-                        >{wishLoading ? (
-                          <CircularProgress size={24} color="inherit" /> // Show spinner while loading
-                        ) : wishlist.has(product._id) ? (
-                          <FavoriteIcon />
-                        ) : (
-                          <FavoriteBorderIcon />
-                        )}
-                        </span></Tooltip>
-                    </IconButton>
                     <Typography variant="h4" style={{
                       fontWeight: 'bold',
                       marginBottom: '0.5rem',
@@ -352,16 +240,9 @@ function SellerProductDetails({ onClose, user }) {
               right: '1rem', position: 'relative', display: 'inline-block', float: 'right',
             }}>
               <IconButton
-                onClick={() => handleLike(product._id)}
-                sx={{ color: product.likedByUser ? 'blue' : 'gray' }} disabled={likeLoading} // Disable button while loading
+                
+                sx={{ color: product.likedByUser ? 'blue' : 'gray' }} // Disable button while loading
               >
-                {likeLoading ? (
-                  <CircularProgress size={24} color="inherit" /> // Show spinner while loading
-                ) : product.likedByUser ? (
-                  <ThumbUp />
-                ) : (
-                  <ThumbUpOffAltIcon />
-                )}
                 {product.likes}
               </IconButton>
               <IconButton onClick={() => openComments(product)}>
@@ -407,7 +288,7 @@ function SellerProductDetails({ onClose, user }) {
           onCommentAdded={onCommentAdded}  // Passing the comment added handler
         />
       </Box>
-    </SellerLayout>
+    </Layout>
   );
 }
 

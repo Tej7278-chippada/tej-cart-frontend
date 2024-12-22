@@ -138,7 +138,7 @@ function AllProducts() {
 
   const openProductDetail = (product) => {
     // setSelectedProduct(product);
-    navigate(`/product/${product._id}`);
+    navigate(`/productSeller/${product._id}`);
   };
 
   const renderPagination = () => {

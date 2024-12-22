@@ -15,7 +15,7 @@ import { Grid } from "@mui/material";
 // import LazyImage from './LazyImage';
 // import ProductDetail from './ProductDetail';
 // import Layout from '../Layout';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 // import SkeletonCards from './SkeletonCards';
 import { useTheme } from '@emotion/react';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -61,6 +61,7 @@ function SellerProducts() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' }); // For notifications
   const theme = useTheme();
+  const navigate = useNavigate();
   // Calculate pagination
   const [currentPage, setCurrentPage] = useState(parseInt(localStorage.getItem('currentPage')) || 1);
   const [productsPerPage] = useState(12); // Show six products per page
@@ -272,7 +273,7 @@ function SellerProducts() {
   // };
 
   const openProductDetail = (product) => {
-    setSelectedProduct(product);
+    navigate(`/productSeller/${product._id}`);
   };
 
   const renderPagination = () => {
