@@ -9,7 +9,7 @@ import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Card, Car
     Snackbar,
     Box,
     IconButton} from '@mui/material';
-import { addProduct, deleteProduct, fetchProducts, updateProduct } from '../../api/api';
+import { addProduct, deleteProduct, fetchProducts, fetchProductsFilter, updateProduct } from '../../api/api';
 // import ProductCard from "../components/ProductCard";
 import { Grid } from "@mui/material";
 import LazyImage from './LazyImage';
@@ -86,7 +86,7 @@ function Admin() {
 
   const fetchProductsData = useCallback(async () => {
     setLoading(true);
-    const response = await fetchProducts();
+    const response = await fetchProductsFilter();
     setProducts(response.data);
     setLoading(false);
   }, []);
