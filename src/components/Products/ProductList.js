@@ -32,12 +32,13 @@ function ProductList() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const searchInputRef = useRef(null);
   // Calculate pagination
+  const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(parseInt(localStorage.getItem('currentPage')) || 1);
   const [productsPerPage] = useState(12); // Show six products per page
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  // const indexOfLastProduct = currentPage * productsPerPage;
+  // const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  // const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  // const totalPages = Math.ceil(products.length / productsPerPage);
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimeoutRef = useRef(null);
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -67,19 +68,23 @@ function ProductList() {
 
   // Fetch products data
   useEffect(() => {
-    setLoading(true); // Start loading
-    localStorage.setItem('currentPage', currentPage); // Persist current page to localStorage
-    fetchProducts()
-      .then((response) => {
-        setProducts(response.data);
-        setFilteredProducts(response.data); // Initially display all products
-        setLoading(false); // Stop loading
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-        setLoading(false); // Stop loading in case of error
-      });
-  }, [currentPage]);
+    const fetchData = async () => {
+        setLoading(true);
+        localStorage.setItem('currentPage', currentPage); // Persist current page to localStorage
+        try {
+            const response = await fetchProducts(currentPage, productsPerPage);
+            const { products, totalPages } = response.data;
+            setProducts(products);
+            setTotalPages(totalPages);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            setLoading(false);
+        }
+    };
+    fetchData();
+}, [currentPage, productsPerPage]);
+
 
   useEffect(() => {
     if (dialogOpen && searchInputRef.current) {
@@ -393,7 +398,7 @@ function ProductList() {
               // </Box>
             ) : (
               <Grid container spacing={isMobile ? 1 : 2}>
-                {currentProducts.map((product) => (
+                {products.map((product) => (
                   <Grid item xs={12} sm={6} md={4} key={product._id}>
                     <Card style={{
                       margin: '0rem 0',  // spacing between up and down cards
@@ -503,7 +508,10 @@ function ProductList() {
             <RenderPagination
               currentPage={currentPage}
               totalPages={totalPages}
-              setCurrentPage={setCurrentPage}
+              setCurrentPage={(page) => {
+                setCurrentPage(page);
+                localStorage.setItem('currentPage', page);
+            }}
             />
           </Box>
 

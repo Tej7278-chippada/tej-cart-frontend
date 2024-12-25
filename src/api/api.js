@@ -67,7 +67,7 @@ export default API;
 //     return await axios.get(`/api/products/${id}`); // Update with actual API endpoint
 //   };
 // export const fetchProductById = (id) => API.get(`/api/products/${id}`,{ headers: { 'Content-Type': 'multipart/form-data' } });
-export const fetchProducts = () => API.get('/api/products');
+export const fetchProducts = (page = 1, limit = 12) => API.get(`/api/products?page=${page}&limit=${limit}`);
 // export const fetchProductById = (id) => API.get(`/api/products/${id}`);
 // export const fetchProductById = async (id) => {
 //   const authToken = localStorage.getItem('authToken');

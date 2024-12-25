@@ -11,7 +11,7 @@ const RenderPagination = ({
     const theme = useTheme();
 
     const paginationItems = [];
-    if (currentPage > 1) paginationItems.push(1);
+    paginationItems.push(1);
     if (currentPage > 3) paginationItems.push('...');
 
     for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
