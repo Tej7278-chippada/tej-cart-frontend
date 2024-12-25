@@ -18,6 +18,7 @@ import SellerProducts from './components/Seller/SellerProducts';
 import SellerPrivateRoute from './components/Seller/SellerPrivateRoute';
 import AllProducts from './components/Seller/allProducts';
 import SellerProductDetails from './components/Seller/SellerProductDetails';
+import SellerProfile from './components/Seller/SellerProfile';
 // import HomeEditor from './components/Products/Home/HomeEditor';
 // import HomePage from './components/Products/Home/HomePage';
 
@@ -52,6 +53,16 @@ function App() {
         } />
         <Route path="/allProducts" element={<AllProducts />} />
         <Route path="/productSeller/:id" element={<SellerProductDetails />} />
+        {/* <Route path="/seller-profile-:sellerId" element={
+            <SellerPrivateRoute>
+              <SellerProfile />
+            </SellerPrivateRoute>
+          } /> */}
+          <Route path="/seller/:id" element={
+            <SellerPrivateRoute>
+            <SellerProfile />
+            </SellerPrivateRoute>} />
+
 
 
         {/* Dynamic route for chat page  path="/chat-:username"*/} 

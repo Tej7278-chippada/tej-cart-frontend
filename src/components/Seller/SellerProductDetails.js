@@ -12,6 +12,7 @@ import { fetchSellerProductById } from '../../api/sellerApi';
 import SkeletonProductDetail from '../Products/SkeletonProductDetail';
 import ImageZoomDialog from '../Products/ImageZoomDialog';
 import CommentPopup from '../Products/CommentPopup';
+import SellerLayout from './SellerLayout';
 
 function SellerProductDetails({ onClose, user }) {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -79,15 +80,15 @@ function SellerProductDetails({ onClose, user }) {
   
   if (loading || !product) {
     return (
-      <Layout>
+      <SellerLayout>
         {/* <SkeletonCards /> */}
         <SkeletonProductDetail />
-      </Layout>
+      </SellerLayout>
     );
   }
 
   return (
-    <Layout>
+    <SellerLayout>
       <Box>
 
         <div style={{
@@ -288,7 +289,7 @@ function SellerProductDetails({ onClose, user }) {
           onCommentAdded={onCommentAdded}  // Passing the comment added handler
         />
       </Box>
-    </Layout>
+    </SellerLayout>
   );
 }
 

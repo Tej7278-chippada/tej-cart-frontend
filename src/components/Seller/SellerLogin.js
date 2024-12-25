@@ -93,7 +93,7 @@ const SellerLogin = () => {
       setIdentifier('');
       setPassword('');
 
-      const { authTokenSeller, tokenSellerUsername } = response.data;
+      const { authTokenSeller, tokenSellerUsername, sellerId } = response.data;
       // if (authToken) {
       //   // Store the token in localStorage
       //   localStorage.setItem('authToken', authToken);
@@ -103,7 +103,7 @@ const SellerLogin = () => {
       // } else {
       //   setError('Token is missing in response');
       // }
-      if (authTokenSeller){
+      if (authTokenSeller && sellerId){
 
       // Store authToken uniquely for the user
       const tokens = JSON.parse(localStorage.getItem('authTokensSeller')) || {};
@@ -114,11 +114,12 @@ const SellerLogin = () => {
       localStorage.setItem('authTokenSeller', authTokenSeller);
       localStorage.setItem('activeSeller', tokenSellerUsername);
       localStorage.setItem('tokenSellerUsername', tokenSellerUsername);
+      localStorage.setItem('sellerId', sellerId); // Store sellerId
 
       setSuccess('Login successful!');
-      navigate('/sellerProducts', { replace: true });
+      navigate(`/seller/${response.data.sellerId}`, { replace: true });
     } else {
-        setError('Token is missing in response');
+        setError('Token or seller ID is missing in response');
       }
       
       // Redirect to chat page or dashboard here

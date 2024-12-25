@@ -29,7 +29,7 @@ import SkeletonCards from '../Products/SkeletonCards';
 import LazyImage from '../Products/LazyImage';
 import { addSellerProduct, deleteSellerProduct, fetchAllProducts, fetchMySellerProducts, updateSellerProduct } from '../../api/sellerApi';
 import SellerProductDetails from './SellerProductDetails';
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 // const LazyImage = React.memo(({ base64Image, alt }) => (
 //   <img
 //     src={`data:image/jpeg;base64,${base64Image}`}
@@ -275,6 +275,10 @@ function SellerProducts() {
   const openProductDetail = (product) => {
     navigate(`/productSeller/${product._id}`);
   };
+  const openSellerProfile = () => {
+    const sellerId = localStorage.getItem('sellerId'); 
+    navigate(`/seller/${sellerId}`, { replace: true });
+  };
 
   const renderPagination = () => {
     const paginationItems = [];
@@ -424,10 +428,30 @@ function SellerProducts() {
                 },
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '8px', marginRight: '10px'
               }}
             >
               <AddIcon sx={{ fontSize: '20px' }} />
+              {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Add Product</span> */}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => openSellerProfile()}
+              sx={{
+                backgroundColor: '#1976d2', // Primary blue
+                color: '#fff',
+                padding: '8px 16px',
+                borderRadius: '24px',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                '&:hover': {
+                  backgroundColor: '#1565c0', // Darker shade on hover
+                },
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <AccountCircleIcon sx={{ fontSize: '20px' }} />
               {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Add Product</span> */}
             </Button>
         </Toolbar>

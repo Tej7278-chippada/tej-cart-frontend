@@ -110,3 +110,23 @@ export const fetchMySellerProducts = () => {
 
 // Public route to fetch all products with seller details
 export const fetchAllProducts = () => API.get('/api/productSeller');
+
+// Get seller profile details
+export const getSellerDetails = async (sellerId) => {
+  try {
+    const response = await API.get(`/api/seller/seller/${sellerId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Delete seller profile
+export const deleteSellerProfile = async (sellerId) => {
+  try {
+    const response = await API.delete(`/api/seller/seller/${sellerId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
