@@ -143,6 +143,20 @@ const SellerRegister = () => {
       return;
     }
 
+    // Email validation
+    if (!email.includes('@') || !email.endsWith('.com')) {
+      setError('Invalid mail id.');
+      setLoading(false);
+      return;
+    }
+
+    // Phone validation
+    if (phone.length < 10 || !/^\d+$/.test(phone)) {
+      setError('Invalid mobile number.');
+      setLoading(false);
+      return;
+    }
+
     if (Object.values(address).some((field) => field.trim() === '')) {
         setError('All address fields (street, area, city, state, pincode) are required.');
         setLoading(false);
@@ -194,21 +208,27 @@ const SellerRegister = () => {
       <form onSubmit={handleRegister} style={{ maxWidth: '400px', width: '100%' }}>
       <Box textAlign="center" paddingTop={4} mb={2} >
       {croppedImage ? (
+              <div>
               <img
                 src={croppedImage}
                 alt="Cropped Profile"
-                style={{ width: '100px', height: '100px', borderRadius: '50%', cursor: 'pointer' }}
+                style={{ width: '180px', height: '180px', borderRadius: '50%', cursor: 'pointer' }}
                 onClick={() => setCropDialog(true)}
               />
+              <Typography variant="body2">Your Profile Pic</Typography>
+              </div>
             ) : (
+              <div>
               <img
-                src="https://via.placeholder.com/100"
+                src="https://placehold.co/400?text=Add+Photo"
                 alt="Dummy Profile"
-                style={{ width: '100px', height: '100px', borderRadius: '50%', cursor: 'pointer' }}
+                style={{ width: '180px', height: '180px', borderRadius: '50%', cursor: 'pointer' }}
                 onClick={() => setCropDialog(true)}
               />
+              <Typography variant="body2">Add Profile Pic</Typography>
+              </div>
             )}
-            <Typography variant="body2">Profile Pic</Typography>
+            {/* <Typography variant="body2">Profile Pic</Typography> */}
             </Box>
             <Dialog open={cropDialog} onClose={() => setCropDialog(false)} fullWidth maxWidth="sm">
               <DialogTitle>Crop and Upload Picture</DialogTitle>
