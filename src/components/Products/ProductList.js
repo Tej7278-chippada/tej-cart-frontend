@@ -18,6 +18,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { fetchAllProducts } from '../../api/sellerApi';
 import RenderPagination from './RenderPagination';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 function ProductList() {
   const [products, setProducts] = useState([]);
@@ -128,6 +129,11 @@ function ProductList() {
   const openProductDetail = (product) => {
     // setSelectedProduct(product);
     navigate(`/product/${product._id}`);
+  };
+
+  const openUserProfile = () => {
+    const userId = localStorage.getItem('userId'); 
+    navigate(`/user/${userId}`, { replace: true });
   };
 
   // Handle opening and closing the filter card
@@ -360,12 +366,32 @@ function ProductList() {
               },
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
+              gap: '8px', marginRight: '10px'
             }}
           >
             <FavoriteIcon sx={{ fontSize: '20px' }} />
             {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Filter</span> */}
           </Button>
+          <Button
+              variant="contained"
+              onClick={() => openUserProfile()}
+              sx={{
+                backgroundColor: '#1976d2', // Primary blue
+                color: '#fff',
+                padding: '8px 16px',
+                borderRadius: '24px',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                '&:hover': {
+                  backgroundColor: '#1565c0', // Darker shade on hover
+                },
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <AccountCircleIcon sx={{ fontSize: '20px' }} />
+              {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Add Product</span> */}
+            </Button>
         </Toolbar>
         {/* Filter Floating Card */}
         {filterOpen && (

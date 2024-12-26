@@ -144,6 +144,28 @@ export const removeFromWishlist = async (productId) => {
     });
 };
 
+// Get seller profile details
+export const getUserDetails = async (userId) => {
+  try {
+    const response = await API.get(`/api/auth/user/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Delete seller profile
+export const deleteUserProfile = async (userId) => {
+  try {
+    const response = await API.delete(`/api/auth/user/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
 // export const fetchWishlist = async () => {
 //   const response = await fetch('/api/wishlist', {
 //     headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },

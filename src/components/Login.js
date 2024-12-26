@@ -90,7 +90,7 @@ const Login = () => {
       setIdentifier('');
       setPassword('');
 
-      const { authToken, tokenUsername } = response.data;
+      const { authToken, tokenUsername, userId } = response.data;
       // if (authToken) {
       //   // Store the token in localStorage
       //   localStorage.setItem('authToken', authToken);
@@ -100,7 +100,7 @@ const Login = () => {
       // } else {
       //   setError('Token is missing in response');
       // }
-      if (authToken){
+      if (authToken && userId){
 
       // Store authToken uniquely for the user
       const tokens = JSON.parse(localStorage.getItem('authTokens')) || {};
@@ -111,6 +111,7 @@ const Login = () => {
       localStorage.setItem('authToken', authToken);
       localStorage.setItem('activeUser', tokenUsername);
       localStorage.setItem('tokenUsername', tokenUsername);
+      localStorage.setItem('userId', userId); // Store userId
 
       setSuccess('Login successful!');
       navigate('/productList', { replace: true });

@@ -72,7 +72,10 @@ const Header = ({ username }) => {
     localStorage.removeItem('authToken'); // Clear current session token
     setAnchorEl(null);
     setCurrentUsername('');
-    localStorage.removeItem('activeUser'); // Clear active user on logout
+    localStorage.removeItem('activeUser'); 
+    localStorage.removeItem('tokenUsername'); 
+    localStorage.removeItem('userId'); 
+    localStorage.removeItem('currentPage'); 
     navigate('/');
   };
   

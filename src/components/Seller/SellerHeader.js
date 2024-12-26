@@ -73,6 +73,9 @@ const SellerHeader = ({ usernameSeller }) => {
     setAnchorEl(null);
     setCurrentUsernameSeller('');
     localStorage.removeItem('activeSeller'); // Clear active user on logout
+    localStorage.removeItem('tokenSellerUsername'); 
+    localStorage.removeItem('sellerId'); 
+    localStorage.removeItem('currentPage'); 
     navigate('/sellerLogin');
   };
   
