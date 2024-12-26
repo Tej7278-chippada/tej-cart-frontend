@@ -12,6 +12,8 @@ import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
 import SkeletonProductDetail from './SkeletonProductDetail';
 import ImageZoomDialog from './ImageZoomDialog';
+import ShareIcon from '@mui/icons-material/Share'; // Import the share icon
+
 
 function ProductDetailID({ onClose, user }) {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -152,6 +154,48 @@ function ProductDetailID({ onClose, user }) {
       setWishLoading(false); // End the progress indicator
     }
   };
+
+  const handleShare = async (productId, productTitle) => {
+    const shareUrl = `${window.location.origin}/product/${productId}`;
+    const shareData = {
+      title: productTitle,
+      text: `Check out this amazing product: ${productTitle}`,
+      url: shareUrl,
+    };
+
+    // Check if Web Share API is supported
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Error using Web Share API:', err);
+      }
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      // Fallback: Copy to clipboard if supported
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        alert(`The link has been copied to your clipboard: ${shareUrl}`);
+      } catch (err) {
+        console.error('Error copying text to clipboard:', err);
+        alert(`Unable to copy the link. Please manually share this URL: ${shareUrl}`);
+      }
+    } else {
+      // Fallback for browsers without clipboard API
+      const tempInput = document.createElement('textarea');
+      tempInput.value = shareUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        alert(`The link has been copied to your clipboard: ${shareUrl}`);
+      } catch (err) {
+        console.error('Error using execCommand to copy:', err);
+        alert(`Unable to copy the link. Please manually share this URL: ${shareUrl}`);
+      }
+      document.body.removeChild(tempInput);
+    }
+  };
+
   if (loading || !product) {
     return (
       <Layout>
@@ -203,33 +247,33 @@ function ProductDetailID({ onClose, user }) {
                   }}>
                     {product.media && product.media.length > 0 ? (
                       product.media.map((base64Image, index) => (
+                        <img
+                          key={index}
+                          src={`data:image/jpeg;base64,${base64Image}`}
+                          alt={`Product ${index}`}
+                          style={{
+                            // height: '200px',
+                            borderRadius: '8px',
+                            objectFit: 'cover',
+                            flexShrink: 0,
+                            cursor: 'pointer' // Make the image look clickable
+                          }}
+                          onClick={() => handleImageClick(base64Image)} // Open image in modal on click
+                        />
+                      ))
+                    ) : (
+                      // Show a placeholder image if no media is available
                       <img
-                        key={index}
-                        src={`data:image/jpeg;base64,${base64Image}`}
-                        alt={`Product ${index}`}
+                        src="../assets/null-product-image.webp" // Replace with the path to your placeholder image
+                        alt="No media available"
                         style={{
                           // height: '200px',
                           borderRadius: '8px',
                           objectFit: 'cover',
                           flexShrink: 0,
-                          cursor: 'pointer' // Make the image look clickable
                         }}
-                        onClick={() => handleImageClick(base64Image)} // Open image in modal on click
                       />
-                    ))
-                  ) : (
-                    // Show a placeholder image if no media is available
-                    <img
-                      src="../assets/null-product-image.webp" // Replace with the path to your placeholder image
-                      alt="No media available"
-                      style={{
-                        // height: '200px',
-                        borderRadius: '8px',
-                        objectFit: 'cover',
-                        flexShrink: 0,
-                      }}
-                    />
-                  )}
+                    )}
                   </div>
                 </CardMedia></Box></Box>
 
@@ -247,6 +291,20 @@ function ProductDetailID({ onClose, user }) {
                 {/* Product Details */}
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
+                    <IconButton
+                      style={{
+                        // display: 'inline-block',
+                        float: 'right',
+                        fontWeight: '500',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', marginLeft: '10px'
+                      }}
+                      onClick={() => handleShare(product._id, product.title)}
+                    >
+                      <Tooltip title="Share this product" arrow placement="right">
+                        <ShareIcon />
+                      </Tooltip>
+                    </IconButton>
                     <IconButton
                       style={{ display: 'inline-block', float: 'right', fontWeight: '500', backgroundColor: 'rgba(255, 255, 255, 0.8)', boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)' }}
                       onClick={() => handleWishlistToggle(product._id)}
