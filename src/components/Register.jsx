@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Box, Alert, useMediaQuery, ThemeProvider, createTheme, CircularProgress } from '@mui/material';
+import { TextField, Button, Typography, Box, Alert, useMediaQuery, ThemeProvider, createTheme, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import axios from 'axios';
 import Layout from './Layout';
+import Cropper from 'react-easy-crop';
 
 const theme = createTheme({
   breakpoints: {
@@ -25,11 +26,55 @@ const Register = () => {
   const [success, setSuccess] = useState('');
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm')); // Media query for small screens
   const [loading, setLoading] = useState(false);
+  const [profilePic, setProfilePic] = useState(null); // State for profile picture
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [cropDialog, setCropDialog] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+
+
+  const handleCropComplete = async (_, croppedAreaPixels) => {
+    if (!profilePic) return; // Ensure profilePic is set before proceeding
+    const canvas = document.createElement('canvas');
+    const image = new Image();
+    // Create an object URL for the image file
+    const objectURL = URL.createObjectURL(profilePic);
+    image.src = objectURL;
+    image.onload = () => {
+      const ctx = canvas.getContext('2d');
+      const { width, height } = croppedAreaPixels;
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(
+        image,
+        croppedAreaPixels.x,
+        croppedAreaPixels.y,
+        width,
+        height,
+        0,
+        0,
+        width,
+        height
+      );
+      canvas.toBlob((blob) => {
+        // Check if the blob is a valid object before creating a URL
+        if (blob) {
+          setCroppedImage(URL.createObjectURL(blob));
+        }
+      });
+    };
+  };
+
+  const handleReplaceImage = () => {
+    setCroppedImage(null);
+    setProfilePic(null);
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    setCroppedImage(null);
 
     // Validate username and password
     const usernameRegex = /^[A-Z][A-Za-z0-9@_-]{5,}$/;
@@ -57,10 +102,21 @@ const Register = () => {
       return;
     }
 
+    const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+      formData.append('email', email);
+      formData.append('phone', phone);
+      if (profilePic) formData.append('profilePic', profilePic);
+
     try {                             // 'http://localhost:5002/api/auth/register' 'https://tej-chat-app-8cd7e70052a5.herokuapp.com/api/auth/register'
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, { username, password, phone, email });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
       setSuccess(`Your new account has been created with username ${username} and linked to email ${email}`);
       setUsername('');
+      setProfilePic(null);
       setEmail('');
       setPhone('');
       setPassword('');
@@ -85,6 +141,68 @@ const Register = () => {
         Register
       </Typography>
       <form onSubmit={handleRegister} style={{ maxWidth: '400px', width: '100%' }}>
+      <Box textAlign="center" paddingTop={4} mb={2} >
+      {croppedImage ? (
+              <img
+                src={croppedImage}
+                alt="Cropped Profile"
+                style={{ width: '100px', height: '100px', borderRadius: '50%', cursor: 'pointer' }}
+                onClick={() => setCropDialog(true)}
+              />
+            ) : (
+              <img
+                src="https://via.placeholder.com/100"
+                alt="Dummy Profile"
+                style={{ width: '100px', height: '100px', borderRadius: '50%', cursor: 'pointer' }}
+                onClick={() => setCropDialog(true)}
+              />
+            )}
+            <Typography variant="body2">Profile Pic</Typography>
+            </Box>
+            <Dialog open={cropDialog} onClose={() => setCropDialog(false)} fullWidth maxWidth="sm">
+              <DialogTitle>Crop and Upload Picture</DialogTitle>
+              <DialogContent sx={{minHeight:'250px'}}>
+                <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setProfilePic(e.target.files[0])}
+                style={{ marginTop: 10 }}
+              />
+              {profilePic ? (
+                <Cropper
+                  image={URL.createObjectURL(profilePic)}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={handleCropComplete}
+                />
+              ) : (
+                <Typography variant="body2" textAlign="center">
+                  Please select an image to upload.
+                </Typography>
+              )}
+
+              
+              </DialogContent>
+              <DialogActions>
+              {croppedImage && (
+                <Button color="secondary" onClick={handleReplaceImage}>
+                  Delete
+                </Button>
+              )}
+              <Button onClick={() => setCropDialog(false)}>Cancel</Button>
+              <Button variant="contained"
+                onClick={() => {
+                  setCropDialog(false);
+                }}
+                disabled={!croppedImage}
+              >
+                Save
+              </Button>
+              </DialogActions>
+            </Dialog>
         <TextField
           label="Username (Format ex: Abc1234)"
           variant="outlined"
