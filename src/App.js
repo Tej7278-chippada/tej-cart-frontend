@@ -20,6 +20,7 @@ import AllProducts from './components/Seller/allProducts';
 import SellerProductDetails from './components/Seller/SellerProductDetails';
 import SellerProfile from './components/Seller/SellerProfile';
 import UserProfile from './components/UserProfile';
+import OrderPage from './components/Products/OrderPage';
 // import HomeEditor from './components/Products/Home/HomeEditor';
 // import HomePage from './components/Products/Home/HomePage';
 
@@ -45,9 +46,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/user/:id" element={
-            <PrivateRoute>
+          <PrivateRoute>
             <UserProfile />
-            </PrivateRoute>} />
+          </PrivateRoute>} 
+        />
+        <Route path="/order/:id" element={
+          <PrivateRoute>
+            <OrderPage />
+          </PrivateRoute>} 
+        />
         <Route path="/register" element={<Register />} />
         <Route path="/sellerRegister" element={<SellerRegister />} />
         <Route path="/sellerLogin" element={<SellerLogin />} />

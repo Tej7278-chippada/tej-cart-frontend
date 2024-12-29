@@ -27,6 +27,8 @@ const refreshAuthToken = async () => {
       localStorage.removeItem('authToken');
       localStorage.removeItem('authTokens');
       localStorage.removeItem('tokenUsername');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('currentPage');
       window.location.reload();
     }
   }
@@ -89,6 +91,12 @@ export const fetchProductById = async (id) => {
   return await API.get(`/api/products/${id}`, { headers });
 };
 
+export const fetchProductStockCount = async (id) => {
+  const authToken = localStorage.getItem('authToken');
+  const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+  
+  return await API.get(`/api/products/${id}/stock`, { headers });
+};
 
 export const addProduct = (data) => API.post('/api/products/add/products', data, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const updateProduct = (id, data) => API.put(`/api/products/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } });
@@ -115,8 +123,37 @@ export const addComment = async (id, comment) => {
       throw error;
   }
 };
+export const addDeliveryAddresses = async (deliveryAddresses) => {
+  const authToken = localStorage.getItem('authToken');
+  const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
 
-  
+  try {
+      const response = await API.post('/api/auth/address', deliveryAddresses, { headers });
+      return response.data;
+  } catch (error) {
+      console.error('Error adding deliveryAddresses:', error);
+      throw error;
+  }
+};
+
+export const fetchUserData = async () => {
+  const authToken = localStorage.getItem('authToken');
+  const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+
+  try {
+      const response = await API.post('/api/auth', { headers });
+      return response.data;
+  } catch (error) {
+      console.error('Error adding deliveryAddresses:', error);
+      throw error;
+  }
+};
+// src/api/api.js
+// export const fetchUserData0 = async () => API.get('/api/auth');
+// export const saveAddress = async (address) => API.post('/api/auth/address', address);
+export const fetchUserOrders = async () => API.get('/api/auth/orders');
+export const saveOrder = async (order) => API.post('/api/orders', order);
+
 export const fetchWishlist = async () => {
   const authToken = localStorage.getItem('authToken');
   return await API.get('/api/wishlist', {

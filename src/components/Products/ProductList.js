@@ -330,7 +330,7 @@ function ProductList() {
 
 
 
-          <Link to="/admin" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px' }}>Admin Page</Link>
+          {/* <Link to="/admin" style={{ color: 'blue', textDecoration: 'none', marginRight: '15px' }}>Admin Page</Link> */}
 
           <Button
             variant="contained"
@@ -502,14 +502,14 @@ function ProductList() {
                           }}>
                           Description: {product.description}
                         </Typography>
-                        <Grid item xs={6} sm={4}>
+                        {/* <Grid item xs={6} sm={4}>
                           <Typography variant="body1" style={{ fontWeight: 500 }}>
                             Seller Details:
                           </Typography>
                           <Typography variant="body2" color="textSecondary">
                             {product.sellerTitle}
                           </Typography>
-                        </Grid>
+                        </Grid> */}
                       </CardContent>
                     </Card>
 

@@ -1,13 +1,13 @@
 // src/components/ProductDetailID.js
 import React, { useEffect, useState } from 'react';
-import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress } from '@mui/material';
+import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress, Button, Snackbar, Alert } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { addToWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
 import SkeletonProductDetail from './SkeletonProductDetail';
@@ -29,6 +29,9 @@ function ProductDetailID({ onClose, user }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication
   const [likeLoading, setLikeLoading] = useState(false); // For like progress
   const [wishLoading, setWishLoading] = useState(false); // For like progress
+  const navigate = useNavigate();
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
+  const { productId } = useParams();
 
   useEffect(() => {
     // setLoading(true);
@@ -195,6 +198,20 @@ function ProductDetailID({ onClose, user }) {
       document.body.removeChild(tempInput);
     }
   };
+
+  const handleBuyNow = () => {
+    if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
+    if (product.stockCount > 0) {
+      navigate(`/order/${id}`, { state: { product } });
+    } else {
+      setSnackbar({ open: true, message: "Product is out of stock.", severity: "warning" });
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
 
   if (loading || !product) {
     return (
@@ -393,7 +410,22 @@ function ProductDetailID({ onClose, user }) {
                       {product.deliveryDays}
                     </Typography>
                   </Grid>
-
+                  <Grid item xs={6} sm={4}>
+                  <Typography variant="body2" color={product.stockCount > 0 ? "green" : "red"}>
+                    {product.stockCount > 0 ? `In Stock (${product.stockCount} available)` : "Out of Stock"}
+                  </Typography>
+                  </Grid>
+                  <Grid item xs={6} sm={4}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleBuyNow}
+                      disabled={product.stockCount === 0}
+                      style={{ marginTop: "1rem" }}
+                    >
+                      Buy Now
+                    </Button>
+                  </Grid>
                 </Grid>
               </Box></Box>
           </Box>
@@ -444,6 +476,14 @@ function ProductDetailID({ onClose, user }) {
               {product.sellerTitle}
             </Typography>
           </Grid>
+          <Grid item xs={6} sm={4}>
+            <Typography variant="body1" style={{ fontWeight: 500 }}>
+              Seller Id:
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {product.sellerId}
+            </Typography>
+          </Grid>
 
         </div>
         {/* Large Image Dialog with Zoom */}
@@ -458,6 +498,16 @@ function ProductDetailID({ onClose, user }) {
           product={product} // Pass the current product
           onCommentAdded={onCommentAdded}  // Passing the comment added handler
         />
+        <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
       </Box>
     </Layout>
   );
