@@ -76,6 +76,10 @@ const Header = ({ username }) => {
     localStorage.removeItem('tokenUsername'); 
     localStorage.removeItem('userId'); 
     localStorage.removeItem('currentPage'); 
+    localStorage.removeItem('rzp_checkout_anon_id'); 
+    localStorage.removeItem('rzp_device_id'); 
+    localStorage.removeItem('rzp_stored_checkout_id'); 
+    // localStorage.clear();
     navigate('/');
   };
   
@@ -144,13 +148,18 @@ const Header = ({ username }) => {
       setSearchResults([]);
     }
   };
+
+  const openUserProfile = () => {
+    const userId = localStorage.getItem('userId'); 
+    navigate(`/user/${userId}`, { replace: true });
+  };
   
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
         <Typography variant={isMobile ? "h6" : "h5"} component="div" sx={{ flexGrow: 1 }}>
-          <Link to="/" style={{ color: 'inherit', textDecoration: 'none', display: 'inline-block' }}>
+          <Link to="/productList" style={{ color: 'inherit', textDecoration: 'none', display: 'inline-block' }}>
             TejCart
           </Link>
         </Typography>
@@ -225,6 +234,7 @@ const Header = ({ username }) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
+                <MenuItem onClick={() => openUserProfile()}>My Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 <MenuItem onClick={handleSwitchProfile}>Switch Profile</MenuItem>
               </Menu>

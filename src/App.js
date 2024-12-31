@@ -21,6 +21,7 @@ import SellerProductDetails from './components/Seller/SellerProductDetails';
 import SellerProfile from './components/Seller/SellerProfile';
 import UserProfile from './components/UserProfile';
 import OrderPage from './components/Products/OrderPage';
+import MyOrders from './components/Products/MyOrders';
 // import HomeEditor from './components/Products/Home/HomeEditor';
 // import HomePage from './components/Products/Home/HomePage';
 
@@ -74,7 +75,11 @@ function App() {
             <SellerPrivateRoute>
             <SellerProfile />
             </SellerPrivateRoute>} />
-
+        <Route path="/my-orders" element={
+          <PrivateRoute>
+            <MyOrders/>
+            </PrivateRoute>
+          } />
 
 
         {/* Dynamic route for chat page  path="/chat-:username"*/} 

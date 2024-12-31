@@ -1,6 +1,7 @@
+// components/Products/Orderpage.js
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, TextField, Grid, Snackbar, Alert, Stepper, Step, StepLabel, List, ListItem, ListItemText, Paper, IconButton, Card, Avatar, CardContent } from "@mui/material";
-import API, { addDeliveryAddresses, fetchProductById, fetchProductStockCount } from "../../api/api";
+import { Box, Typography, Button, TextField, Grid, Snackbar, Alert, Stepper, Step, StepLabel, List, ListItem, ListItemText, Paper, IconButton, Card, Avatar, CardContent, Tooltip } from "@mui/material";
+import API, { addDeliveryAddresses, fetchProductById, fetchProductStockCount, saveOrder, sendOrderConfirmationEmail } from "../../api/api";
 import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../Layout";
 import SkeletonProductDetail from "./SkeletonProductDetail";
@@ -136,6 +137,66 @@ const OrderPage = ({ user }) => {
     }
   };
 
+  const handlePaymentComplete = async (paymentStatus) => {
+    if (paymentStatus === "success") {
+      console.log("Selected Address for Order:", selectedAddress);
+
+      try {
+        const userSelectedAddress = {
+          name: selectedAddress.name,
+          phone: selectedAddress.phone,
+          email: selectedAddress.email,
+          address: {
+            street: selectedAddress.address.street,
+            area: selectedAddress.address.area,
+            city: selectedAddress.address.city,
+            state: selectedAddress.address.state,
+            pincode: selectedAddress.address.pincode,
+          },
+        };
+  
+        const orderData = {
+          productId: product._id,
+          deliveryAddress: userSelectedAddress,
+          paymentStatus: "Completed",
+        };
+  
+        const response = await saveOrder(orderData);
+        if (response.status === 201) {
+          try {
+            const emailPayload = {
+              email: selectedAddress.email,
+              product: {
+                title: product.title,
+                price: product.price,
+                media: product.media[0],
+              },
+              deliveryAddress: userSelectedAddress,
+              sellerTitle: product.sellerTitle,
+            };
+  
+            await sendOrderConfirmationEmail(emailPayload);
+            console.log("Order email sent successfully");
+  
+            setActiveStep(2); // Move to order confirmation step
+          } catch (emailError) {
+            console.error("Failed to send email:", emailError);
+            alert("Order placed, but email sending failed.");
+          }
+        } else {
+          console.error("Error saving the order");
+          alert("Failed to place the order. Please try again.");
+        }
+      } catch (err) {
+        console.error("Error completing the order:", err);
+        alert("Failed to place the order. Please try again.");
+      }
+    } else {
+      alert("Payment failed. Please try again.");
+    }
+  };
+  
+
   const calculateDeliveryDate = (days) => {
     const deliveryDate = new Date();
     deliveryDate.setDate(deliveryDate.getDate() + days);
@@ -167,9 +228,16 @@ const OrderPage = ({ user }) => {
     <Layout>
       <Box p={2}>
         <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-          <Typography variant="h5" sx={{ ml: activeStep > 0 ? 1 : 1 }}>
-            Order Page
-          </Typography>
+          
+          <IconButton >
+          <Tooltip title="Back to product" arrow placement="top">
+            <ArrowBackRoundedIcon onClick={() => navigate(`/product/${id}`)} />
+            </Tooltip>
+            <Typography variant="h5" sx={{ ml: activeStep > 0 ? 1 : 1 }}>
+              Order Page
+            </Typography>
+          </IconButton>
+         
           <Typography variant="body2" color="error">
             Time remaining: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}
           </Typography>
@@ -284,9 +352,6 @@ const OrderPage = ({ user }) => {
                     </ListItem>
                   ))}
                 </List>
-                {/* {stockWarningMessage && <Snackbar open={true}   >
-              <Alert severity="error">{stockWarningMessage}</Alert>
-            </Snackbar>} */}
                 {stockWarningMessage && <p style={{ color: 'red', float: 'inline-start', marginRight: '10px' }}>{stockWarningMessage}</p>}
                 <Button
                   variant="contained"
@@ -314,13 +379,11 @@ const OrderPage = ({ user }) => {
               <PaymentForm
                 amount={product.price}
                 stockCountId={stockCountId}
-                onPaymentComplete={(paymentStatus) => {
-                  if (paymentStatus === "success") {
-                    setActiveStep(2);
-                  } else {
-                    alert("Payment failed. Please try again.");
-                  }
-                }}
+                name={selectedAddress.name}
+                email={selectedAddress.email}
+                contact={selectedAddress.phone}
+                productDesc={product.title}
+                onPaymentComplete={handlePaymentComplete} // Updated logic
               />
             </Box>
           )}
@@ -332,9 +395,12 @@ const OrderPage = ({ user }) => {
               <Typography variant="h5">Order Confirmation</Typography>
               <Typography>Product: {product.title}</Typography>
               <Typography>Price: ₹{product.price}</Typography>
-              <Button variant="contained" onClick={() => alert("Go to My Orders")}>
-                Go to My Orders
-              </Button>
+              <Button
+          variant="contained"
+          onClick={() => navigate("/my-orders")} // Redirect to MyOrders.js
+        >
+          Go to My Orders
+        </Button>
             </Box>
           )}
         </Box>

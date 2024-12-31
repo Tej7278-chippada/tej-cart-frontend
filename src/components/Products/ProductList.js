@@ -6,6 +6,7 @@ import { Grid } from "@mui/material";
 import ProductDetail from './ProductDetail';
 import Layout from '../Layout';
 import { useTheme } from '@emotion/react';
+import LocalMallRoundedIcon from '@mui/icons-material/LocalMallRounded';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link, useNavigate } from 'react-router-dom';
@@ -373,6 +374,26 @@ function ProductList() {
             {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Filter</span> */}
           </Button>
           <Button
+            variant="contained"
+            onClick={() => navigate("/my-orders")}
+            sx={{
+              backgroundColor: '#1976d2', // Primary blue
+              color: '#fff',
+              padding: '8px 16px',
+              borderRadius: '24px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+              '&:hover': {
+                backgroundColor: '#1565c0', // Darker shade on hover
+              },
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px', 
+            }}
+          >
+            <LocalMallRoundedIcon sx={{ fontSize: '20px' }} />
+            {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Filter</span> */}
+          </Button>
+          {/* <Button
               variant="contained"
               onClick={() => openUserProfile()}
               sx={{
@@ -390,8 +411,8 @@ function ProductList() {
               }}
             >
               <AccountCircleIcon sx={{ fontSize: '20px' }} />
-              {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Add Product</span> */}
-            </Button>
+              <span style={{ fontSize: '14px', fontWeight: '500' }}>Add Product</span>
+            </Button> */}
         </Toolbar>
         {/* Filter Floating Card */}
         {filterOpen && (
@@ -484,14 +505,17 @@ function ProductList() {
                         <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
                           Gender: {product.gender}
                         </Typography>
-                        <Typography variant="body2" color={product.stockStatus === 'In Stock' ? 'green' : 'red'} style={{ display: 'inline-block', marginBottom: '0.5rem' }}>
+                        {/* <Typography variant="body2" color={product.stockStatus === 'In Stock' ? 'green' : 'red'} style={{ display: 'inline-block', marginBottom: '0.5rem' }}>
                           Stock Status: {product.stockStatus}
+                        </Typography> */}
+                        <Typography variant="body2" color={product.stockCount > 0 ? "green" : "red"} style={{ marginBottom: '0.5rem' }}>
+                          {product.stockCount > 0 ? `In Stock (${product.stockCount} available)` : "Out of Stock"}
                         </Typography>
-                        {product.stockStatus === 'In Stock' && (
+                        {/* {product.stockStatus === 'In Stock' && (
                           <Typography variant="body2" color="textSecondary" style={{ display: 'inline-block', float: 'right', marginBottom: '0.5rem' }}>
                             Stock Count: {product.stockCount}
                           </Typography>
-                        )}
+                        )} */}
                         <Typography
                           variant="body2"
                           color="textSecondary"

@@ -151,8 +151,24 @@ export const fetchUserData = async () => {
 // src/api/api.js
 // export const fetchUserData0 = async () => API.get('/api/auth');
 // export const saveAddress = async (address) => API.post('/api/auth/address', address);
-export const fetchUserOrders = async () => API.get('/api/auth/orders');
-export const saveOrder = async (order) => API.post('/api/orders', order);
+export const fetchUserOrders0 = async () => API.get('/api/orders/my-orders');
+export const fetchUserOrders = async () => {
+  const authToken = localStorage.getItem("authToken");
+  const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+  return await API.get("/api/orders/my-orders", { headers });
+};
+// export const saveOrder = async (order) => API.post('/api/orders', order);
+export const saveOrder = async (order) => {
+  const authToken = localStorage.getItem("authToken");
+  const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+  return await API.post("/api/orders", order, { headers });
+};
+
+export const sendOrderConfirmationEmail = async (payload) => {
+  const authToken = localStorage.getItem("authToken");
+  const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+  return await API.post("/api/orders/send-email", payload, { headers });
+};
 
 export const fetchWishlist = async () => {
   const authToken = localStorage.getItem('authToken');
