@@ -1,6 +1,6 @@
 // src/components/ProductDetailID.js
 import React, { useEffect, useState } from 'react';
-import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress, Button, Snackbar, Alert } from '@mui/material';
+import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress, Button, Snackbar, Alert, Avatar } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { addToWishlist, fetchOrderById, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
@@ -264,8 +264,19 @@ function OrderDetails({ onClose, user }) {
                     scrollbarWidth: 'none',
                     scrollbarColor: '#888 transparent',
                     // borderRadius: '8px',
-                    gap: '0.2rem', height: '300px',
+                    gap: '0.2rem', 
+                    // height: '300px',
                   }}>
+                    
+                    {order.productPic ? (
+                      <Avatar
+                        src={`data:image/jpeg;base64,${order.productPic}`} // Render the image
+                        alt={order.productTitle}
+                        sx={{ width: 80, height: 120, margin: 2, borderRadius: '10px' }}
+                      />
+                    ) : (
+                      <p>No image available</p>
+                    )}
                     {/* {product.media && product.media.length > 0 ? (
                       product.media.map((base64Image, index) => (
                         <img
@@ -402,7 +413,7 @@ function OrderDetails({ onClose, user }) {
                       marginBottom: '0.5rem',
                       color: '#333'
                     }}>
-                      {order.product.title}
+                      {order.productTitle}
                     </Typography>
 
                   </Grid>
@@ -466,6 +477,14 @@ function OrderDetails({ onClose, user }) {
                     <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
                       Address: {`${order.userDeliveryAddresses[0]?.address.street || "N/A"}, ${order.userDeliveryAddresses[0]?.address.area || "N/A"}, ${order.userDeliveryAddresses[0]?.address.city || "N/A"}`},
                       <br/> {`${order.userDeliveryAddresses[0]?.address.state || "N/A"} - ${order.userDeliveryAddresses[0]?.address.pincode || "N/A"}`}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6} sm={4}>
+                    <Typography variant="body1" style={{ fontWeight: 500 }}>
+                      Seller Title:
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                    {order.sellerTitle}
                     </Typography>
                   </Grid>
                   {/* <Grid item xs={6} sm={4}>

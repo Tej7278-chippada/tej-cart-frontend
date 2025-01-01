@@ -1,6 +1,6 @@
 // src/components/orders/MyOrders.js
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Grid, Card, CardContent, Tooltip, CardMedia } from "@mui/material";
+import { Box, Typography, Grid, Card, CardContent, Tooltip, CardMedia, Avatar } from "@mui/material";
 import { fetchUserOrders } from "../../api/api";
 import Header from "../Header";
 import Footer from "../Footer";
@@ -82,7 +82,7 @@ const MyOrders = () => {
                             // marginBottom: '1rem'
                             height: '210px'
                           }} >
-                            {order.product.media && order.product.media.map((base64Image, index) => (
+                            {/* {order.product.media && order.product.media.map((base64Image, index) => (
                               <img
                                 key={index}
                                 src={`data:image/jpeg;base64,${base64Image}`}
@@ -95,7 +95,16 @@ const MyOrders = () => {
                                   cursor: 'pointer' // Make the image look clickable
                                 }}
                               />
-                            ))}
+                            ))} */}
+                            {order.productPic ? (
+                              <Avatar
+                                src={`data:image/jpeg;base64,${order.productPic}`} // Render the image
+                                alt={order.productTitle}
+                                sx={{ width: 80, height: 120, margin: 2, borderRadius: '10px' }}
+                              />
+                            ) : (
+                              <p>No image available</p>
+                            )}
                           </div>
                           
                         </CardMedia>

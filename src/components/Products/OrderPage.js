@@ -157,9 +157,12 @@ const OrderPage = ({ user }) => {
   
         const orderData = {
           productId: product._id,
+          productTitle: product.title,
+          productPic: product.media[0], // Include the first product image
           orderPrice: product.price,
           deliveryAddress: userSelectedAddress,
           paymentStatus: "Completed",
+          sellerTitle: product.sellerTitle,
         };
   
         const response = await saveOrder(orderData);
