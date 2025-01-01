@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress, Button, Snackbar, Alert } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import { addToWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
+import { addToWishlist, fetchOrderById, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -13,7 +13,8 @@ import { useTheme } from '@emotion/react';
 import SkeletonProductDetail from './SkeletonProductDetail';
 import ImageZoomDialog from './ImageZoomDialog';
 import ShareIcon from '@mui/icons-material/Share'; // Import the share icon
-
+import HeartBrokenIcon from '@mui/icons-material/HeartBroken';
+import LocalMallRoundedIcon from '@mui/icons-material/LocalMallRounded';
 
 function OrderDetails({ onClose, user }) {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -32,96 +33,99 @@ function OrderDetails({ onClose, user }) {
   const navigate = useNavigate();
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
   const { productId } = useParams();
+  const [ order, setOrder ] = useState(null);
+  const [hoveredId, setHoveredId] = useState(null);
+  
 
   useEffect(() => {
     // setLoading(true);
-    const fetchProductDetails = async () => {
+    const fetchOrderDetails = async () => {
       setLoading(true);
       try {
         const authToken = localStorage.getItem('authToken');
         setIsAuthenticated(!!authToken); // Check if user is authenticated
 
-        const response = await fetchProductById(id);
-        setProduct({
+        const response = await fetchOrderById(id);
+        setOrder({
           ...response.data,
-          likedByUser: response.data.likedByUser || false, // Set the liked status
+          // likedByUser: response.data.likedByUser || false, // Set the liked status
         });
-        if (authToken) {
-          const wishlistResponse = await fetchWishlist();
-          const wishlistProducts = wishlistResponse.data.wishlist.map((item) => item._id);
-          setWishlist(new Set(wishlistProducts));
-        }
+        // if (authToken) {
+        //   const wishlistResponse = await fetchWishlist();
+        //   const wishlistProducts = wishlistResponse.data.wishlist.map((item) => item._id);
+        //   setWishlist(new Set(wishlistProducts));
+        // }
       } catch (error) {
         console.error('Error fetching product details:', error);
       } finally {
         setLoading(false);
       }
     };
-    if (product) {
-      // Find the updated product in the product list
+    // if (product) {
+    //   // Find the updated product in the product list
 
 
-      // Initialize wishlist state based on the product's `isInWishlist` property
-      const fetchUserWishlist = async () => {
-        try {
-          const response = await fetchWishlist();
-          const wishlistProducts = response.data.wishlist.map((item) => item._id);
-          setWishlist(new Set(wishlistProducts));
-        } catch (error) {
-          console.error('Error fetching wishlist:', error);
-        }
-      };
+    //   // Initialize wishlist state based on the product's `isInWishlist` property
+    //   const fetchUserWishlist = async () => {
+    //     try {
+    //       const response = await fetchWishlist();
+    //       const wishlistProducts = response.data.wishlist.map((item) => item._id);
+    //       setWishlist(new Set(wishlistProducts));
+    //     } catch (error) {
+    //       console.error('Error fetching wishlist:', error);
+    //     }
+    //   };
 
-      if (product) {
+    //   if (product) {
 
-        fetchUserWishlist();
-      }
-    }
-    fetchProductDetails();
+    //     fetchUserWishlist();
+    //   }
+    // }
+    fetchOrderDetails();
     setLoading(false);
-  }, [product, id]);
+  }, [order,id]); // [product, id]
 
-  const handleLike = async (productId) => {
-    if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
-    setLikeLoading(true); // Start the progress indicator
-    try {
-      const response = await likeProduct(productId);
-      const updatedLikes = response.likes;
+  // const handleLike = async (productId) => {
+  //   if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
+  //   setLikeLoading(true); // Start the progress indicator
+  //   try {
+  //     const response = await likeProduct(productId);
+  //     const updatedLikes = response.likes;
 
-      // Toggle likedByUser and update the likes count
-      setProduct((prevProduct) =>
-        prevProduct._id === productId
-          ? {
-            ...prevProduct,
-            likes: updatedLikes,
-            likedByUser: !prevProduct.likedByUser, // Toggle liked state
-          }
-          : prevProduct
-      );
-    } catch (error) {
-      console.error('Error toggling like:', error);
-      alert('Error toggling like.');
-    } finally {
-      setLikeLoading(false); // End the progress indicator
-    }
-  };
-  const openComments = (product) => {
-    // setSelectedProduct(product);
-    setCommentPopupOpen(true);
-    // setSelectedProduct(product); // Pass the product to ensure it gets updated in the popup
-  };
+  //     // Toggle likedByUser and update the likes count
+  //     setProduct((prevProduct) =>
+  //       prevProduct._id === productId
+  //         ? {
+  //           ...prevProduct,
+  //           likes: updatedLikes,
+  //           likedByUser: !prevProduct.likedByUser, // Toggle liked state
+  //         }
+  //         : prevProduct
+  //     );
+  //   } catch (error) {
+  //     console.error('Error toggling like:', error);
+  //     alert('Error toggling like.');
+  //   } finally {
+  //     setLikeLoading(false); // End the progress indicator
+  //   }
+  // };
+  // const openComments = (product) => {
+  //   // setSelectedProduct(product);
+  //   setCommentPopupOpen(true);
+  //   // setSelectedProduct(product); // Pass the product to ensure it gets updated in the popup
+  // };
 
-  const onCommentAdded = async () => {
-    try {
-      // const updatedProducts = await fetchProducts(); // This fetches all products after a comment is added
-      // setProducts(updatedProducts.data); // Update the product list in the state
-      // setCommentPopupOpen(false); // Close the CommentPopup
-    } catch (error) {
-      console.error("Error fetching products after comment added:", error);
-    } finally {
-      // setCommentPopupOpen(false); // Close the comment popup
-    }
-  };
+  // const onCommentAdded = async () => {
+  //   try {
+  //     // const updatedProducts = await fetchProducts(); // This fetches all products after a comment is added
+  //     // setProducts(updatedProducts.data); // Update the product list in the state
+  //     // setCommentPopupOpen(false); // Close the CommentPopup
+  //   } catch (error) {
+  //     console.error("Error fetching products after comment added:", error);
+  //   } finally {
+  //     // setCommentPopupOpen(false); // Close the comment popup
+  //   }
+  // };
 
   // Function to open the zoomed image modal
   const handleImageClick = (image) => {
@@ -133,87 +137,87 @@ function OrderDetails({ onClose, user }) {
     setSelectedImage(null);
   };
 
-  const handleWishlistToggle = async (productId) => {
-    if (!isAuthenticated) return; // Prevent unauthenticated actions
-    setWishLoading(true); // Start the progress indicator
-    try {
-      if (wishlist.has(productId)) {
-        await removeFromWishlist(productId);
-        setWishlist((prevWishlist) => {
-          const newWishlist = new Set(prevWishlist);
-          newWishlist.delete(productId);
-          return newWishlist;
-        });
-        // alert('Product removed from wishlist!');
-      } else {
-        await addToWishlist(productId);
-        setWishlist((prevWishlist) => new Set([...prevWishlist, productId]));
-        // alert('Product added to wishlist!');
-      }
-    } catch (error) {
-      console.error('Error toggling wishlist:', error);
-      alert('Product already added on wishlist!');
-    } finally {
-      setWishLoading(false); // End the progress indicator
-    }
-  };
+  // const handleWishlistToggle = async (productId) => {
+  //   if (!isAuthenticated) return; // Prevent unauthenticated actions
+  //   setWishLoading(true); // Start the progress indicator
+  //   try {
+  //     if (wishlist.has(productId)) {
+  //       await removeFromWishlist(productId);
+  //       setWishlist((prevWishlist) => {
+  //         const newWishlist = new Set(prevWishlist);
+  //         newWishlist.delete(productId);
+  //         return newWishlist;
+  //       });
+  //       // alert('Product removed from wishlist!');
+  //     } else {
+  //       await addToWishlist(productId);
+  //       setWishlist((prevWishlist) => new Set([...prevWishlist, productId]));
+  //       // alert('Product added to wishlist!');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error toggling wishlist:', error);
+  //     alert('Product already added on wishlist!');
+  //   } finally {
+  //     setWishLoading(false); // End the progress indicator
+  //   }
+  // };
 
-  const handleShare = async (productId, productTitle) => {
-    const shareUrl = `${window.location.origin}/product/${productId}`;
-    const shareData = {
-      title: productTitle,
-      text: `Check out this amazing product: ${productTitle}`,
-      url: shareUrl,
-    };
+  // const handleShare = async (productId, productTitle) => {
+  //   const shareUrl = `${window.location.origin}/product/${productId}`;
+  //   const shareData = {
+  //     title: productTitle,
+  //     text: `Check out this amazing product: ${productTitle}`,
+  //     url: shareUrl,
+  //   };
 
-    // Check if Web Share API is supported
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (err) {
-        console.error('Error using Web Share API:', err);
-      }
-    } else if (navigator.clipboard && navigator.clipboard.writeText) {
-      // Fallback: Copy to clipboard if supported
-      try {
-        await navigator.clipboard.writeText(shareUrl);
-        alert(`The link has been copied to your clipboard: ${shareUrl}`);
-      } catch (err) {
-        console.error('Error copying text to clipboard:', err);
-        alert(`Unable to copy the link. Please manually share this URL: ${shareUrl}`);
-      }
-    } else {
-      // Fallback for browsers without clipboard API
-      const tempInput = document.createElement('textarea');
-      tempInput.value = shareUrl;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      try {
-        document.execCommand('copy');
-        alert(`The link has been copied to your clipboard: ${shareUrl}`);
-      } catch (err) {
-        console.error('Error using execCommand to copy:', err);
-        alert(`Unable to copy the link. Please manually share this URL: ${shareUrl}`);
-      }
-      document.body.removeChild(tempInput);
-    }
-  };
+  //   // Check if Web Share API is supported
+  //   if (navigator.share) {
+  //     try {
+  //       await navigator.share(shareData);
+  //     } catch (err) {
+  //       console.error('Error using Web Share API:', err);
+  //     }
+  //   } else if (navigator.clipboard && navigator.clipboard.writeText) {
+  //     // Fallback: Copy to clipboard if supported
+  //     try {
+  //       await navigator.clipboard.writeText(shareUrl);
+  //       alert(`The link has been copied to your clipboard: ${shareUrl}`);
+  //     } catch (err) {
+  //       console.error('Error copying text to clipboard:', err);
+  //       alert(`Unable to copy the link. Please manually share this URL: ${shareUrl}`);
+  //     }
+  //   } else {
+  //     // Fallback for browsers without clipboard API
+  //     const tempInput = document.createElement('textarea');
+  //     tempInput.value = shareUrl;
+  //     document.body.appendChild(tempInput);
+  //     tempInput.select();
+  //     try {
+  //       document.execCommand('copy');
+  //       alert(`The link has been copied to your clipboard: ${shareUrl}`);
+  //     } catch (err) {
+  //       console.error('Error using execCommand to copy:', err);
+  //       alert(`Unable to copy the link. Please manually share this URL: ${shareUrl}`);
+  //     }
+  //     document.body.removeChild(tempInput);
+  //   }
+  // };
 
-  const handleBuyNow = () => {
-    if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
-    if (product.stockCount > 0) {
-      navigate(`/order/${id}`, { state: { product } });
-    } else {
-      setSnackbar({ open: true, message: "Product is out of stock.", severity: "warning" });
-    }
-  };
+  // const handleBuyNow = () => {
+  //   if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
+  //   if (product.stockCount > 0) {
+  //     navigate(`/order/${id}`, { state: { product } });
+  //   } else {
+  //     setSnackbar({ open: true, message: "Product is out of stock.", severity: "warning" });
+  //   }
+  // };
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
 
-  if (loading || !product) {
+  if (loading || !order) {
     return (
       <Layout>
         {/* <SkeletonCards /> */}
@@ -262,7 +266,7 @@ function OrderDetails({ onClose, user }) {
                     // borderRadius: '8px',
                     gap: '0.2rem', height: '300px',
                   }}>
-                    {product.media && product.media.length > 0 ? (
+                    {/* {product.media && product.media.length > 0 ? (
                       product.media.map((base64Image, index) => (
                         <img
                           key={index}
@@ -290,9 +294,49 @@ function OrderDetails({ onClose, user }) {
                           flexShrink: 0,
                         }}
                       />
-                    )}
+                    )} */}
+                    
                   </div>
-                </CardMedia></Box></Box>
+                  <IconButton
+                  onClick={(event) => {
+                    event.stopPropagation(); // Prevent triggering the parent onClick
+                    navigate(`/product/${order.product}`)
+                  }}
+                  onMouseEnter={() => setHoveredId(order._id)} // Set hoveredId to the current button's ID
+                  onMouseLeave={() => setHoveredId(null)} // Reset hoveredId when mouse leaves
+                  style={{
+                    position: 'relative', float:'right', 
+                    bottom: '6px',
+                    right: '8px',
+                    backgroundColor: hoveredId === order._id ? '#ffe6e6' : 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: hoveredId === order._id ? '16px' : '16px',
+                    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center', color: 'red'
+                    // transition: 'all 0.2s ease',
+                  }}
+                >
+                  {hoveredId === order._id && (
+                    <span
+                      style={{
+                        fontSize: '14px', marginLeft:'16px',
+                        color: '#ff0000',
+                        marginRight: '8px',
+                        whiteSpace: 'nowrap',
+                        opacity: hoveredId === order._id ? 1 : 0,
+                        transform: hoveredId === order._id ? 'translateX(0)' : 'translateX(10px)',
+                        transition: 'opacity 0.3s, transform 0.3s',
+                      }}
+                    >
+                      See Product Details
+                    </span>
+                  )}
+                  <LocalMallRoundedIcon />
+                </IconButton>
+                </CardMedia>
+                </Box>
+                
+                </Box>
 
             <Box sx={{
               flex: 3,
@@ -308,7 +352,7 @@ function OrderDetails({ onClose, user }) {
                 {/* Product Details */}
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <IconButton
+                    {/* <IconButton
                       style={{
                         // display: 'inline-block',
                         float: 'right',
@@ -321,8 +365,8 @@ function OrderDetails({ onClose, user }) {
                       <Tooltip title="Share this product" arrow placement="right">
                         <ShareIcon />
                       </Tooltip>
-                    </IconButton>
-                    <IconButton
+                    </IconButton> */}
+                    {/* <IconButton
                       style={{ display: 'inline-block', float: 'right', fontWeight: '500', backgroundColor: 'rgba(255, 255, 255, 0.8)', boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)' }}
                       onClick={() => handleWishlistToggle(product._id)}
                       sx={{
@@ -352,70 +396,84 @@ function OrderDetails({ onClose, user }) {
                           <FavoriteBorderIcon />
                         )}
                         </span></Tooltip>
-                    </IconButton>
+                    </IconButton> */}
                     <Typography variant="h4" style={{
                       fontWeight: 'bold',
                       marginBottom: '0.5rem',
                       color: '#333'
                     }}>
-                      {product.title}
+                      {order.product.title}
                     </Typography>
 
                   </Grid>
                   <Grid item xs={6} sm={4}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
-                      Product Category:
+                      Order Status:
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {product.categories}
+                    {order.paymentStatus}
                     </Typography>
                   </Grid>
                   <Grid item xs={6} sm={4}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
-                      Gender:
+                      Order Price:
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {product.gender}
+                      ₹{order.orderPrice}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6} sm={4}>
+                  <Grid item xs={12} sm={12}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
-                      Price:
+                      Ordered on:
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      ₹{product.price}
+                      {new Date(order.createdAt).toLocaleString()}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6} sm={4}>
+                  
+                  {/* <Grid item xs={6} sm={4}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
                       Stock Status:
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       {product.stockStatus}
                     </Typography>
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
+                  </Grid> */}
+                  {/* <Grid item xs={6} sm={4}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
                       Stock Count:
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       {product.stockCount}
                     </Typography>
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
+                  </Grid> */}
+                  <Grid item xs={12} sm={12}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
-                      Delivery Days:
+                      Delivery Address Details:
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
+                    {/* <Typography variant="body2" color="textSecondary">
                       {product.deliveryDays}
+                    </Typography> */}
+                    <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
+                      Name: {order.userDeliveryAddresses[0]?.name || "N/A"}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
+                      Phone: {order.userDeliveryAddresses[0]?.phone || "N/A"}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
+                      Email: {order.userDeliveryAddresses[0]?.email || "N/A"}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
+                      Address: {`${order.userDeliveryAddresses[0]?.address.street || "N/A"}, ${order.userDeliveryAddresses[0]?.address.area || "N/A"}, ${order.userDeliveryAddresses[0]?.address.city || "N/A"}`},
+                      <br/> {`${order.userDeliveryAddresses[0]?.address.state || "N/A"} - ${order.userDeliveryAddresses[0]?.address.pincode || "N/A"}`}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6} sm={4}>
+                  {/* <Grid item xs={6} sm={4}>
                   <Typography variant="body2" color={product.stockCount > 0 ? "green" : "red"}>
                     {product.stockCount > 0 ? `In Stock (${product.stockCount} available)` : "Out of Stock"}
                   </Typography>
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
+                  </Grid> */}
+                  {/* <Grid item xs={6} sm={4}>
                     <Button
                       variant="contained"
                       color="primary"
@@ -425,12 +483,12 @@ function OrderDetails({ onClose, user }) {
                     >
                       Buy Now
                     </Button>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Box></Box>
           </Box>
 
-          <Grid item xs={12} sx={{ paddingTop: '2rem' }}>
+          {/* <Grid item xs={12} sx={{ paddingTop: '2rem' }}>
             <Grid2 sx={{
               bottom: '6px',
               right: '1rem', position: 'relative', display: 'inline-block', float: 'right',
@@ -467,8 +525,8 @@ function OrderDetails({ onClose, user }) {
             }}>
               {product.description}
             </Typography>
-          </Grid>
-          <Grid item xs={6} sm={4}>
+          </Grid> */}
+          {/* <Grid item xs={6} sm={4}>
             <Typography variant="body1" style={{ fontWeight: 500 }}>
               Seller Details:
             </Typography>
@@ -483,21 +541,21 @@ function OrderDetails({ onClose, user }) {
             <Typography variant="body2" color="textSecondary">
               {product.sellerId}
             </Typography>
-          </Grid>
+          </Grid> */}
 
         </div>
         {/* Large Image Dialog with Zoom */}
-        <ImageZoomDialog
+        {/* <ImageZoomDialog
           selectedImage={selectedImage}
           handleCloseImageModal={handleCloseImageModal}
           images={product.media} // Pass the full media array
-        />
-        <CommentPopup
+        /> */}
+        {/* <CommentPopup
           open={commentPopupOpen}
           onClose={() => setCommentPopupOpen(false)}
           product={product} // Pass the current product
           onCommentAdded={onCommentAdded}  // Passing the comment added handler
-        />
+        /> */}
         <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}

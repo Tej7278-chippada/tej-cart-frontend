@@ -32,7 +32,7 @@ const MyOrders = () => {
 
   const openProductDetail = (order) => {
     // setSelectedProduct(product);
-    navigate(`/order-details/${order.product._id}`);
+    navigate(`/order-details/${order._id}`);
   };
 
   return (
@@ -117,7 +117,7 @@ const MyOrders = () => {
                           <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
                             Ordered on: {new Date(order.createdAt).toLocaleString()}
                           </Typography>
-                          <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
+                          {/* <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
                             Name: {order.userDeliveryAddresses[0]?.name || "N/A"}
                           </Typography>
                           <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
@@ -129,7 +129,7 @@ const MyOrders = () => {
                           <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
                             Delivery Address: {`${order.userDeliveryAddresses[0]?.address.street || "N/A"}, ${order.userDeliveryAddresses[0]?.address.area || "N/A"}, ${order.userDeliveryAddresses[0]?.address.city || "N/A"}`},
                             <br/> {`${order.userDeliveryAddresses[0]?.address.state || "N/A"} - ${order.userDeliveryAddresses[0]?.address.pincode || "N/A"}`}
-                          </Typography>
+                          </Typography> */}
                           
                           
                         </CardContent>
