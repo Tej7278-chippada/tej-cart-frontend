@@ -157,6 +157,7 @@ const OrderPage = ({ user }) => {
   
         const orderData = {
           productId: product._id,
+          orderPrice: product.price,
           deliveryAddress: userSelectedAddress,
           paymentStatus: "Completed",
         };
