@@ -264,7 +264,7 @@ function OrderDetails({ onClose, user }) {
                     scrollbarWidth: 'none',
                     scrollbarColor: '#888 transparent',
                     // borderRadius: '8px',
-                    gap: '0.2rem', 
+                    gap: '1rem', 
                     // height: '300px',
                   }}>
                     
@@ -272,10 +272,12 @@ function OrderDetails({ onClose, user }) {
                       <Avatar
                         src={`data:image/jpeg;base64,${order.productPic}`} // Render the image
                         alt={order.productTitle}
-                        sx={{ width: 80, height: 120, margin: 2, borderRadius: '10px' }}
+                        sx={{ width: 210, height: 260, margin: 0, borderRadius: '10px' }}
                       />
                     ) : (
-                      <p>No image available</p>
+                      <Typography variant="body2" color="grey" align="center" marginLeft="1rem" marginTop="1rem" gutterBottom>
+                        No Product Image available
+                      </Typography>
                     )}
                     {/* {product.media && product.media.length > 0 ? (
                       product.media.map((base64Image, index) => (
@@ -306,9 +308,7 @@ function OrderDetails({ onClose, user }) {
                         }}
                       />
                     )} */}
-                    
-                  </div>
-                  <IconButton
+                    <IconButton
                   onClick={(event) => {
                     event.stopPropagation(); // Prevent triggering the parent onClick
                     navigate(`/product/${order.product}`)
@@ -317,7 +317,7 @@ function OrderDetails({ onClose, user }) {
                   onMouseLeave={() => setHoveredId(null)} // Reset hoveredId when mouse leaves
                   style={{
                     position: 'relative', float:'right', 
-                    bottom: '6px',
+                    bottom: '6px', marginTop: '1rem',
                     right: '8px',
                     backgroundColor: hoveredId === order._id ? '#ffe6e6' : 'rgba(255, 255, 255, 0.2)',
                     borderRadius: hoveredId === order._id ? '16px' : '16px',
@@ -344,6 +344,9 @@ function OrderDetails({ onClose, user }) {
                   )}
                   <LocalMallRoundedIcon />
                 </IconButton>
+                    
+                  </div>
+                  
                 </CardMedia>
                 </Box>
                 

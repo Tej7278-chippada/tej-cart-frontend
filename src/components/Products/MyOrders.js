@@ -100,10 +100,12 @@ const MyOrders = () => {
                               <Avatar
                                 src={`data:image/jpeg;base64,${order.productPic}`} // Render the image
                                 alt={order.productTitle}
-                                sx={{ width: 80, height: 120, margin: 2, borderRadius: '10px' }}
+                                sx={{ width: 180, height: 180, margin: 1, borderRadius: '10px' }}
                               />
                             ) : (
-                              <p>No image available</p>
+                              <Typography variant="body2" color="grey" align="center" marginLeft="1rem" marginTop="1rem" gutterBottom>
+                                No Product Image available
+                              </Typography>
                             )}
                           </div>
                           

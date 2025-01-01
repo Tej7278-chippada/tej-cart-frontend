@@ -53,7 +53,7 @@ const WishList = () => {
 
   return (
     <Layout>
-      <Box p={2} sx={{ margin: '0rem' }}>
+      <Box p={'4px'} sx={{ margin: '0rem' }}>
         <Typography variant="h5" align="left" marginLeft="1rem" marginTop="1rem" gutterBottom>
           Your Wishlist
         </Typography>
