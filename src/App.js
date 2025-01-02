@@ -23,6 +23,7 @@ import UserProfile from './components/UserProfile';
 import OrderPage from './components/Products/OrderPage';
 import MyOrders from './components/Products/MyOrders';
 import OrderDetails from './components/Products/OrderDetails';
+import SellerOrders from './components/Seller/SellerOrders';
 // import HomeEditor from './components/Products/Home/HomeEditor';
 // import HomePage from './components/Products/Home/HomePage';
 
@@ -72,10 +73,12 @@ function App() {
               <SellerProfile />
             </SellerPrivateRoute>
           } /> */}
-          <Route path="/seller/:id" element={
-            <SellerPrivateRoute>
-            <SellerProfile />
-            </SellerPrivateRoute>} />
+        <Route path="/seller/:id" element={
+          <SellerPrivateRoute>
+          <SellerProfile />
+        </SellerPrivateRoute>} />
+        <Route path="/sellerOrders" element={<SellerOrders />} />
+        
         <Route path="/my-orders" element={
           <PrivateRoute>
             <MyOrders/>

@@ -130,3 +130,21 @@ export const deleteSellerProfile = async (sellerId) => {
     throw error;
   }
 };
+
+// Fetch Seller Orders
+export const getSellerOrders = async (sellerId) => {
+  try {
+    const authTokenSeller = localStorage.getItem('authTokenSeller');
+    if (!authTokenSeller) {
+      throw new Error('No authentication token found.');
+    }
+
+    const response = await API.get('/api/sellerOrders/orders', {
+      headers: { Authorization: `Bearer ${authTokenSeller}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error in getSellerOrders:', error);
+    throw error;
+  }
+};
