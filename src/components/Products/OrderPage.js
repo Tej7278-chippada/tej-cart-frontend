@@ -1,12 +1,13 @@
 // components/Products/Orderpage.js
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, TextField, Grid, Snackbar, Alert, Stepper, Step, StepLabel, List, ListItem, ListItemText, Paper, IconButton, Card, Avatar, CardContent, Tooltip } from "@mui/material";
+import { Box, Typography, Button, TextField, Grid, Snackbar, Alert, Stepper, Step, StepLabel, List, ListItem, ListItemText, Paper, IconButton, Card, Avatar, CardContent, Tooltip, useMediaQuery } from "@mui/material";
 import API, { addDeliveryAddresses, fetchProductById, fetchProductStockCount, saveOrder, sendOrderConfirmationEmail } from "../../api/api";
 import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../Layout";
 import SkeletonProductDetail from "./SkeletonProductDetail";
 import PaymentForm from "./PaymentForm";
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import { useTheme } from "@emotion/react";
 
 const OrderPage = ({ user }) => {
   const [activeStep, setActiveStep] = useState(0);
@@ -22,7 +23,8 @@ const OrderPage = ({ user }) => {
     state: "",
     pincode: "",
   });
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { id } = useParams(); // Extract product ID from URL
   const [product, setProduct] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -251,45 +253,67 @@ const OrderPage = ({ user }) => {
             Time remaining: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}
           </Typography>
         </Box>
-        {/* Product Details */}
-        {product && (
-          <Card sx={{ display: 'flex', marginBottom: 1, borderRadius:'16px' }}>
-            <Avatar
-              src={`data:image/jpeg;base64,${product.media[0]}`} // Assuming the first image is the primary one
-              alt={product.title}
-              sx={{ width: 80, height: 120, margin: 2, borderRadius: '10px' }}
-            />
-            <CardContent>
-              <Typography variant="h6">{product.title}</Typography>
-              <Typography style={{ display: 'inline-block', float: 'right', marginBottom: '0.5rem' }}>Price: ₹{product.price}</Typography>
-              <Grid item xs={6} sm={4}>
-                <Typography variant="body2" color={stockCountId > 0 ? "green" : "red"}>
-                  {stockCountId > 0 ? `In Stock (${stockCountId} available)` : "Out of Stock"}
-                </Typography>
-              </Grid>
-              <Typography>Delivery in {product.deliveryDays} days</Typography>
-              {product.deliveryDays && (
+        <Box display="flex" gap={1} flexDirection={isMobile ? "column" : "row"} margin={isMobile ? "-10px" : "0"} marginBottom="1rem" >
+          <Box sx={{flex: 3, display: "flex", flexDirection: "column", gap: 1}}>
+            {/* Product Details */}
+            {product && (
+              <Card sx={{
+                display: "flex",
+                // flexDirection: "column",
+                // justifyContent: "space-between",
+                alignItems: "stretch",
+                borderRadius: "8px",
+                height: "100%",
+              }}>
+                {/* <Box sx={{ display: "flex", alignItems: "center", p: 2 }}> */}
+                <Avatar
+                  src={`data:image/jpeg;base64,${product.media[0]}`} // Assuming the first image is the primary one
+                  alt={product.title}
+                  sx={{ width: 80, height: 120, margin: 2, borderRadius: '10px' }}
+                />
+                <CardContent>
+                  <Typography variant="h6">{product.title}</Typography>
+                  <Typography style={{ display: 'inline-block', float: 'right', marginBottom: '0.5rem' }}>Price: ₹{product.price}</Typography>
+                  <Grid item xs={6} sm={4}>
+                    <Typography variant="body2" color={stockCountId > 0 ? "green" : "red"}>
+                      {stockCountId > 0 ? `In Stock (${stockCountId} available)` : "Out of Stock"}
+                    </Typography>
+                  </Grid>
+                  <Typography>Delivery in {product.deliveryDays} days</Typography>
+                  {product.deliveryDays && (
+                    <Typography>
+                      Estimated Delivery: {`Product will be delivered by ${calculateDeliveryDate(product.deliveryDays)}`}
+                    </Typography>
+                  )}
+                </CardContent>
+                {/* </Box> */}
+              </Card>
+            )}
+          </Box>
+          <Box sx={{flex: 2, display: "flex", flexDirection: "column", gap: 1}}>
+            {selectedAddress && (
+              <Paper elevation={2} sx={{
+                p: 2,
+                borderRadius: "8px",
+                display: "flex",
+                flexDirection: "column",
+                // justifyContent: "space-between",
+                height: "100%",
+              }}>
                 <Typography>
-                  Estimated Delivery: {`Product will be delivered by ${calculateDeliveryDate(product.deliveryDays)}`}
+                  <strong>Product will be delivered to:</strong>
                 </Typography>
-              )}
-            </CardContent>
-          </Card>
-        )}
-        {selectedAddress && (
-          <Paper elevation={2} sx={{ p: 2, mt: 1, borderRadius:'16px' }}>
-            <Typography>
-              <strong>Product will be delivered to:</strong>
-            </Typography>
-            <Typography>
-              {`${selectedAddress.name}, ${selectedAddress.phone}, ${selectedAddress.email}`}
-            </Typography>
-            <Typography>
-              {`${selectedAddress.address.street}, ${selectedAddress.address.area}, ${selectedAddress.address.city}, ${selectedAddress.address.state}, ${selectedAddress.address.pincode}`}
-            </Typography>
-          </Paper>
-        )}
-        <Card sx={{ marginTop:'10px', borderRadius:'16px'}}>
+                <Typography>
+                  {`${selectedAddress.name}, ${selectedAddress.phone}, ${selectedAddress.email}`}
+                </Typography>
+                <Typography>
+                  {`${selectedAddress.address.street}, ${selectedAddress.address.area}, ${selectedAddress.address.city}, ${selectedAddress.address.state}, ${selectedAddress.address.pincode}`}
+                </Typography>
+              </Paper>
+            )}
+          </Box>
+        </Box>
+        <Card sx={{ borderRadius:'8px', margin: `${ isMobile ? '-10px' : '0'}`}}>
           <Box p={1} mt="1rem" >
             <Stepper activeStep={activeStep} alternativeLabel>
               <Step>
@@ -308,7 +332,7 @@ const OrderPage = ({ user }) => {
                   <Button
                     variant="contained"
                     onClick={() => setIsAddAddressBoxOpen((prev) => !prev)}
-                    sx={{ mt: 2, mb: 2}}
+                    sx={{ mt: 2, mb: 2, mr: 1}}
                   >
                     Add New Address
                   </Button>
@@ -359,44 +383,50 @@ const OrderPage = ({ user }) => {
                 </Snackbar>}
                 <Box>
                   <Typography variant="h6" sx={{ mt: 1, ml: 1 }}>Select Delivery Address</Typography>
-                  <List>
+                  <Grid container spacing={1}>
                     {deliveryAddresses.map((deliveryAddress, index) => (
-                      <ListItem
-                        key={index}
-                        button="true"
-                        selected={selectedAddress === deliveryAddress}
-                        onClick={() => setSelectedAddress(deliveryAddress)}
-                        sx={{
-                          border: selectedAddress === deliveryAddress ? "2px solid blue" : "1px solid lightgray",
-                          borderRadius: 2,
-                          mb: 2,
-                        }}
-                      >
-                        <ListItemText
-                          primary={
-                            <>{`${deliveryAddress.name}, ${deliveryAddress.phone}, ${deliveryAddress.email}`}
-                              <br />
-                              {`${deliveryAddress.address.street}, ${deliveryAddress.address.area}, ${deliveryAddress.address.city}, ${deliveryAddress.address.state}, ${deliveryAddress.address.pincode}`}
-                            </>}
-                          secondary={
-                            <>
+                      <Grid item key={index} xs={12} sm={6} md={4} >
+                        <List sx={{ height: "100%", width:"100%" }}>
+                          <ListItem
+                            key={index}
+                            button="true"
+                            selected={selectedAddress === deliveryAddress}
+                            onClick={() => setSelectedAddress(deliveryAddress)}
+                            sx={{
+                              border: selectedAddress === deliveryAddress ? "2px solid blue" : "1px solid lightgray",
+                              borderRadius: 2,
+                              mb: 0,
+                              flexDirection: "column", // column for desktop, row for mobile to align text on middle
+                              height: "100%", // Make the ListItem fill the grid cell height
+                            }}
+                          >
+                            <ListItemText
+                              primary={
+                                <>{`${deliveryAddress.name}, ${deliveryAddress.phone}, ${deliveryAddress.email}`}
+                                  <br />
+                                  {`${deliveryAddress.address.street}, ${deliveryAddress.address.area}, ${deliveryAddress.address.city}, ${deliveryAddress.address.state}, ${deliveryAddress.address.pincode}`}
+                                </>}
+                              secondary={
+                                <>
 
-                              <br />
-                              <Typography sx={{ display: 'inline-block', float: 'right' }}>
-                                Added on: {new Date(deliveryAddress.createdAt).toLocaleString()} {/* toLocaleDateString for displaying date only */}
-                              </Typography>
-                            </>
-                          }
-                        />
-                      </ListItem>
+                                  <br />
+                                  <Typography sx={{ display: 'inline-block', float: 'right' }}>
+                                    Added on: {new Date(deliveryAddress.createdAt).toLocaleString()} {/* toLocaleDateString for displaying date only */}
+                                  </Typography>
+                                </>
+                              }
+                            />
+                          </ListItem>
+                        </List>
+                      </Grid>
                     ))}
-                  </List>
+                  </Grid>
                   {stockWarningMessage && <p style={{ color: 'red', float: 'inline-start', marginRight: '10px' }}>{stockWarningMessage}</p>}
                   <Button
                     variant="contained"
                     disabled={!selectedAddress || stockCountId === 0}
                     onClick={handleNext}
-                    sx={{ m: 1, mb: 2, float: 'right' }}
+                    sx={{ m: 1, mb: 2, mt: 3, float: 'right' }}
                   >
                     Proceed to Payment
                   </Button>
