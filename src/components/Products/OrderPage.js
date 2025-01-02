@@ -35,6 +35,7 @@ const OrderPage = ({ user }) => {
   const [stockWarningMessage, setStockWarningMessage] = useState('');
   const [stockCountId, setStockCountId] = useState(null); // Track only stock count
   const [isStockFetched, setIsStockFetched] = useState(false); // Track if stock data has been fetched
+  const [isAddAddressBoxOpen, setIsAddAddressBoxOpen] = useState(false); // to toggle the Add Address button
 
 
   useEffect(() => {
@@ -120,7 +121,7 @@ const OrderPage = ({ user }) => {
       const updatedAddresses = response.deliveryAddresses;
       // Sort addresses to ensure latest one is on top
       setDeliveryAddresses(updatedAddresses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-      setNewAddress({
+      setNewAddress({   // Clear input fields and close the box
         name: "",
         phone: "",
         email: "",
@@ -131,6 +132,7 @@ const OrderPage = ({ user }) => {
         pincode: "",
       });
       setAddressAddedMessage('Address added successfully!');
+      setIsAddAddressBoxOpen(false);
     } catch (error) {
       setAddressFailedMessage('Failed to add address. Please try again later.');
       console.error('Error adding address:', error);
@@ -235,23 +237,23 @@ const OrderPage = ({ user }) => {
     <Layout>
       <Box p={2}>
         <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-          
-          <IconButton >
-          <Tooltip title="Back to product" arrow placement="top">
-            <ArrowBackRoundedIcon onClick={() => navigate(`/product/${id}`)} />
+          <Box display="flex" alignItems="center">
+          <Tooltip title="Back to Product" arrow placement="top">
+            <IconButton >
+              <ArrowBackRoundedIcon onClick={() => navigate(`/product/${id}`)} />
+            </IconButton>
             </Tooltip>
-            <Typography variant="h5" sx={{ ml: activeStep > 0 ? 1 : 1 }}>
+            <Typography variant="h5" sx={{ ml: activeStep > 0 ? 1 : 1, float:'right'}}>
               Order Page
             </Typography>
-          </IconButton>
-         
+          </Box>
           <Typography variant="body2" color="error">
             Time remaining: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}
           </Typography>
         </Box>
         {/* Product Details */}
         {product && (
-          <Card sx={{ display: 'flex', marginBottom: 2 }}>
+          <Card sx={{ display: 'flex', marginBottom: 1, borderRadius:'16px' }}>
             <Avatar
               src={`data:image/jpeg;base64,${product.media[0]}`} // Assuming the first image is the primary one
               alt={product.title}
@@ -275,7 +277,7 @@ const OrderPage = ({ user }) => {
           </Card>
         )}
         {selectedAddress && (
-          <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
+          <Paper elevation={2} sx={{ p: 2, mt: 1, borderRadius:'16px' }}>
             <Typography>
               <strong>Product will be delivered to:</strong>
             </Typography>
@@ -287,132 +289,168 @@ const OrderPage = ({ user }) => {
             </Typography>
           </Paper>
         )}
-        <Box p={1} mt="1rem">
-          <Stepper activeStep={activeStep} alternativeLabel>
-            <Step>
-              <StepLabel>Select Delivery Address</StepLabel>
-            </Step>
-            <Step>
-              <StepLabel>Payment</StepLabel>
-            </Step>
-            <Step>
-              <StepLabel>Order Confirmation</StepLabel>
-            </Step>
-          </Stepper>
-          {activeStep === 0 && (
-            <Box mb={2}>
-              <Box my={2}>
-                <Typography variant="h6">Add New Delivery Address</Typography>
-                <Grid container spacing={2}>
-                  {["name", "phone", "email", "street", "area", "city", "state", "pincode"].map((field) => (
-                    <Grid item xs={12} sm={6} key={field}>
-                      <TextField
-                        label={field.charAt(0).toUpperCase() + field.slice(1)}
-                        fullWidth
-                        value={newAddress[field] || ""}
-                        onChange={(e) => setNewAddress({ ...newAddress, [field]: e.target.value })}
-                      />
+        <Card sx={{ marginTop:'10px', borderRadius:'16px'}}>
+          <Box p={1} mt="1rem" >
+            <Stepper activeStep={activeStep} alternativeLabel>
+              <Step>
+                <StepLabel>Select Delivery Address</StepLabel>
+              </Step>
+              <Step>
+                <StepLabel>Payment</StepLabel>
+              </Step>
+              <Step>
+                <StepLabel>Order Confirmation</StepLabel>
+              </Step>
+            </Stepper>
+            {activeStep === 0 && (
+              <Box mb={2}>
+                <Box style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+                  <Button
+                    variant="contained"
+                    onClick={() => setIsAddAddressBoxOpen((prev) => !prev)}
+                    sx={{ mt: 2, mb: 2}}
+                  >
+                    Add New Address
+                  </Button>
+                </Box>
+                {isAddAddressBoxOpen && (
+                  <Card sx={{borderRadius:'16px'}}>
+                  <Box my={2} p={2} >
+                    <Typography variant="h6" marginInline={1} mb={2}>Add New Delivery Address</Typography>
+                    <Grid container spacing={2}>
+                      {["name", "phone", "email", "street", "area", "city", "state", "pincode"].map(
+                        (field) => (
+                          <Grid item xs={12} sm={6} key={field}>
+                            <TextField
+                              label={field.charAt(0).toUpperCase() + field.slice(1)}
+                              fullWidth
+                              value={newAddress[field] || ""}
+                              onChange={(e) =>
+                                setNewAddress({ ...newAddress, [field]: e.target.value })
+                              }
+                            />
+                          </Grid>
+                        )
+                      )}
                     </Grid>
-                  ))}
-                </Grid>
-                <Button variant="contained" onClick={handleAddAddress} sx={{ mt: 2, float: 'right' }}>
-                  Submit
-                </Button>
-                {addressAddedMessage && <Snackbar open={true} autoHideDuration={6000} onClose={() => setAddressAddedMessage('')}>
+                    
+                    <Button
+                      variant="contained"
+                      onClick={handleAddAddress}
+                      sx={{ mt: 2, mb: 2 , float: "right", minWidth:'150px' }}
+                    >
+                      Submit
+                    </Button>
+                    <Button
+                      variant="text"
+                      onClick={() => setIsAddAddressBoxOpen(false)}
+                      sx={{ mt: 2, mb: 2, mr:1, float: "right", minWidth:'80px' }}
+                    >
+                      Cancel
+                    </Button>
+                  </Box>
+                  </Card>
+                )}
+                {addressAddedMessage && <Snackbar open={true} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} autoHideDuration={6000} onClose={() => setAddressAddedMessage('')}>
                   <Alert severity="success">{addressAddedMessage}</Alert>
                 </Snackbar>}
-                {addressFailedMessage && <Snackbar open={true} autoHideDuration={6000} onClose={() => setAddressFailedMessage('')}>
+                {addressFailedMessage && <Snackbar open={true} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} autoHideDuration={6000} onClose={() => setAddressFailedMessage('')}>
                   <Alert severity="error">{addressFailedMessage}</Alert>
                 </Snackbar>}
-              </Box>
-              <Box>
-                <Typography variant="h6" sx={{ mt: 4 }}>Select Delivery Address</Typography>
-                <List>
-                  {deliveryAddresses.map((deliveryAddress, index) => (
-                    <ListItem
-                      key={index}
-                      button="true"
-                      selected={selectedAddress === deliveryAddress}
-                      onClick={() => setSelectedAddress(deliveryAddress)}
-                      sx={{
-                        border: selectedAddress === deliveryAddress ? "2px solid blue" : "1px solid lightgray",
-                        borderRadius: 2,
-                        mb: 2,
-                      }}
-                    >
-                      <ListItemText
-                        primary={
-                          <>{`${deliveryAddress.name}, ${deliveryAddress.phone}, ${deliveryAddress.email}`}
-                            <br />
-                            {`${deliveryAddress.address.street}, ${deliveryAddress.address.area}, ${deliveryAddress.address.city}, ${deliveryAddress.address.state}, ${deliveryAddress.address.pincode}`}
-                          </>}
-                        secondary={
-                          <>
+                <Box>
+                  <Typography variant="h6" sx={{ mt: 1, ml: 1 }}>Select Delivery Address</Typography>
+                  <List>
+                    {deliveryAddresses.map((deliveryAddress, index) => (
+                      <ListItem
+                        key={index}
+                        button="true"
+                        selected={selectedAddress === deliveryAddress}
+                        onClick={() => setSelectedAddress(deliveryAddress)}
+                        sx={{
+                          border: selectedAddress === deliveryAddress ? "2px solid blue" : "1px solid lightgray",
+                          borderRadius: 2,
+                          mb: 2,
+                        }}
+                      >
+                        <ListItemText
+                          primary={
+                            <>{`${deliveryAddress.name}, ${deliveryAddress.phone}, ${deliveryAddress.email}`}
+                              <br />
+                              {`${deliveryAddress.address.street}, ${deliveryAddress.address.area}, ${deliveryAddress.address.city}, ${deliveryAddress.address.state}, ${deliveryAddress.address.pincode}`}
+                            </>}
+                          secondary={
+                            <>
 
-                            <br />
-                            <Typography sx={{ display: 'inline-block', float: 'right' }}>
-                              Added on: {new Date(deliveryAddress.createdAt).toLocaleString()} {/* toLocaleDateString for displaying date only */}
-                            </Typography>
-                          </>
-                        }
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-                {stockWarningMessage && <p style={{ color: 'red', float: 'inline-start', marginRight: '10px' }}>{stockWarningMessage}</p>}
+                              <br />
+                              <Typography sx={{ display: 'inline-block', float: 'right' }}>
+                                Added on: {new Date(deliveryAddress.createdAt).toLocaleString()} {/* toLocaleDateString for displaying date only */}
+                              </Typography>
+                            </>
+                          }
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                  {stockWarningMessage && <p style={{ color: 'red', float: 'inline-start', marginRight: '10px' }}>{stockWarningMessage}</p>}
+                  <Button
+                    variant="contained"
+                    disabled={!selectedAddress || stockCountId === 0}
+                    onClick={handleNext}
+                    sx={{ m: 1, mb: 2, float: 'right' }}
+                  >
+                    Proceed to Payment
+                  </Button>
+                </Box>
+              </Box>
+            )}
+            {activeStep === 1 && (
+              <Box>
+                <Box display="flex" alignItems="center" mb={2} mt={2} justifyContent="space-between" >   {/* justifyContent="space-between" */}
+                  <Box display="flex" alignItems="center">
+                  {activeStep > 0 && (
+                    <Tooltip title="Back to Delivery Address" arrow placement="top">
+                    <IconButton onClick={handleBack} >
+                      <ArrowBackRoundedIcon />
+                    </IconButton>
+                    </Tooltip>
+                  )}
+                  <Typography variant="body1" color="grey" sx={{float:'inline-end'}}>
+                    Back
+                  </Typography>
+                  </Box>
+                  {stockWarningMessage && <p style={{ color: 'red', float: 'right', marginRight: '10px' }}>{stockWarningMessage}</p>}
+                </Box>
+                <PaymentForm
+                  amount={product.price}
+                  stockCountId={stockCountId}
+                  name={selectedAddress.name}
+                  email={selectedAddress.email}
+                  contact={selectedAddress.phone}
+                  productDesc={product.title}
+                  onPaymentComplete={handlePaymentComplete} // Updated logic
+                />
+              </Box>
+            )}
+            {activeStep === 2 && (
+              <Box mt="1rem">
+                {/* <IconButton onClick={handleBack}>
+                  <ArrowBackRoundedIcon />
+                </IconButton> */}
+                <Typography variant="h5" mb={2}>Your Order placed successfully</Typography>
+                {/* <Typography>Product: {product.title}</Typography> */}
+                {/* <Typography>Price: ₹{product.price}</Typography> */}
+                <Typography variant="body2" color="grey" mb={'10px'}>Check your order status on My Orders</Typography>
                 <Button
                   variant="contained"
-                  disabled={!selectedAddress || stockCountId === 0}
-                  onClick={handleNext}
-                  sx={{ mt: 1, float: 'right' }}
+                  onClick={() => navigate("/my-orders")} // Redirect to MyOrders.js
+                  style={{float:'inline-end', marginBottom:'2rem'}}
                 >
-                  Proceed to Payment
+                  Go to My Orders
                 </Button>
               </Box>
-            </Box>
-          )}
-          {activeStep === 1 && (
-            <Box>
-              <Box display="flex" alignItems="center" mb={2} mt={2}>   {/* justifyContent="space-between" */}
-                {activeStep > 0 && (
-                  <IconButton onClick={handleBack}>
-                    <ArrowBackRoundedIcon />
-                  </IconButton>
-                )}
-                <Typography variant="body1" color="grey">
-                  Back
-                </Typography>
-              </Box>
-              <PaymentForm
-                amount={product.price}
-                stockCountId={stockCountId}
-                name={selectedAddress.name}
-                email={selectedAddress.email}
-                contact={selectedAddress.phone}
-                productDesc={product.title}
-                onPaymentComplete={handlePaymentComplete} // Updated logic
-              />
-            </Box>
-          )}
-          {activeStep === 2 && (
-            <Box mt="1rem">
-              {/* <IconButton onClick={handleBack}>
-                <ArrowBackRoundedIcon />
-              </IconButton> */}
-              <Typography variant="h5" mb={2}>Your Order placed successfully</Typography>
-              {/* <Typography>Product: {product.title}</Typography> */}
-              {/* <Typography>Price: ₹{product.price}</Typography> */}
-              <Typography variant="body2" color="grey" mb={'10px'}>Check your order status on My Orders</Typography>
-              <Button
-                variant="contained"
-                onClick={() => navigate("/my-orders")} // Redirect to MyOrders.js
-                style={{float:'inline-end', marginBottom:'2rem'}}
-              >
-                Go to My Orders
-              </Button>
-            </Box>
-          )}
-        </Box>
+            )}
+          </Box>
+        </Card>
       </Box>
     </Layout>
   );
