@@ -166,6 +166,8 @@ const OrderPage = ({ user }) => {
         };
   
         const response = await saveOrder(orderData);
+        setActiveStep(2); // Move to order confirmation step
+
         if (response.status === 201) {
           try {
             const emailPayload = {
@@ -173,16 +175,17 @@ const OrderPage = ({ user }) => {
               product: {
                 title: product.title,
                 price: product.price,
-                media: product.media[0],
+                media: product.media[0], // Send as Base64 string .toString("base64")
               },
+              deliverTo: selectedAddress.name,
+              contactTo: selectedAddress.phone,
               deliveryAddress: userSelectedAddress,
+              deliveryDate: product.deliveryDays,
               sellerTitle: product.sellerTitle,
             };
   
             await sendOrderConfirmationEmail(emailPayload);
             console.log("Order email sent successfully");
-  
-            setActiveStep(2); // Move to order confirmation step
           } catch (emailError) {
             console.error("Failed to send email:", emailError);
             alert("Order placed, but email sending failed.");
@@ -284,7 +287,7 @@ const OrderPage = ({ user }) => {
             </Typography>
           </Paper>
         )}
-        <Box p={3}>
+        <Box p={1} mt="1rem">
           <Stepper activeStep={activeStep} alternativeLabel>
             <Step>
               <StepLabel>Select Delivery Address</StepLabel>
@@ -392,19 +395,21 @@ const OrderPage = ({ user }) => {
             </Box>
           )}
           {activeStep === 2 && (
-            <Box>
-              <IconButton onClick={handleBack}>
+            <Box mt="1rem">
+              {/* <IconButton onClick={handleBack}>
                 <ArrowBackRoundedIcon />
-              </IconButton>
-              <Typography variant="h5">Order Confirmation</Typography>
-              <Typography>Product: {product.title}</Typography>
-              <Typography>Price: ₹{product.price}</Typography>
+              </IconButton> */}
+              <Typography variant="h5" mb={2}>Your Order placed successfully</Typography>
+              {/* <Typography>Product: {product.title}</Typography> */}
+              {/* <Typography>Price: ₹{product.price}</Typography> */}
+              <Typography variant="body2" color="grey" mb={'10px'}>Check your order status on My Orders</Typography>
               <Button
-          variant="contained"
-          onClick={() => navigate("/my-orders")} // Redirect to MyOrders.js
-        >
-          Go to My Orders
-        </Button>
+                variant="contained"
+                onClick={() => navigate("/my-orders")} // Redirect to MyOrders.js
+                style={{float:'inline-end', marginBottom:'2rem'}}
+              >
+                Go to My Orders
+              </Button>
             </Box>
           )}
         </Box>

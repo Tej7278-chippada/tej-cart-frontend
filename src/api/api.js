@@ -170,6 +170,7 @@ export const saveOrder = async (order) => {
   return await API.post("/api/orders", order, { headers });
 };
 
+// Send Order Confirmation Email
 export const sendOrderConfirmationEmail = async (payload) => {
   const authToken = localStorage.getItem("authToken");
   const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
