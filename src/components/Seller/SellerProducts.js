@@ -21,7 +21,6 @@ import { useTheme } from '@emotion/react';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 // import SearchBar from './SearchBar';
-import AddIcon from '@mui/icons-material/Add';
 import SellerLayout from './SellerLayout';
 import SearchBar from '../Products/SearchBar';
 import ProductDetail from '../Products/ProductDetail';
@@ -30,6 +29,8 @@ import LazyImage from '../Products/LazyImage';
 import { addSellerProduct, deleteSellerProduct, fetchAllProducts, fetchMySellerProducts, updateSellerProduct } from '../../api/sellerApi';
 import SellerProductDetails from './SellerProductDetails';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AddShoppingCartRoundedIcon from '@mui/icons-material/AddShoppingCartRounded';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 // const LazyImage = React.memo(({ base64Image, alt }) => (
 //   <img
 //     src={`data:image/jpeg;base64,${base64Image}`}
@@ -431,7 +432,7 @@ function SellerProducts() {
                 gap: '8px', marginRight: '10px'
               }}
             >
-              <AddIcon sx={{ fontSize: '20px' }} />
+              <AddShoppingCartRoundedIcon sx={{ fontSize: '20px' }} />
               {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Add Product</span> */}
             </Button>
             <Button
@@ -451,7 +452,7 @@ function SellerProducts() {
                 gap: '8px',
               }}
             >
-              <AccountCircleIcon sx={{ fontSize: '20px' }} />
+              <PersonRoundedIcon sx={{ fontSize: '20px' }} />
               {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>Add Product</span> */}
             </Button>
         </Toolbar>

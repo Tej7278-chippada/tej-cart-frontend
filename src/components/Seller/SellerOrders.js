@@ -72,6 +72,9 @@ const SellerOrders = () => {
                 <Card elevation={3}>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
+                      User Order ID: {order.orderId._id}
+                    </Typography>
+                    <Typography variant="h6" gutterBottom>
                       Order ID: {order._id}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">

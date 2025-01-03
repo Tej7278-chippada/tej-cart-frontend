@@ -18,7 +18,9 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import ShoppingCartCheckoutRoundedIcon from '@mui/icons-material/ShoppingCartCheckoutRounded';
 import ProductionQuantityLimitsRoundedIcon from '@mui/icons-material/ProductionQuantityLimitsRounded';
 import API from '../../api/sellerApi';
 import SellerLayout from './SellerLayout';
@@ -35,6 +37,7 @@ const SellerProfile = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [hoveredId, setHoveredId] = useState(null);
 
   useEffect(() => {
     const fetchSellerDetails = async () => {
@@ -106,26 +109,61 @@ const SellerProfile = () => {
         </Alert>
       </Snackbar>
     <Box >
-    <div style={{
-          padding: '8px',
+    <div  style={{
+          padding: `${isMobile ? "4px" : "8px"}`,
           // position: 'relative',
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
           borderRadius: '8px', scrollbarWidth: 'thin'
         }}>
-          <Typography variant="h5" style={{ flexGrow: 1 }} gutterBottom>
+         
+      <Toolbar >
+        <Typography variant="h5" style={{ flexGrow: 1 }} gutterBottom>
           Seller Profile
         </Typography>
-      <Box
-        display="flex"
-        flexDirection={isMobile ? "column" : "row"}
-        gap={2} sx={{ bgcolor: '#f5f5f5', borderRadius: '10px', padding: '6px', paddingBottom: '10px', paddingTop: '10px' }}
-      >
-
-
-
-
-
-        
+        <Button
+          variant="contained"
+          // onClick={handleDeleteAccount}
+          sx={{
+            backgroundColor: '#1976d2', // Primary blue
+            color: '#fff',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+            '&:hover': {
+              backgroundColor: '#1565c0', // Darker shade on hover
+            },
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px', marginRight: '10px', 
+          }}
+        >
+          <ProductionQuantityLimitsRoundedIcon sx={{ fontSize: '20px' }} />
+          <Link to="/sellerOrders" style={{ color: 'white', textDecoration: 'none',  }}>Orders</Link>
+          {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>My Products</span> */}
+        </Button>
+        <Button
+          variant="contained"
+          // onClick={handleDeleteAccount}
+          sx={{
+            backgroundColor: '#1976d2', // Primary blue
+            color: '#fff',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+            '&:hover': {
+              backgroundColor: '#1565c0', // Darker shade on hover
+            },
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <ShoppingCartCheckoutRoundedIcon sx={{ fontSize: '20px'  }} />
+          <Link to="/sellerProducts" style={{ color: 'white', textDecoration: 'none',  }}>Products</Link>
+          {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>My Products</span> */}
+        </Button>
+      </Toolbar>
+      <Box display="flex" flexDirection={isMobile ? "column" : "row"} gap={2} sx={{ bgcolor: '#f5f5f5', borderRadius: '10px', padding: '6px', paddingBottom: '10px', paddingTop: '10px' }} >
         <Box sx={{
               flex: 1,
               // height: '73vh', // Fixed height relative to viewport
@@ -151,8 +189,6 @@ const SellerProfile = () => {
                 />
           </Box>
         </Box>
-
-
         <Box sx={{
               flex: 3,
               // height: '73vh', // Fixed height relative to viewport
@@ -184,6 +220,14 @@ const SellerProfile = () => {
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   {sellerData.sellerId}
+                </Typography>
+              </Grid>
+              <Grid item xs={6} sm={4}>
+                <Typography variant="body1" style={{ fontWeight: 500 }}>
+                  Seller Id:
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {sellerData._id}
                 </Typography>
               </Grid>
               <Grid item xs={6} sm={4}>
@@ -254,48 +298,39 @@ const SellerProfile = () => {
             marginTop: '1rem',
           }}>
         <Toolbar>
-        <Button
-          variant="contained"
-          // onClick={handleDeleteAccount}
-          sx={{
-            backgroundColor: '#1976d2', // Primary blue
-            color: '#fff',
-            padding: '8px 16px',
-            borderRadius: '24px',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            '&:hover': {
-              backgroundColor: '#1565c0', // Darker shade on hover
-            },
+        <IconButton
+            onClick={handleOpenDeleteDialog}
+          onMouseEnter={() => setHoveredId(sellerData._id)} // Set hoveredId to the current button's ID
+          onMouseLeave={() => setHoveredId(null)} // Reset hoveredId when mouse leaves
+          style={{
+            position: 'absolute',
+            bottom: '10px',
+            right: '8px',
+            backgroundColor: hoveredId === sellerData._id ? '#ffe6e6' : 'rgba(255, 255, 255, 0.2)',
+            borderRadius: hoveredId === sellerData._id ? '6px' : '50%',
+            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
             display: 'flex',
-            alignItems: 'center',
-            gap: '8px', marginRight: '10px'
+            alignItems: 'center', color: 'red'
+            // transition: 'all 0.2s ease',
           }}
         >
-          <ProductionQuantityLimitsRoundedIcon sx={{ fontSize: '20px' }} />
-          <Link to="/sellerProducts" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>My Products</Link>
-          {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>My Products</span> */}
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleOpenDeleteDialog}
-          sx={{
-            backgroundColor: '#1976d2', // Primary blue
-            color: '#fff',
-            padding: '8px 16px',
-            borderRadius: '24px',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            '&:hover': {
-              backgroundColor: '#1565c0', // Darker shade on hover
-            },
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px', 
-            justifyContent: 'right', // Align to the right
-          }}
-        >
-          <DeleteIcon sx={{ fontSize: '20px' }} />
-          <span style={{ fontSize: '14px', fontWeight: '500' }}>Delete Account</span>
-        </Button>
+          {hoveredId && (
+            <span
+              style={{
+                fontSize: '14px',
+                color: '#ff0000',
+                marginRight: '8px',
+                whiteSpace: 'nowrap',
+                opacity: hoveredId === sellerData._id ? 1 : 0,
+                transform: hoveredId === sellerData._id ? 'translateX(0)' : 'translateX(10px)',
+                transition: 'opacity 0.3s, transform 0.3s',
+              }}
+            >
+              Delete Seller Account
+            </span>
+          )}
+          <DeleteForeverRoundedIcon />
+        </IconButton>
         </Toolbar>
         </Box>
     </div>

@@ -1,7 +1,7 @@
 // src/components/ProductDetailID.js
 import React, { useEffect, useState } from 'react';
 import { Typography, CardMedia, IconButton, Grid, Grid2, Box, useMediaQuery } from '@mui/material';
-import {  Comment } from '@mui/icons-material';
+import {  Comment, ThumbUp } from '@mui/icons-material';
 // import CommentPopup from './CommentPopup';
 import { useParams } from 'react-router-dom';
 import Layout from '../Layout';
@@ -244,7 +244,7 @@ function SellerProductDetails({ onClose, user }) {
                 
                 sx={{ color: product.likedByUser ? 'blue' : 'gray' }} // Disable button while loading
               >
-                {product.likes}
+                <ThumbUp />{product.likes}
               </IconButton>
               <IconButton onClick={() => openComments(product)}>
                 <Comment /> {product.comments?.length || 0}

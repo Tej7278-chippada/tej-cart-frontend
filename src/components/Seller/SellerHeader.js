@@ -144,6 +144,11 @@ const SellerHeader = ({ usernameSeller }) => {
       setSearchResults([]);
     }
   };
+
+  const openSellerProfile = () => {
+    const sellerId = localStorage.getItem('sellerId'); 
+    navigate(`/seller/${sellerId}`, { replace: true });
+  };
   
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -225,6 +230,7 @@ const SellerHeader = ({ usernameSeller }) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
+                <MenuItem onClick={() => openSellerProfile()}>My Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 <MenuItem onClick={handleSwitchProfile}>Switch Profile</MenuItem>
               </Menu>
