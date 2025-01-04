@@ -119,6 +119,7 @@ function SellerProducts() {
       }
     };
   }, [fetchProductsData, currentPage]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // Show loading state
@@ -131,10 +132,12 @@ function SellerProducts() {
       if (key !== 'media') data.append(key, formData[key]);
     });
 
-    // Pass existing media IDs to keep them in the database
-    if (existingMedia.length > 0) {
-      data.append('existingMedia', JSON.stringify(existingMedia.filter(media => !media.remove).map(media => media._id)));
+    // Include IDs of existing media to keep
+    const mediaToKeep = existingMedia.filter(media => !media.remove).map(media => media._id);
+    if (mediaToKeep.length > 0) {
+      data.append('existingMedia', JSON.stringify(mediaToKeep));
     }
+    
     try {
       if (editingProduct) {
         await updateSellerProduct(editingProduct._id, data);
@@ -172,9 +175,9 @@ function SellerProducts() {
       stockCount: product.stockCount,
       deliveryDays: product.deliveryDays,
       description: product.description,
-      media: null, // Reset images to avoid re-uploading
+      // media: null, // Reset images to avoid re-uploading
     });
-    setExistingMedia(product.media.map((media) => ({ ...media, remove: false })));
+    setExistingMedia(product.media.map((media, index) => ({ data: media.toString('base64'), _id: index.toString(), remove: false })));
     setOpenDialog(true);
   };
 
