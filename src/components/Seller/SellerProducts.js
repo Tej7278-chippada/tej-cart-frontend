@@ -475,25 +475,23 @@ function SellerProducts() {
         <DialogTitle>{editingProduct ? "Edit Product" : "Add Product"}</DialogTitle>
         <DialogContent style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '0rem' }}>
           <Card style={{borderRadius:'1rem'}}>
-          {/* Existing media with delete option */}
-          {existingMedia.length > 0 && (
-          <div style={{marginBottom:'1rem', margin:'1rem'}}>
-            <Typography variant="subtitle1">Existing Images</Typography>
-            <div style={{ display: 'flex', overflowX: 'scroll', scrollbarWidth: 'none', scrollbarColor: '#888 transparent' }}>
-              {existingMedia.map((media) => (
-                !media.remove && (
-                  <div key={media._id} style={{ position: 'relative', margin: '5px' }}>
-                    <img src={`data:image/jpeg;base64,${media.data}`} alt="Product Media" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
-                    <Button size="small" color="secondary" onClick={() => handleDeleteMedia(media._id)}>Remove</Button>
-                  </div>
-                )
-                
-              ))}
-              
+            {/* Existing media with delete option */}
+            {existingMedia.length > 0 && (
+            <div style={{marginBottom:'1rem', margin:'1rem'}}>
+              <Typography variant="subtitle1">Existing Images</Typography>
+              <div style={{ display: 'flex', overflowX: 'scroll', scrollbarWidth: 'none', scrollbarColor: '#888 transparent' }}>
+                {existingMedia.map((media) => (
+                  !media.remove && (
+                    <div key={media._id} style={{ position: 'relative', margin: '5px' }}>
+                      <img src={`data:image/jpeg;base64,${media.data}`} alt="Product Media" style={{ height: '200px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0, cursor: 'pointer' }} />
+                      <Button size="small" color="secondary" onClick={() => handleDeleteMedia(media._id)}>Remove</Button>
+                    </div>
+                  )
+                ))}
+              </div>
             </div>
-            {/* <img src={media.data} alt="Product Media" style={{ width: '100px', height: '100px', objectFit: 'cover' }} /> */}
-          </div>
-          )}</Card>
+            )}
+          </Card>
           <Card style={{borderRadius:'1rem', marginBottom:'2rem'}}>
           <div style={{marginBottom:'1rem', margin:'1rem'}}>
             <Typography variant="subtitle1">Add Product Photos</Typography>    
