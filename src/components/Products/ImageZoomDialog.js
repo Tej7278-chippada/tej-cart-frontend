@@ -148,40 +148,6 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
                 >
                     <CloseIcon />
                 </IconButton>
-                {/* Navigation Buttons */}
-                {images.length > 1 && (
-                    <>
-                        {/* Previous Button */}
-                        <IconButton
-                            onClick={handlePrev}
-                            style={{
-                                position: "absolute",
-                                top: "50%",
-                                left: 16,
-                                transform: "translateY(-50%)",
-                                backgroundColor: "rgba(0,0,0,0.3)",
-                                color: "white",
-                            }}
-                        >
-                            <ArrowBackIosRoundedIcon />
-                        </IconButton>
-
-                        {/* Next Button */}
-                        <IconButton
-                            onClick={handleNext}
-                            style={{
-                                position: "absolute",
-                                top: "50%",
-                                right: 16,
-                                transform: "translateY(-50%)",
-                                backgroundColor: "rgba(0,0,0,0.3)",
-                                color: "white",
-                            }}
-                        >
-                            <ArrowForwardIosRoundedIcon />
-                        </IconButton>
-                    </>
-                )}
 
                 {/* Zoom Controls */}
                 <Box
@@ -209,6 +175,53 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
                     >
                         <ZoomOutIcon />
                     </IconButton>
+                </Box>
+                
+                {/* Navigation Buttons */}
+                <Box
+                    style={{
+                        position: 'absolute',
+                        bottom: 10,
+                        right: 10,
+                        display: 'flex',
+                        gap: '10px',
+                        borderRadius: '6px',
+                        padding: '8px',
+                    }}
+                >
+                    {images.length > 1 && (
+                    <>
+                        {/* Previous Button */}
+                        <IconButton
+                            onClick={handlePrev}
+                            style={{
+                                // position: "absolute",
+                                // top: "50%",
+                                // left: 16,
+                                // transform: "translateY(-50%)",
+                                backgroundColor: "rgba(0,0,0,0.3)",
+                                color: "white",
+                            }}
+                        >
+                            <ArrowBackIosRoundedIcon />
+                        </IconButton>
+
+                        {/* Next Button */}
+                        <IconButton
+                            onClick={handleNext}
+                            style={{
+                                // position: "absolute",
+                                // top: "50%",
+                                // right: 16,
+                                // transform: "translateY(-50%)",
+                                backgroundColor: "rgba(0,0,0,0.3)",
+                                color: "white",
+                            }}
+                        >
+                            <ArrowForwardIosRoundedIcon />
+                        </IconButton>
+                    </>
+                )}
                 </Box>
             </DialogContent>
         </Dialog>
