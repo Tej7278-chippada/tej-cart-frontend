@@ -3,7 +3,9 @@ import { Dialog, DialogContent, IconButton, Box, useMediaQuery } from '@mui/mate
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import CloseIcon from '@mui/icons-material/Close';
-import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+// import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
+import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 
 const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
     const [zoomLevel, setZoomLevel] = useState(1);
@@ -93,7 +95,10 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
             open={!!selectedImage}
             onClose={handleCloseImageModal}
             maxWidth="md"
-            fullWidth fullScreen={isMobile} sx={{ margin: '1rem' }}
+            fullWidth fullScreen="true" sx={{ margin: '1rem',
+                '& .MuiPaper-root': { // Target the dialog paper
+                  borderRadius: '16px', // Apply border radius
+                }, }}
         >
             <DialogContent
                 style={{
@@ -101,6 +106,9 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
                     position: 'relative',
                     backgroundColor: '#000',
                     overflow: 'hidden',
+                    display: 'flex', // Use flexbox for centering
+                    justifyContent: 'center', // Horizontal centering
+                    alignItems: 'center', // Vertical centering
                 }}
             >
 
@@ -114,7 +122,7 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
                         transition: isDragging ? 'none' : 'transform 0.3s ease',
                         cursor: zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in',
                         maxWidth: '100%',
-                        maxHeight: '100vh',
+                        maxHeight: '95vh',
                         objectFit: 'contain',
                         display: 'block', // Center the image horizontally
                         margin: 'auto',  // Center the image vertically in the dialog
@@ -151,11 +159,11 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
                                 top: "50%",
                                 left: 16,
                                 transform: "translateY(-50%)",
-                                backgroundColor: "rgba(0,0,0,0.5)",
+                                backgroundColor: "rgba(0,0,0,0.3)",
                                 color: "white",
                             }}
                         >
-                            <ArrowBackIos />
+                            <ArrowBackIosRoundedIcon />
                         </IconButton>
 
                         {/* Next Button */}
@@ -166,11 +174,11 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
                                 top: "50%",
                                 right: 16,
                                 transform: "translateY(-50%)",
-                                backgroundColor: "rgba(0,0,0,0.5)",
+                                backgroundColor: "rgba(0,0,0,0.3)",
                                 color: "white",
                             }}
                         >
-                            <ArrowForwardIos />
+                            <ArrowForwardIosRoundedIcon />
                         </IconButton>
                     </>
                 )}
@@ -189,14 +197,14 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
                 >
                     <IconButton
                         onClick={handleZoomIn}
-                        style={{ color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.7)', }}
+                        style={{ color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.5)', }}
                         aria-label="Zoom In"
                     >
                         <ZoomInIcon />
                     </IconButton>
                     <IconButton
                         onClick={handleZoomOut}
-                        style={{ color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.7)', }}
+                        style={{ color: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.5)', }}
                         aria-label="Zoom Out"
                     >
                         <ZoomOutIcon />
