@@ -85,6 +85,14 @@ const SellerProfile = () => {
     setDeleteDialogOpen(false);
   };
 
+  const toSellerProducts = () => {
+    navigate('/sellerProducts'); //, { replace: true }
+  };
+
+  const toSellerOrders = () => {
+    navigate('/sellerOrders'); //, { replace: true }
+  };
+
   // if (loading) return <CircularProgress />;
   if (loading || !sellerData) {
     return (
@@ -116,13 +124,13 @@ const SellerProfile = () => {
           borderRadius: '8px', scrollbarWidth: 'thin'
         }}>
          
-      <Toolbar >
+      <Toolbar style={{marginInline:`${isMobile} ? '-8px' : '-10px'`}} >
         <Typography variant="h5" style={{ flexGrow: 1 }} gutterBottom>
           Seller Profile
         </Typography>
         <Button
           variant="contained"
-          // onClick={handleDeleteAccount}
+          onClick={() => toSellerOrders()}
           sx={{
             backgroundColor: '#1976d2', // Primary blue
             color: '#fff',
@@ -138,12 +146,12 @@ const SellerProfile = () => {
           }}
         >
           <ProductionQuantityLimitsRoundedIcon sx={{ fontSize: '20px' }} />
-          <Link to="/sellerOrders" style={{ color: 'white', textDecoration: 'none',  }}>Orders</Link>
+          <Link  style={{ color: 'white', textDecoration: 'none',  }}>Orders</Link>
           {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>My Products</span> */}
         </Button>
         <Button
           variant="contained"
-          // onClick={handleDeleteAccount}
+          onClick={() => toSellerProducts()}
           sx={{
             backgroundColor: '#1976d2', // Primary blue
             color: '#fff',
@@ -159,7 +167,7 @@ const SellerProfile = () => {
           }}
         >
           <ShoppingCartCheckoutRoundedIcon sx={{ fontSize: '20px'  }} />
-          <Link to="/sellerProducts" style={{ color: 'white', textDecoration: 'none',  }}>Products</Link>
+          <Link  style={{ color: 'white', textDecoration: 'none',  }}>Products</Link>
           {/* <span style={{ fontSize: '14px', fontWeight: '500' }}>My Products</span> */}
         </Button>
       </Toolbar>

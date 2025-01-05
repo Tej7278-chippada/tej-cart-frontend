@@ -147,7 +147,7 @@ const SellerHeader = ({ usernameSeller }) => {
 
   const openSellerProfile = () => {
     const sellerId = localStorage.getItem('sellerId'); 
-    navigate(`/seller/${sellerId}`, { replace: true });
+    navigate(`/seller/${sellerId}`); //, { replace: true }
   };
   
   return (
