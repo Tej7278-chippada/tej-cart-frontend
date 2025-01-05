@@ -151,7 +151,7 @@ const Header = ({ username }) => {
 
   const openUserProfile = () => {
     const userId = localStorage.getItem('userId'); 
-    navigate(`/user/${userId}`, { replace: true });
+    navigate(`/user/${userId}`); //, { replace: true }
   };
   
   return (
