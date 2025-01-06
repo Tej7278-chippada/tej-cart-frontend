@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress, Button, Snackbar, Alert } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import { addToWishlist, checkIfLiked, checkProductInWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
+import { addToWishlist, checkIfLiked, checkProductInWishlist, fetchProductById, fetchProductStockCount, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -32,6 +32,9 @@ function ProductDetailID({ onClose, user }) {
   const navigate = useNavigate();
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
   const { productId } = useParams();
+  const [stockWarningMessage, setStockWarningMessage] = useState('');
+  const [stockCountId, setStockCountId] = useState(null); // Track only stock count
+  const [isStockFetched, setIsStockFetched] = useState(false); // Track if stock data has been fetched
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -53,6 +56,9 @@ function ProductDetailID({ onClose, user }) {
           ...response.data,
           likedByUser, // Set the liked status
         });
+        setStockCountId(response.data.stockCount); // Set initial stock count
+        // setIsStockFetched(true); // Mark stock data as fetched
+
       } catch (error) {
         console.error('Error fetching product details:', error);
       } finally {
@@ -78,9 +84,38 @@ function ProductDetailID({ onClose, user }) {
   
     checkWishlistStatus();
   }, [product, isAuthenticated]);
-  
-  
 
+  useEffect(() => {
+    // Periodically fetch stock count
+    const interval = setInterval(async () => {
+      try {
+        const stockResponse = await fetchProductStockCount(id);
+        setStockCountId(stockResponse.data.stockCount);
+      } catch (err) {
+        console.error("Error fetching product stock count:", err);
+      }
+    }, 5000); // Fetch every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [id]);
+
+  // useEffect(() => {
+  //   if (isStockFetched) {
+  //     if (stockCountId === 0) {
+  //       setStockWarningMessage("Product is Out of stock");
+  //     } else {
+  //       setStockWarningMessage("");
+  //     }
+  //   }
+  // }, [stockCountId, isStockFetched]);
+
+  const calculateDeliveryDate = (days) => {
+    const deliveryDate = new Date();
+    deliveryDate.setDate(deliveryDate.getDate() + days);
+    const options = { weekday: "long", month: "long", day: "numeric" };
+    return deliveryDate.toLocaleDateString(undefined, options);
+  };
+  
   const handleLike = async () => {
     if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
     setLikeLoading(true); // Start the progress indicator
@@ -383,7 +418,7 @@ function ProductDetailID({ onClose, user }) {
                       ₹{product.price}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6} sm={4}>
+                  {/* <Grid item xs={6} sm={4}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
                       Stock Status:
                     </Typography>
@@ -406,18 +441,31 @@ function ProductDetailID({ onClose, user }) {
                     <Typography variant="body2" color="textSecondary">
                       {product.deliveryDays}
                     </Typography>
+                  </Grid> */}
+                  <Grid item xs={12} sm={12}>
+                    <Typography variant="body2" color={stockCountId > 0 ? "green" : "red"}>
+                      {stockCountId > 0 ? `In Stock (${stockCountId} available)` : "Out of Stock"}
+                    </Typography>
                   </Grid>
-                  <Grid item xs={6} sm={4}>
-                  <Typography variant="body2" color={product.stockCount > 0 ? "green" : "red"}>
+                  <Grid item xs={12} sm={12}>
+                  {/* <Typography variant="body2" color={product.stockCount > 0 ? "green" : "red"}>
                     {product.stockCount > 0 ? `In Stock (${product.stockCount} available)` : "Out of Stock"}
-                  </Typography>
+                  </Typography> */}
+                  
+                  <Typography variant="body2">Delivery in {product.deliveryDays} days</Typography>
+                  {product.deliveryDays && (
+                    <Typography color='grey'>
+                      {`Product will be delivered by ${calculateDeliveryDate(product.deliveryDays)}`}
+                    </Typography>
+                  )}
+                  {/* {stockWarningMessage && <p style={{ color: 'red', float: 'inline-start', marginRight: '10px' }}>{stockWarningMessage}</p>} */}
                   </Grid>
                   <Grid item xs={6} sm={4}>
                     <Button
                       variant="contained"
                       color="primary"
                       onClick={handleBuyNow}
-                      disabled={product.stockCount === 0}
+                      disabled={stockCountId === 0}
                       style={{ marginTop: "1rem" }}
                     >
                       Buy Now
@@ -434,7 +482,7 @@ function ProductDetailID({ onClose, user }) {
             }}>
               <IconButton
                 onClick={handleLike}
-                sx={{ color: product.likedByUser ? 'blue' : 'gray' }} disabled={likeLoading} // Disable button while loading
+                disabled={likeLoading} // Disable button while loading, sx={{ color: product.likedByUser ? 'blue' : 'gray' }} 
               >
                 {likeLoading ? (
                   <CircularProgress size={24} color="inherit" /> // Show spinner while loading

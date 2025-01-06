@@ -242,7 +242,7 @@ const OrderPage = ({ user }) => {
           <Box display="flex" alignItems="center">
           <Tooltip title="Back to Product" arrow placement="top">
             <IconButton >
-              <ArrowBackRoundedIcon onClick={() => navigate(`/product/${id}`)} />
+              <ArrowBackRoundedIcon onClick={() => navigate(`/product/${id}`, { replace: true })} />
             </IconButton>
             </Tooltip>
             <Typography variant="h5" sx={{ ml: activeStep > 0 ? 1 : 1, float:'right'}}>
