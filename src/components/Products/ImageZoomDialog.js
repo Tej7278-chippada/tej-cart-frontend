@@ -95,7 +95,7 @@ const ImageZoomDialog = ({ selectedImage, handleCloseImageModal, images }) => {
             open={!!selectedImage}
             onClose={handleCloseImageModal}
             maxWidth="md"
-            fullWidth fullScreen="true" sx={{ margin: '1rem',
+            fullWidth fullScreen={true} sx={{ margin: '1rem',
                 '& .MuiPaper-root': { // Target the dialog paper
                   borderRadius: '16px', // Apply border radius
                 }, }}

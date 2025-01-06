@@ -104,10 +104,17 @@ export const deleteProduct = (id) => API.delete(`/api/products/${id}`);
 // export const likeProduct = (id) => API.post(`/api/products/${id}/like`);
 export const likeProduct = async (id) => {
   const authToken = localStorage.getItem('authToken');
-  const response = await API.post(`/api/products/${id}/like`, {}, {
+  const response = await API.post(`/api/likes/${id}/like`, {}, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
   return response.data;
+};
+export const checkIfLiked = async (id) => {
+  const authToken = localStorage.getItem('authToken');
+  const response = await API.get(`/api/likes/${id}/isLiked`, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+  return response.data.isLiked;
 };
 
 // export const addComment = (id, comment) => API.post(`/api/products/${id}/comment`, comment);

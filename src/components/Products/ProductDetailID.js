@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress, Button, Snackbar, Alert } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import { addToWishlist, checkProductInWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
+import { addToWishlist, checkIfLiked, checkProductInWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -34,29 +34,35 @@ function ProductDetailID({ onClose, user }) {
   const { productId } = useParams();
 
   useEffect(() => {
-    // setLoading(true);
     const fetchProductDetails = async () => {
       setLoading(true);
       try {
         const authToken = localStorage.getItem('authToken');
         setIsAuthenticated(!!authToken); // Check if user is authenticated
-
+  
+        // Fetch product details
         const response = await fetchProductById(id);
+  
+        let likedByUser = false; // Default to false for unauthenticated users
+        if (authToken) {
+          // Only check if the product is liked by the user if the user is authenticated
+          likedByUser = await checkIfLiked(id);
+        }
+  
         setProduct({
           ...response.data,
-          likedByUser: response.data.likedByUser || false, // Set the liked status
+          likedByUser, // Set the liked status
         });
-        
       } catch (error) {
         console.error('Error fetching product details:', error);
       } finally {
         setLoading(false);
       }
     };
-    
-    
+  
     fetchProductDetails();
-  }, [ id]);
+  }, [id]);
+  
 
   useEffect(() => {
     const checkWishlistStatus = async () => {
@@ -75,23 +81,21 @@ function ProductDetailID({ onClose, user }) {
   
   
 
-  const handleLike = async (productId) => {
+  const handleLike = async () => {
     if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
     setLikeLoading(true); // Start the progress indicator
     try {
-      const response = await likeProduct(productId);
-      const updatedLikes = response.likes;
+      const response = await likeProduct(id);
+      // const { likes, likedByUser } = response;
+      // const updatedLikes = response.likes;
 
       // Toggle likedByUser and update the likes count
       setProduct((prevProduct) =>
-        prevProduct._id === productId
-          ? {
-            ...prevProduct,
-            likes: updatedLikes,
-            likedByUser: !prevProduct.likedByUser, // Toggle liked state
-          }
-          : prevProduct
-      );
+        ({
+          ...prevProduct,
+          likes: response.likes,
+          likedByUser: !prevProduct.likedByUser,
+        }));
     } catch (error) {
       console.error('Error toggling like:', error);
       alert('Error toggling like.');
@@ -429,7 +433,7 @@ function ProductDetailID({ onClose, user }) {
               right: '1rem', position: 'relative', display: 'inline-block', float: 'right',
             }}>
               <IconButton
-                onClick={() => handleLike(product._id)}
+                onClick={handleLike}
                 sx={{ color: product.likedByUser ? 'blue' : 'gray' }} disabled={likeLoading} // Disable button while loading
               >
                 {likeLoading ? (
