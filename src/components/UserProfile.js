@@ -367,7 +367,8 @@ const UserProfile = () => {
                 <Box>
                   <Typography variant="h6" sx={{ mt: 1, ml: 1 }}>Delivery Addresses</Typography>
                   <Grid container spacing={1}>
-                    {deliveryAddresses.map((deliveryAddress, index) => (
+                    {deliveryAddresses.length > 0 ? (
+                      deliveryAddresses.map((deliveryAddress, index) => (
                       <Grid item key={index} xs={12} sm={6} md={4} >
                         <List sx={{ height: "100%", width: "100%" }}>
                           <ListItem
@@ -402,7 +403,11 @@ const UserProfile = () => {
                           </ListItem>
                         </List>
                       </Grid>
-                    ))}
+                    ))) : (
+                      <Typography align="center" padding="1rem" variant="body1" color="error">
+                        You Don't have Delivery Addresses. Add new Delivery Address.
+                      </Typography>
+                    )}
                   </Grid>
 
                 </Box>

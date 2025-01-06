@@ -220,7 +220,7 @@ function ProductDetailID({ onClose, user }) {
 
   const handleBuyNow = () => {
     if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
-    if (product.stockCount > 0) {
+    if (stockCountId > 0) {
       navigate(`/order/${id}`, { state: { product } });
     } else {
       setSnackbar({ open: true, message: "Product is out of stock.", severity: "warning" });

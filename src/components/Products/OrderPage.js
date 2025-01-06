@@ -279,10 +279,10 @@ const OrderPage = ({ user }) => {
                       {stockCountId > 0 ? `In Stock (${stockCountId} available)` : "Out of Stock"}
                     </Typography>
                   </Grid>
-                  <Typography>Delivery in {product.deliveryDays} days</Typography>
+                  <Typography variant="body2" mt={2}>Delivery in {product.deliveryDays} days</Typography>
                   {product.deliveryDays && (
-                    <Typography>
-                      Estimated Delivery: {`Product will be delivered by ${calculateDeliveryDate(product.deliveryDays)}`}
+                    <Typography color="grey" variant="body2">
+                      {`Product will be delivered by ${calculateDeliveryDate(product.deliveryDays)}`}
                     </Typography>
                   )}
                 </CardContent>
@@ -384,42 +384,48 @@ const OrderPage = ({ user }) => {
                 <Box>
                   <Typography variant="h6" sx={{ mt: 1, ml: 1 }}>Select Delivery Address</Typography>
                   <Grid container spacing={1}>
-                    {deliveryAddresses.map((deliveryAddress, index) => (
-                      <Grid item key={index} xs={12} sm={6} md={4} >
-                        <List sx={{ height: "100%", width:"100%" }}>
-                          <ListItem
-                            key={index}
-                            button="true"
-                            selected={selectedAddress === deliveryAddress}
-                            onClick={() => setSelectedAddress(deliveryAddress)}
-                            sx={{
-                              border: selectedAddress === deliveryAddress ? "2px solid blue" : "1px solid lightgray",
-                              borderRadius: 2,
-                              mb: 0,
-                              flexDirection: "column", // column for desktop, row for mobile to align text on middle
-                              height: "100%", // Make the ListItem fill the grid cell height
-                            }}
-                          >
-                            <ListItemText
-                              primary={
-                                <>{`${deliveryAddress.name}, ${deliveryAddress.phone}, ${deliveryAddress.email}`}
-                                  <br />
-                                  {`${deliveryAddress.address.street}, ${deliveryAddress.address.area}, ${deliveryAddress.address.city}, ${deliveryAddress.address.state}, ${deliveryAddress.address.pincode}`}
-                                </>}
-                              secondary={
-                                <>
+                    {deliveryAddresses.length > 0 ? (
+                      deliveryAddresses.map((deliveryAddress, index) => (
+                        <Grid item key={index} xs={12} sm={6} md={4} >
+                          <List sx={{ height: "100%", width:"100%" }}>
+                            <ListItem
+                              key={index}
+                              button="true"
+                              selected={selectedAddress === deliveryAddress}
+                              onClick={() => setSelectedAddress(deliveryAddress)}
+                              sx={{
+                                border: selectedAddress === deliveryAddress ? "2px solid blue" : "1px solid lightgray",
+                                borderRadius: 2,
+                                mb: 0,
+                                flexDirection: "column", // column for desktop, row for mobile to align text on middle
+                                height: "100%", // Make the ListItem fill the grid cell height
+                              }}
+                            >
+                              <ListItemText
+                                primary={
+                                  <>{`${deliveryAddress.name}, ${deliveryAddress.phone}, ${deliveryAddress.email}`}
+                                    <br />
+                                    {`${deliveryAddress.address.street}, ${deliveryAddress.address.area}, ${deliveryAddress.address.city}, ${deliveryAddress.address.state}, ${deliveryAddress.address.pincode}`}
+                                  </>}
+                                secondary={
+                                  <>
 
-                                  <br />
-                                  <Typography sx={{ display: 'inline-block', float: 'right' }}>
-                                    Added on: {new Date(deliveryAddress.createdAt).toLocaleString()} {/* toLocaleDateString for displaying date only */}
-                                  </Typography>
-                                </>
-                              }
-                            />
-                          </ListItem>
-                        </List>
-                      </Grid>
-                    ))}
+                                    <br />
+                                    <Typography sx={{ display: 'inline-block', float: 'right' }}>
+                                      Added on: {new Date(deliveryAddress.createdAt).toLocaleString()} {/* toLocaleDateString for displaying date only */}
+                                    </Typography>
+                                  </>
+                                }
+                              />
+                            </ListItem>
+                          </List>
+                        </Grid>
+                      ))
+                    ) : (
+                      <Typography align="center" padding="1rem" variant="body1" color="error">
+                        You Don't have Delivery Addresses. Add new Delivery Address.
+                      </Typography>
+                    )}
                   </Grid>
                   {stockWarningMessage && <p style={{ color: 'red', float: 'inline-start', marginRight: '10px' }}>{stockWarningMessage}</p>}
                   <Button
