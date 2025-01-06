@@ -186,6 +186,17 @@ export const fetchWishlist = async () => {
   });
 };
 
+export const checkProductInWishlist = async (productId) => {
+  const authToken = localStorage.getItem('authToken');
+  const response = await API.get(`/api/wishlist/is-in-wishlist/${productId}`, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+  return response.data.isInWishlist;
+};
+
+
 export const addToWishlist = async (productId) => {
     const authToken = localStorage.getItem('authToken');
     return await API.post('/api/wishlist/add', { productId }, {

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress, Button, Snackbar, Alert } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import { addToWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
+import { addToWishlist, checkProductInWishlist, fetchProductById, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -46,40 +46,34 @@ function ProductDetailID({ onClose, user }) {
           ...response.data,
           likedByUser: response.data.likedByUser || false, // Set the liked status
         });
-        if (authToken) {
-          const wishlistResponse = await fetchWishlist();
-          const wishlistProducts = wishlistResponse.data.wishlist.map((item) => item._id);
-          setWishlist(new Set(wishlistProducts));
-        }
+        
       } catch (error) {
         console.error('Error fetching product details:', error);
       } finally {
         setLoading(false);
       }
     };
-    if (product) {
-      // Find the updated product in the product list
-
-
-      // Initialize wishlist state based on the product's `isInWishlist` property
-      const fetchUserWishlist = async () => {
-        try {
-          const response = await fetchWishlist();
-          const wishlistProducts = response.data.wishlist.map((item) => item._id);
-          setWishlist(new Set(wishlistProducts));
-        } catch (error) {
-          console.error('Error fetching wishlist:', error);
-        }
-      };
-
-      if (product) {
-
-        fetchUserWishlist();
-      }
-    }
+    
+    
     fetchProductDetails();
-    setLoading(false);
-  }, [product, id]);
+  }, [ id]);
+
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      if (isAuthenticated && product) {
+        try {
+          const isInWishlist = await checkProductInWishlist(product._id);
+          setWishlist(new Set(isInWishlist ? [product._id] : []));
+        } catch (error) {
+          console.error('Error checking wishlist status:', error);
+        }
+      }
+    };
+  
+    checkWishlistStatus();
+  }, [product, isAuthenticated]);
+  
+  
 
   const handleLike = async (productId) => {
     if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
@@ -138,25 +132,24 @@ function ProductDetailID({ onClose, user }) {
     setWishLoading(true); // Start the progress indicator
     try {
       if (wishlist.has(productId)) {
-        await removeFromWishlist(productId);
         setWishlist((prevWishlist) => {
           const newWishlist = new Set(prevWishlist);
           newWishlist.delete(productId);
           return newWishlist;
-        });
-        // alert('Product removed from wishlist!');
+        }); // Optimistically update the UI
+        await removeFromWishlist(productId);
       } else {
+        setWishlist((prevWishlist) => new Set([...prevWishlist, productId])); // Optimistically update the UI
         await addToWishlist(productId);
-        setWishlist((prevWishlist) => new Set([...prevWishlist, productId]));
-        // alert('Product added to wishlist!');
       }
     } catch (error) {
       console.error('Error toggling wishlist:', error);
-      alert('Product already added on wishlist!');
+      alert('Failed to update wishlist status!');
     } finally {
       setWishLoading(false); // End the progress indicator
     }
   };
+  
 
   const handleShare = async (productId, productTitle) => {
     const shareUrl = `${window.location.origin}/product/${productId}`;
