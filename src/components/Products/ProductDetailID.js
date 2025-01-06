@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress, Button, Snackbar, Alert, Toolbar } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import { addToWishlist, checkIfLiked, checkProductInWishlist, fetchProductById, fetchProductStockCount, likeProduct, removeFromWishlist } from '../../api/api';
+import { addToWishlist, checkIfLiked, checkProductInWishlist, fetchLikesCount, fetchProductById, fetchProductStockCount, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -38,6 +38,7 @@ function ProductDetailID({ onClose, user }) {
     const fetchProductDetails = async () => {
       setLoading(true);
       try {
+        const likesCount = await fetchLikesCount(id);
         const authToken = localStorage.getItem('authToken');
         setIsAuthenticated(!!authToken); // Check if user is authenticated
   
@@ -53,6 +54,7 @@ function ProductDetailID({ onClose, user }) {
         setProduct({
           ...response.data,
           likedByUser, // Set the liked status
+          likes: likesCount,
         });
         setStockCountId(response.data.stockCount); // Set initial stock count
 
@@ -107,17 +109,13 @@ function ProductDetailID({ onClose, user }) {
     if (!isAuthenticated || likeLoading) return; // Prevent unauthenticated actions
     setLikeLoading(true); // Start the progress indicator
     try {
-      const response = await likeProduct(id);
-      // const { likes, likedByUser } = response;
-      // const updatedLikes = response.likes;
-
-      // Toggle likedByUser and update the likes count
-      setProduct((prevProduct) =>
-        ({
-          ...prevProduct,
-          likes: response.likes,
-          likedByUser: !prevProduct.likedByUser,
-        }));
+      const newLikedByUser = !product.likedByUser;
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        likedByUser: newLikedByUser,
+        likes: newLikedByUser ? prevProduct.likes + 1 : prevProduct.likes - 1,
+      }));
+      await likeProduct(id);
     } catch (error) {
       console.error('Error toggling like:', error);
       alert('Error toggling like.');

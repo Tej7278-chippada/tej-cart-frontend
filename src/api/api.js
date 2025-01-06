@@ -116,6 +116,10 @@ export const checkIfLiked = async (id) => {
   });
   return response.data.isLiked;
 };
+export const fetchLikesCount = async (id) => {
+  const response = await API.get(`/api/likes/${id}/count`);
+  return response.data.likes;
+};
 
 // export const addComment = (id, comment) => API.post(`/api/products/${id}/comment`, comment);
 export const addComment = async (id, comment) => {
