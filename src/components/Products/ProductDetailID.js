@@ -1,9 +1,9 @@
 // src/components/ProductDetailID.js
 import React, { useEffect, useState } from 'react';
-import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress, Button, Snackbar, Alert } from '@mui/material';
+import { Typography, CardMedia, IconButton, Grid, Grid2, Tooltip, Box, useMediaQuery, CircularProgress, Button, Snackbar, Alert, Toolbar } from '@mui/material';
 import { ThumbUp, Comment } from '@mui/icons-material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import { addToWishlist, checkIfLiked, checkProductInWishlist, fetchProductById, fetchProductStockCount, fetchWishlist, likeProduct, removeFromWishlist } from '../../api/api';
+import { addToWishlist, checkIfLiked, checkProductInWishlist, fetchProductById, fetchProductStockCount, likeProduct, removeFromWishlist } from '../../api/api';
 import CommentPopup from './CommentPopup';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -31,11 +31,9 @@ function ProductDetailID({ onClose, user }) {
   const [wishLoading, setWishLoading] = useState(false); // For like progress
   const navigate = useNavigate();
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
-  const { productId } = useParams();
-  const [stockWarningMessage, setStockWarningMessage] = useState('');
+  // const { productId } = useParams();
   const [stockCountId, setStockCountId] = useState(null); // Track only stock count
-  const [isStockFetched, setIsStockFetched] = useState(false); // Track if stock data has been fetched
-
+  
   useEffect(() => {
     const fetchProductDetails = async () => {
       setLoading(true);
@@ -57,7 +55,6 @@ function ProductDetailID({ onClose, user }) {
           likedByUser, // Set the liked status
         });
         setStockCountId(response.data.stockCount); // Set initial stock count
-        // setIsStockFetched(true); // Mark stock data as fetched
 
       } catch (error) {
         console.error('Error fetching product details:', error);
@@ -98,16 +95,6 @@ function ProductDetailID({ onClose, user }) {
 
     return () => clearInterval(interval);
   }, [id]);
-
-  // useEffect(() => {
-  //   if (isStockFetched) {
-  //     if (stockCountId === 0) {
-  //       setStockWarningMessage("Product is Out of stock");
-  //     } else {
-  //       setStockWarningMessage("");
-  //     }
-  //   }
-  // }, [stockCountId, isStockFetched]);
 
   const calculateDeliveryDate = (days) => {
     const deliveryDate = new Date();
@@ -333,9 +320,10 @@ function ProductDetailID({ onClose, user }) {
               bgcolor: 'white', // Card background color (customizable)
               borderRadius: 3, // Card border radius (customizable)
               // boxShadow: 3, // Shadow for a modern look
-              scrollbarWidth: 'thin', padding: '1rem'
+              scrollbarWidth: 'thin', padding: '1rem',
+              position: 'relative', // To enable absolute positioning of the button
             }}>
-              <Box flex={isMobile ? "1" : "0 0 70%"}>
+              <Box flex={isMobile ? "1" : "0 0 70%"} mb={7}>
 
                 {/* Product Details */}
                 <Grid container spacing={2}>
@@ -383,7 +371,8 @@ function ProductDetailID({ onClose, user }) {
                         ) : (
                           <FavoriteBorderIcon />
                         )}
-                        </span></Tooltip>
+                        </span>
+                      </Tooltip>
                     </IconButton>
                     <Typography variant="h4" style={{
                       fontWeight: 'bold',
@@ -392,7 +381,6 @@ function ProductDetailID({ onClose, user }) {
                     }}>
                       {product.title}
                     </Typography>
-
                   </Grid>
                   <Grid item xs={6} sm={4}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
@@ -418,61 +406,46 @@ function ProductDetailID({ onClose, user }) {
                       ₹{product.price}
                     </Typography>
                   </Grid>
-                  {/* <Grid item xs={6} sm={4}>
-                    <Typography variant="body1" style={{ fontWeight: 500 }}>
-                      Stock Status:
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {product.stockStatus}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
-                    <Typography variant="body1" style={{ fontWeight: 500 }}>
-                      Stock Count:
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {product.stockCount}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
-                    <Typography variant="body1" style={{ fontWeight: 500 }}>
-                      Delivery Days:
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {product.deliveryDays}
-                    </Typography>
-                  </Grid> */}
                   <Grid item xs={12} sm={12}>
-                    <Typography variant="body2" color={stockCountId > 0 ? "green" : "red"}>
-                      {stockCountId > 0 ? `In Stock (${stockCountId} available)` : "Out of Stock"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={12}>
-                  {/* <Typography variant="body2" color={product.stockCount > 0 ? "green" : "red"}>
-                    {product.stockCount > 0 ? `In Stock (${product.stockCount} available)` : "Out of Stock"}
-                  </Typography> */}
-                  
-                  <Typography variant="body2">Delivery in {product.deliveryDays} days</Typography>
-                  {product.deliveryDays && (
-                    <Typography color='grey'>
-                      {`Product will be delivered by ${calculateDeliveryDate(product.deliveryDays)}`}
-                    </Typography>
-                  )}
-                  {/* {stockWarningMessage && <p style={{ color: 'red', float: 'inline-start', marginRight: '10px' }}>{stockWarningMessage}</p>} */}
-                  </Grid>
-                  <Grid item xs={6} sm={4}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleBuyNow}
-                      disabled={stockCountId === 0}
-                      style={{ marginTop: "1rem" }}
-                    >
-                      Buy Now
-                    </Button>
+                    <Typography variant="body2">Delivery in {product.deliveryDays} days</Typography>
+                    {product.deliveryDays && (
+                      <Typography color='grey' variant="body2">
+                        {`Product will be delivered by ${calculateDeliveryDate(product.deliveryDays)}`}
+                      </Typography>
+                    )}
                   </Grid>
                 </Grid>
-              </Box></Box>
+              </Box>
+              <Toolbar sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                // bgcolor: 'white', borderRadius:'16px',
+                // boxShadow: '0 -2px 5px rgba(0, 0, 0, 0.1)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginTop: '0rem',
+              }}>
+                <Box style={{ display: 'flex', flexGrow: 1, }}>
+                  <Typography variant="body2" color={stockCountId > 0 ? "green" : "red"}>
+                    {stockCountId > 0 ? `In Stock (${stockCountId} available)` : "Out of Stock"}
+                  </Typography>
+                </Box>
+                <Box >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleBuyNow}
+                    disabled={stockCountId === 0}
+                    style={{ margin: "1rem" }}
+                  >
+                    Buy Now
+                  </Button>
+                </Box>
+              </Toolbar>
+              
+              </Box>
           </Box>
 
           <Grid item xs={12} sx={{ paddingTop: '2rem' }}>
