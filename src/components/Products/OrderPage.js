@@ -167,6 +167,7 @@ const OrderPage = ({ user }) => {
           deliveryAddress: userSelectedAddress,
           paymentStatus: "Completed",
           sellerTitle: product.sellerTitle,
+          sellerId: product.sellerId,
         };
   
         const response = await saveOrder(orderData);
@@ -463,6 +464,7 @@ const OrderPage = ({ user }) => {
                   email={selectedAddress.email}
                   contact={selectedAddress.phone}
                   productDesc={product.title}
+                  sellerTitle={product.sellerTitle}
                   onPaymentComplete={handlePaymentComplete} // Updated logic
                 />
               </Box>
@@ -478,7 +480,7 @@ const OrderPage = ({ user }) => {
                 <Typography variant="body2" color="grey" mb={'10px'}>Check your order status on My Orders</Typography>
                 <Button
                   variant="contained"
-                  onClick={() => navigate("/my-orders")} // Redirect to MyOrders.js
+                  onClick={() => navigate("/my-orders", { replace: true })} // Redirect to MyOrders.js
                   style={{float:'inline-end', marginBottom:'2rem'}}
                 >
                   Go to My Orders

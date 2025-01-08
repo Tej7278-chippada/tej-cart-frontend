@@ -148,3 +148,9 @@ export const getSellerOrders = async (sellerId) => {
     throw error;
   }
 };
+
+export const fetchSellerOrders = async () => {
+  const authTokenSeller = localStorage.getItem('authTokenSeller');
+  const headers = authTokenSeller ? { Authorization: `Bearer ${authTokenSeller}` } : {};
+  return await API.get("/api/sellerOrders/sellerOrders", { headers });
+};

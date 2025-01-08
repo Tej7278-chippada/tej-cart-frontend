@@ -15,7 +15,7 @@ const theme = createTheme({
   },
 });
 
-const PaymentForm = ({amount, onPaymentComplete, stockCountId, name, email, contact, productDesc}) => {
+const PaymentForm = ({amount, onPaymentComplete, stockCountId, name, email, contact, productDesc, sellerTitle}) => {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ open: false, message: "", severity: "info" });
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm')); // Media query for small screens
@@ -38,6 +38,13 @@ const PaymentForm = ({amount, onPaymentComplete, stockCountId, name, email, cont
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
+              name: name,
+              contact: contact, // Replace with actual user contact
+              order_title: productDesc,
+              seller_title: sellerTitle,
+              email: email, // Replace with actual user email
+              payment_method: data.payment_method, // Replace with actual payment method if applicable
+              
             });
             setAlert({
               open: true,
