@@ -1,18 +1,12 @@
 // src/components/orders/MyOrders.js
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Grid, Card, CardContent, Tooltip, CardMedia, Avatar } from "@mui/material";
-// import { fetchUserOrders } from "../../api/api";
-// import Header from "../Header";
-// import Footer from "../Footer";
-// import SkeletonCards from "./SkeletonCards";
 import { useNavigate } from "react-router-dom";
 import { fetchSellerOrders } from "../../api/sellerApi";
 import SellerHeader from "./SellerHeader";
 import SkeletonCards from "../Products/SkeletonCards";
 import Footer from "../Footer";
 import ProductDetail from "../Products/ProductDetail";
-// import ProductDetail from "./ProductDetail";
-// import LazyImage from "./LazyImage";
 
 const SellerMyOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -24,8 +18,8 @@ const SellerMyOrders = () => {
     const loadOrders = async () => {
       setLoading(true);
       try {
-        const userOrders = await fetchSellerOrders();
-        setOrders(userOrders.data.reverse() || []);
+        const sellerOrders = await fetchSellerOrders();
+        setOrders(sellerOrders.data.reverse() || []);
       } catch (err) {
         console.error("Failed to fetch orders:", err);
       } finally {
@@ -36,7 +30,6 @@ const SellerMyOrders = () => {
   }, []);
 
   const openProductDetail = (order) => {
-    // setSelectedProduct(product);
     navigate(`/order-details/${order._id}`);
   };
 
@@ -84,28 +77,13 @@ const SellerMyOrders = () => {
                             scrollbarColor: '#888 transparent',
                             borderRadius: '8px',
                             gap: '0.1rem',
-                            // marginBottom: '1rem'
                             height: '210px'
                           }} >
-                            {/* {order.product.media && order.product.media.map((base64Image, index) => (
-                              <img
-                                key={index}
-                                src={`data:image/jpeg;base64,${base64Image}`}
-                                alt={`Product ${index}`}
-                                style={{
-                                  height: '200px',
-                                  borderRadius: '8px',
-                                  objectFit: 'cover',
-                                  flexShrink: 0,
-                                  cursor: 'pointer' // Make the image look clickable
-                                }}
-                              />
-                            ))} */}
                             {order.productPic ? (
                               <Avatar
                                 src={`data:image/jpeg;base64,${order.productPic}`} // Render the image
                                 alt={order.productTitle}
-                                sx={{ width: 180, height: 180, margin: 1, borderRadius: '10px' }}
+                                sx={{ width: 140, height: 180, margin: 1, borderRadius: '10px' }}
                               />
                             ) : (
                               <Typography variant="body2" color="grey" align="center" marginLeft="1rem" marginTop="1rem" gutterBottom>
@@ -165,17 +143,6 @@ const SellerMyOrders = () => {
       {selectedProduct && (
           <ProductDetail order={selectedProduct} onClose={() => setSelectedProduct(null)} />
         )}
-
-      {/* <Typography variant="h4">My Orders</Typography> */}
-      {/* <List>
-        {orders.map((order, index) => (
-          <ListItem key={index}>
-            <Typography>
-              {`Product: ${order.product.title} | Price: ₹${order.product.price} | Status: ${order.paymentStatus}`}
-            </Typography>
-          </ListItem>
-        ))}
-      </List> */}
     </Box>
     <Footer/>
     </div>
