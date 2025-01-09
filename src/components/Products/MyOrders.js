@@ -100,7 +100,7 @@ const MyOrders = () => {
                               <Avatar
                                 src={`data:image/jpeg;base64,${order.productPic}`} // Render the image
                                 alt={order.productTitle}
-                                sx={{ width: 180, height: 180, margin: 1, borderRadius: '10px' }}
+                                sx={{ width: 140, height: 180, margin: 1, borderRadius: '10px' }}
                               />
                             ) : (
                               <Typography variant="body2" color="grey" align="center" marginLeft="1rem" marginTop="1rem" gutterBottom>
