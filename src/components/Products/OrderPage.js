@@ -141,7 +141,7 @@ const OrderPage = ({ user }) => {
     }
   };
 
-  const handlePaymentComplete = async (paymentStatus) => {
+  const handlePaymentComplete = async (paymentStatus, razorpay_order_id) => {
     if (paymentStatus === "success") {
       console.log("Selected Address for Order:", selectedAddress);
 
@@ -168,6 +168,7 @@ const OrderPage = ({ user }) => {
           paymentStatus: "Completed",
           sellerTitle: product.sellerTitle,
           sellerId: product.sellerId,
+          razorpay_order_id,
         };
   
         const response = await saveOrder(orderData);
@@ -465,6 +466,9 @@ const OrderPage = ({ user }) => {
                   contact={selectedAddress.phone}
                   productDesc={product.title}
                   sellerTitle={product.sellerTitle}
+                  // orderId={product._id} // Pass orderId
+                  sellerId={product.sellerId} // Pass sellerId
+                  productId={product._id} // Pass productId
                   onPaymentComplete={handlePaymentComplete} // Updated logic
                 />
               </Box>

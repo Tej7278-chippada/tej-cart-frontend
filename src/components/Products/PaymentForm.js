@@ -15,7 +15,7 @@ const theme = createTheme({
   },
 });
 
-const PaymentForm = ({amount, onPaymentComplete, stockCountId, name, email, contact, productDesc, sellerTitle}) => {
+const PaymentForm = ({amount, onPaymentComplete, stockCountId, name, email, contact, productDesc, sellerTitle, sellerId, productId}) => {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ open: false, message: "", severity: "info" });
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm')); // Media query for small screens
@@ -24,7 +24,12 @@ const PaymentForm = ({amount, onPaymentComplete, stockCountId, name, email, cont
   const handlePayment = async () => {
     setLoading(true);
     try {                              // "https://tej-pay-d30700a52203.herokuapp.com/api/payments"
-      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/payments`, { amount });
+      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/payments`, { amount,
+      // orderId: orderId, // Pass orderId
+      sellerId: sellerId, // Pass sellerId
+      userId: localStorage.getItem('userId'), // Pass userId from local storage
+      productId: productId, // Pass productId
+       });
       const options = {
         key: "rzp_live_SOG0BZHIb1FCq1",
         amount: data.amount,
@@ -51,7 +56,7 @@ const PaymentForm = ({amount, onPaymentComplete, stockCountId, name, email, cont
               message: `Payment successful! Order ID: ${response.razorpay_order_id}, Payment ID: ${response.razorpay_payment_id}`,
               severity: "success",
             });
-            onPaymentComplete("success");
+            onPaymentComplete("success", data.id);
           } catch (error) {
             console.error("Failed to update payment details:", error);
             setAlert({
