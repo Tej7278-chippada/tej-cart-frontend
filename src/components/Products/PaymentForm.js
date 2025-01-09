@@ -24,12 +24,12 @@ const PaymentForm = ({amount, onPaymentComplete, stockCountId, name, email, cont
   const handlePayment = async () => {
     setLoading(true);
     try {                              // "https://tej-pay-d30700a52203.herokuapp.com/api/payments"
-      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/payments`, { amount,
-      // orderId: orderId, // Pass orderId
-      sellerId: sellerId, // Pass sellerId
-      userId: localStorage.getItem('userId'), // Pass userId from local storage
-      productId: productId, // Pass productId
-       });
+      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/payments`,
+      { amount,
+        sellerId: sellerId, // Pass sellerId
+        userId: localStorage.getItem('userId'), // Pass userId from local storage
+        productId: productId, // Pass productId
+      });
       const options = {
         key: "rzp_live_SOG0BZHIb1FCq1",
         amount: data.amount,

@@ -470,7 +470,11 @@ function SellerProducts() {
       )}
 
 
-      <Dialog  open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
+      <Dialog  open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth fullScreen={true} sx={{ margin: '1rem',
+                '& .MuiPaper-root': { // Target the dialog paper
+                  borderRadius: '16px', // Apply border radius
+                  scrollbarWidth:'thin',
+                }, }}>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
         <DialogTitle>{editingProduct ? "Edit Product" : "Add Product"}</DialogTitle>
         <DialogContent style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '0rem' }}>
@@ -610,14 +614,14 @@ function SellerProducts() {
           
         </DialogContent>
         {submitError && <Alert severity="error" style={{ margin: '1rem' }}>{submitError}</Alert>} 
-        <DialogActions>
-          <Button onClick={handleCloseDialog} disabled={loading}>Cancel</Button>
+        <DialogActions sx={{margin:'2rem', gap:'1rem'}}>
+          <Button onClick={handleCloseDialog} disabled={loading} variant='text' color='warning' sx={{borderRadius:'8px'}}>Cancel</Button>
           <Button 
             type="submit" 
             variant="contained" 
             color="primary" 
             disabled={loading} 
-            style={loading ? { cursor: 'wait' } : {}}
+            style={loading ? { cursor: 'wait' } : {}} sx={{borderRadius:'8px'}}
           >
           {loading ? 'Processing...' : (editingProduct ? 'Update Product' : 'Add Product')}
           </Button>
