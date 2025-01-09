@@ -1,4 +1,4 @@
-// src/components/ProductDetailID.js
+// src/components/OrderDetails.js
 import React, { useEffect, useState } from 'react';
 import { Typography, CardMedia, IconButton, Grid, Box, useMediaQuery, Snackbar, Alert, Avatar } from '@mui/material';
 import { fetchOrderById } from '../../api/api';
@@ -39,7 +39,7 @@ function OrderDetails() {
     };
     fetchOrderDetails();
     setLoading(false);
-  }, [order, id]);
+  }, [id]); // order,
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -67,8 +67,9 @@ function OrderDetails() {
             flexDirection={isMobile ? "column" : "row"}
             gap={2} sx={{ bgcolor: '#f5f5f5', borderRadius: '10px', padding: '6px', paddingBottom: '10px', paddingTop: '10px' }}
           >
-            <Box sx={{
-              flex: 2,
+
+            {/* <Box sx={{
+              flex: 1,
               // height: '73vh', // Fixed height relative to viewport
               overflowY: 'auto',
               // bgcolor: 'transparent', // Card background color (customizable)
@@ -81,8 +82,6 @@ function OrderDetails() {
                 style={{ paddingRight: isMobile ? "0" : "0rem" }}
               >
 
-                {/* Media section */}
-                {/* Media section with click to zoom */}
                 <CardMedia>
                   <div style={{
                     display: 'flex',
@@ -144,7 +143,8 @@ function OrderDetails() {
                   </div>
                 </CardMedia>
               </Box>
-            </Box>
+            </Box> */}
+           
 
             <Box sx={{
               flex: 3,
@@ -159,16 +159,74 @@ function OrderDetails() {
 
                 {/* Product Details */}
                 <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Typography variant="h4" style={{
+                  <Grid item sm={3.5}>
+                    {order.productPic ? (
+                      <Avatar
+                        src={`data:image/jpeg;base64,${order.productPic}`} // Render the image
+                        alt={order.productTitle}
+                        sx={{ width: 80, height: 120, margin: 0, borderRadius: '10px' }}
+                      />
+                    ) : (
+                      <Typography variant="body2" color="grey" align="center" marginLeft="1rem" marginTop="1rem" gutterBottom>
+                        No Product Image available
+                      </Typography>
+                    )}
+                    
+                  </Grid>
+                  <Grid item xs={8} sm={8} >
+                    <IconButton
+                      onClick={(event) => {
+                        event.stopPropagation(); // Prevent triggering the parent onClick
+                        navigate(`/product/${order.product}`)
+                      }}
+                      onMouseEnter={() => setHoveredId(order._id)} // Set hoveredId to the current button's ID
+                      onMouseLeave={() => setHoveredId(null)} // Reset hoveredId when mouse leaves
+                      style={{
+                        position: 'relative', float:'inline-end',
+                        // bottom: '6px', marginTop: '1rem',
+                        // right: '8px',
+                        backgroundColor: hoveredId === order._id ? '#ffe6e6' : 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: hoveredId === order._id ? '16px' : '16px',
+                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                        display: 'flex',
+                        alignItems: 'center', color: 'red'
+                        // transition: 'all 0.2s ease',
+                      }}
+                    >
+                      {hoveredId === order._id && (
+                        <span
+                          style={{
+                            fontSize: '14px', marginLeft: '16px',
+                            color: '#ff0000',
+                            marginRight: '8px',
+                            whiteSpace: 'nowrap',
+                            opacity: hoveredId === order._id ? 1 : 0,
+                            transform: hoveredId === order._id ? 'translateX(0)' : 'translateX(10px)',
+                            transition: 'opacity 0.3s, transform 0.3s',
+                          }}
+                        >
+                          See Product Details
+                        </span>
+                      )}
+                      <LocalMallRoundedIcon />
+                    </IconButton>
+                    <Typography variant="h5" style={{
                       fontWeight: 'bold',
                       marginBottom: '0.5rem',
                       color: '#333'
                     }}>
                       {order.productTitle}
                     </Typography>
+                    <Box alignItems="center" display="flex">
+                    <Typography variant="body1" style={{ fontWeight: 500, float:'inline-start', marginRight:'1rem' }}>
+                      Ordered on:
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" >
+                      {new Date(order.createdAt).toLocaleString()}
+                    </Typography>
+                    </Box>
                   </Grid>
-                  <Grid item xs={6} sm={4}>
+                  <Grid item xs={6} sm={6}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
                       Order Status:
                     </Typography>
@@ -182,14 +240,6 @@ function OrderDetails() {
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       ₹{order.orderPrice}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={12}>
-                    <Typography variant="body1" style={{ fontWeight: 500 }}>
-                      Ordered on:
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {new Date(order.createdAt).toLocaleString()}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={12}>
@@ -218,6 +268,56 @@ function OrderDetails() {
                       {order.sellerTitle}
                     </Typography>
                   </Grid>
+
+                   
+                </Grid>
+              </Box>
+            </Box>
+
+            <Box sx={{
+              flex: 2,
+              // height: '73vh', // Fixed height relative to viewport
+              overflowY: 'auto',
+              bgcolor: 'white', // Card background color (customizable)
+              borderRadius: 3, // Card border radius (customizable)
+              // boxShadow: 3, // Shadow for a modern look
+              scrollbarWidth: 'thin', padding: '1rem'
+            }}>
+              <Box flex={isMobile ? "1" : "0 0 70%"}>
+
+                {/* Product Details */}
+                <Grid container spacing={2}>
+                   {/* Payment Details Section */}
+                {order.paymentId && (
+                  <>
+                    <Grid item xs={12} sm={12}>
+                      <Typography variant="body1" style={{ fontWeight: 500 }}>
+                        Payment ID:
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {order.paymentId.razorpay_payment_id || "N/A"}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} sm={6}>
+                      <Typography variant="body1" style={{ fontWeight: 500 }}>
+                        Payment Status:
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {order.paymentId.status}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} sm={6}>
+                      <Typography variant="body1" style={{ fontWeight: 500 }}>
+                        Payment Amount:
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        ₹{order.paymentId.amount}
+                      </Typography>
+                    </Grid>
+                  </>
+                )}
+
+
                 </Grid>
               </Box>
             </Box>
