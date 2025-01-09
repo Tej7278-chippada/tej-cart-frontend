@@ -466,7 +466,6 @@ const OrderPage = ({ user }) => {
                   contact={selectedAddress.phone}
                   productDesc={product.title}
                   sellerTitle={product.sellerTitle}
-                  // orderId={product._id} // Pass orderId
                   sellerId={product.sellerId} // Pass sellerId
                   productId={product._id} // Pass productId
                   onPaymentComplete={handlePaymentComplete} // Updated logic

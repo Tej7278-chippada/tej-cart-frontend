@@ -16,9 +16,9 @@ function OrderDetails() {
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication
   const navigate = useNavigate();
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
-  const [ order, setOrder ] = useState(null);
+  const [order, setOrder] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
-  
+
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -39,12 +39,11 @@ function OrderDetails() {
     };
     fetchOrderDetails();
     setLoading(false);
-  }, [order,id]); 
+  }, [order, id]);
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
-
 
   if (loading || !order) {
     return (
@@ -57,7 +56,6 @@ function OrderDetails() {
   return (
     <Layout>
       <Box>
-
         <div style={{
           padding: '8px',
           // position: 'relative',
@@ -92,10 +90,10 @@ function OrderDetails() {
                     scrollbarWidth: 'none',
                     scrollbarColor: '#888 transparent',
                     // borderRadius: '8px',
-                    gap: '1rem', 
+                    gap: '1rem',
                     // height: '300px',
                   }}>
-                    
+
                     {order.productPic ? (
                       <Avatar
                         src={`data:image/jpeg;base64,${order.productPic}`} // Render the image
@@ -108,48 +106,45 @@ function OrderDetails() {
                       </Typography>
                     )}
                     <IconButton
-                  onClick={(event) => {
-                    event.stopPropagation(); // Prevent triggering the parent onClick
-                    navigate(`/product/${order.product}`)
-                  }}
-                  onMouseEnter={() => setHoveredId(order._id)} // Set hoveredId to the current button's ID
-                  onMouseLeave={() => setHoveredId(null)} // Reset hoveredId when mouse leaves
-                  style={{
-                    position: 'relative', float:'right', 
-                    bottom: '6px', marginTop: '1rem',
-                    right: '8px',
-                    backgroundColor: hoveredId === order._id ? '#ffe6e6' : 'rgba(255, 255, 255, 0.2)',
-                    borderRadius: hoveredId === order._id ? '16px' : '16px',
-                    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                    display: 'flex',
-                    alignItems: 'center', color: 'red'
-                    // transition: 'all 0.2s ease',
-                  }}
-                >
-                  {hoveredId === order._id && (
-                    <span
+                      onClick={(event) => {
+                        event.stopPropagation(); // Prevent triggering the parent onClick
+                        navigate(`/product/${order.product}`)
+                      }}
+                      onMouseEnter={() => setHoveredId(order._id)} // Set hoveredId to the current button's ID
+                      onMouseLeave={() => setHoveredId(null)} // Reset hoveredId when mouse leaves
                       style={{
-                        fontSize: '14px', marginLeft:'16px',
-                        color: '#ff0000',
-                        marginRight: '8px',
-                        whiteSpace: 'nowrap',
-                        opacity: hoveredId === order._id ? 1 : 0,
-                        transform: hoveredId === order._id ? 'translateX(0)' : 'translateX(10px)',
-                        transition: 'opacity 0.3s, transform 0.3s',
+                        position: 'relative', float: 'right',
+                        bottom: '6px', marginTop: '1rem',
+                        right: '8px',
+                        backgroundColor: hoveredId === order._id ? '#ffe6e6' : 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: hoveredId === order._id ? '16px' : '16px',
+                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                        display: 'flex',
+                        alignItems: 'center', color: 'red'
+                        // transition: 'all 0.2s ease',
                       }}
                     >
-                      See Product Details
-                    </span>
-                  )}
-                  <LocalMallRoundedIcon />
-                </IconButton>
-                    
+                      {hoveredId === order._id && (
+                        <span
+                          style={{
+                            fontSize: '14px', marginLeft: '16px',
+                            color: '#ff0000',
+                            marginRight: '8px',
+                            whiteSpace: 'nowrap',
+                            opacity: hoveredId === order._id ? 1 : 0,
+                            transform: hoveredId === order._id ? 'translateX(0)' : 'translateX(10px)',
+                            transition: 'opacity 0.3s, transform 0.3s',
+                          }}
+                        >
+                          See Product Details
+                        </span>
+                      )}
+                      <LocalMallRoundedIcon />
+                    </IconButton>
                   </div>
-                  
                 </CardMedia>
-                </Box>
-                
-                </Box>
+              </Box>
+            </Box>
 
             <Box sx={{
               flex: 3,
@@ -172,14 +167,13 @@ function OrderDetails() {
                     }}>
                       {order.productTitle}
                     </Typography>
-
                   </Grid>
                   <Grid item xs={6} sm={4}>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>
                       Order Status:
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                    {order.paymentStatus}
+                      {order.paymentStatus}
                     </Typography>
                   </Grid>
                   <Grid item xs={6} sm={4}>
@@ -213,7 +207,7 @@ function OrderDetails() {
                     </Typography>
                     <Typography variant="body2" color="textSecondary" style={{ marginBottom: '0.5rem' }}>
                       Address: {`${order.userDeliveryAddresses[0]?.address.street || "N/A"}, ${order.userDeliveryAddresses[0]?.address.area || "N/A"}, ${order.userDeliveryAddresses[0]?.address.city || "N/A"}`},
-                      <br/> {`${order.userDeliveryAddresses[0]?.address.state || "N/A"} - ${order.userDeliveryAddresses[0]?.address.pincode || "N/A"}`}
+                      <br /> {`${order.userDeliveryAddresses[0]?.address.state || "N/A"} - ${order.userDeliveryAddresses[0]?.address.pincode || "N/A"}`}
                     </Typography>
                   </Grid>
                   <Grid item xs={6} sm={4}>
@@ -221,24 +215,25 @@ function OrderDetails() {
                       Seller Title:
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                    {order.sellerTitle}
+                      {order.sellerTitle}
                     </Typography>
                   </Grid>
                 </Grid>
-              </Box></Box>
+              </Box>
+            </Box>
           </Box>
 
         </div>
         <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Box>
     </Layout>
   );
